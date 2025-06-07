@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages (docs folder)
 
 on:
   push:
-    branches: [ main ]  # Change if your default branch is something else
+    branches: [ main ]
 
 permissions:
   contents: write
@@ -30,7 +30,7 @@ jobs:
           cd portfolio
           npm run build
 
-      - name: List portfolio/out contents (for debugging)
+      - name: List portfolio/out dir (debug)
         run: |
           ls -al portfolio/out || echo "No out folder found!"
 
