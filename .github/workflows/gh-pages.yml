@@ -1,14 +1,19 @@
-name: Deploy to GitHub Pages (docs folder in main)
+name: Deploy to GitHub Pages (docs folder)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # Change if your default branch is something else
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,16 +30,20 @@ jobs:
           cd portfolio
           npm run build
 
+      - name: List portfolio/out contents (for debugging)
+        run: |
+          ls -al portfolio/out || echo "No out folder found!"
+
       - name: Copy to docs folder
         run: |
           rm -rf docs
           mkdir docs
           cp -r portfolio/out/* docs/
 
-      - name: Commit & push
+      - name: Commit and push updated docs
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs
-          git commit -m "Deploy to docs folder [skip ci]" || echo "No changes to commit"
+          git commit -m "Deploy static site to docs folder [skip ci]" || echo "No changes to commit"
           git push
