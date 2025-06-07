@@ -2,7 +2,7 @@ name: Deploy static site to docs
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # or your main branch
 
 permissions:
   contents: write
@@ -28,9 +28,9 @@ jobs:
       - name: Build static site
         run: |
           cd portfolio
-          npm run build:static
+          npm run build
 
-      - name: Copy static site to docs
+      - name: Copy out folder to docs
         run: |
           rm -rf docs
           mkdir docs
