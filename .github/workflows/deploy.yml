@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages (static export to docs folder)
+name: Deploy static site to docs
 
 on:
   push:
-    branches: [ main ]  # Change if your default branch is different
+    branches: [ main ]
 
 permissions:
   contents: write
@@ -25,24 +25,12 @@ jobs:
           cd portfolio
           npm ci
 
-      - name: Temporarily add output export in next.config.js
-        run: |
-          cd portfolio
-          if ! grep -q "output: 'export'" next.config.js; then
-            echo "🔧 Adding output export for static export..."
-            sed -i "0,/module.exports = {/s/module.exports = {/module.exports = {\n  output: 'export',/" next.config.js
-          fi
-
       - name: Build static site
         run: |
           cd portfolio
-          npm run build
+          npm run build:static
 
-      - name: Debug list out directory
-        run: |
-          ls -al portfolio/out || echo "❌ No out folder found!"
-
-      - name: Copy out folder to docs folder
+      - name: Copy static site to docs
         run: |
           rm -rf docs
           mkdir docs
@@ -53,10 +41,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs
-          git commit -m "Deploy static site to docs folder [skip ci]" || echo "No changes to commit"
+          git commit -m "Deploy static site to docs [skip ci]" || echo "No changes to commit"
           git push
-
-      - name: Revert next.config.js change
-        run: |
-          cd portfolio
-          git checkout -- next.config.js
