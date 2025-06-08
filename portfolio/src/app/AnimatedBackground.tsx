@@ -11,13 +11,14 @@ export default function AnimatedBackground() {
   }, []);
 
   const options: ISourceOptions = {
-    fullScreen: { enable: true, zIndex: 0 },
+    fullScreen: { enable: true, zIndex: -1 },
+    fpsLimit: 60,
     background: { color: '#000000' },
     particles: {
-      number: { value: 200 },
+      number: { value: 200, density: { enable: false } },
       color: { value: '#ffffff' },
       opacity: { value: 0.5 },
-      size: { value: { min: 1, max: 3 } },
+      size: { value: 2 },
       move: { enable: true, speed: 2 },
       links: { enable: false }
     },
@@ -25,12 +26,10 @@ export default function AnimatedBackground() {
       enable: true,
       type: 'inline',
       inline: { arrangement: 'equidistant' },
-      scale: 5,
+      draw: { enable: true, stroke: { width: 0.5, color: 'rgba(255,255,255,0.2)' } },
       move: { radius: 10 },
-      data: {
-        path: 'M50 15 L61 35 L85 35 L66 50 L72 72 L50 60 L28 72 L34 50 L15 35 L39 35 Z',
-        size: { width: 100, height: 100 }
-      }
+      scale: 1,
+      url: '/star.svg'
     }
   };
 
@@ -39,7 +38,7 @@ export default function AnimatedBackground() {
       id="animated-bg"
       init={particlesInit}
       options={options}
-      style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+      style={{ position: 'absolute', inset: 0, zIndex: -1 }}
     />
   );
 }
