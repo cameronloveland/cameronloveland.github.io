@@ -36,10 +36,9 @@ jobs:
           mkdir docs
           cp -r portfolio/out/. docs/
 
-      - name: Commit and push updated docs
+      - name: Copy out folder to docs
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs
-          git commit -m "Deploy static site to docs [skip ci]" || echo "No changes to commit"
-          git push
+          rm -rf docs
+          mkdir docs
+          cp -r portfolio/out/. docs/
+          touch docs/.nojekyll
