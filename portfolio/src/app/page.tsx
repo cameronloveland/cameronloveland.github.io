@@ -1,6 +1,7 @@
 // page.tsx
 import React from 'react';
 import { Repo } from './Repo';
+import AnimatedBackground from './AnimatedBackground';
 
 async function getRepos() {
   const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
@@ -15,9 +16,10 @@ export default async function Home() {
   const repos = await getRepos();
 
   return (
-    <div className="p-8 bg-gradient-to-r from-purple-600 to-indigo-600 min-h-screen text-white">
-      <h1 className="text-4xl font-bold mb-6">My GitHub Repos</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="relative overflow-hidden p-8 bg-gradient-to-r from-purple-600 to-indigo-600 min-h-screen text-white">
+      <AnimatedBackground />
+      <h1 className="relative z-10 text-4xl font-bold mb-6">My GitHub Repos</h1>
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {repos.slice(0, 6).map((repo: Repo) => (
           <div
             key={repo.id}
