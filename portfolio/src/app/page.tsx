@@ -16,7 +16,7 @@ export default async function Home() {
   const repos = await getRepos();
 
   return (
-    <div className="relative overflow-hidden p-8 bg-gradient-to-r from-purple-600 to-indigo-600 min-h-screen text-white">
+    <div className="relative overflow-hidden p-8 bg-black min-h-screen text-white">
       <AnimatedBackground />
       <h1 className="relative z-10 text-4xl font-bold mb-6">My GitHub Repos</h1>
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

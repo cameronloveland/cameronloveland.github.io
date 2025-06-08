@@ -11,8 +11,8 @@ export default function AnimatedBackground() {
   }, []);
 
   const options: ISourceOptions = {
-    fullScreen: { enable: false },
-    background: { color: 'transparent' },
+    fullScreen: { enable: true, zIndex: 0 },
+    background: { color: '#000000' },
     particles: {
       number: { value: 200 },
       color: { value: '#ffffff' },
@@ -25,7 +25,7 @@ export default function AnimatedBackground() {
       enable: true,
       type: 'inline',
       inline: { arrangement: 'equidistant' },
-      scale: 80,
+      scale: 5,
       move: { radius: 10 },
       data: {
         path: 'M50 15 L61 35 L85 35 L66 50 L72 72 L50 60 L28 72 L34 50 L15 35 L39 35 Z',
