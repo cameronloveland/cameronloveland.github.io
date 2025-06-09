@@ -107,7 +107,7 @@ export default async function Home() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
         {/* Hero Section */}
-        <section id="about" className="w-full max-w-2xl flex flex-col items-center text-center mb-16">
+        <section id="about" className="w-full max-w-2xl flex flex-col items-center text-center mb-8">
           <img
             src="https://github.com/cameronloveland.png"
             alt="Cameron Loveland"
@@ -130,6 +130,40 @@ export default async function Home() {
             </a>
           </div>
         </section>
+
+        {/* Tech Stack Banner */}
+        <div className="flex flex-wrap justify-center gap-4 mb-16">
+          {/* React */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="3" fill="#61DAFB"/><g stroke="#61DAFB" strokeWidth="2" fill="none"><ellipse rx="18" ry="7" cx="20" cy="20" transform="rotate(60 20 20)"/><ellipse rx="18" ry="7" cx="20" cy="20" transform="rotate(120 20 20)"/><ellipse rx="18" ry="7" cx="20" cy="20"/></g></svg>
+            React
+          </span>
+          {/* Next.js */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#fff"/><path d="M7 16c0-5 4-9 9-9s9 4 9 9-4 9-9 9-9-4-9-9zm13.5 4.5L12 12" stroke="#000" strokeWidth="2" strokeLinecap="round"/></svg>
+            Next.js
+          </span>
+          {/* Tailwind CSS */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M24 18c-4 0-6.7 2-8 6 1.3-2 3.3-3 6-3 2.1 0 3.7 1.1 4.8 3.2C28.7 27.1 30.3 28 32 28c4 0 6.7-2 8-6-1.3 2-3.3 3-6 3-2.1 0-3.7-1.1-4.8-3.2C27.3 20.9 25.7 20 24 20z" fill="#38BDF8"/><path d="M16 30c-4 0-6.7 2-8 6 1.3-2 3.3-3 6-3 2.1 0 3.7 1.1 4.8 3.2C20.7 39.1 22.3 40 24 40c4 0 6.7-2 8-6-1.3 2-3.3 3-6 3-2.1 0-3.7-1.1-4.8-3.2C19.3 31.9 17.7 31 16 31z" fill="#38BDF8"/></svg>
+            TailwindCSS
+          </span>
+          {/* Copilot */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="16" fill="#24292F"/><circle cx="10.5" cy="13.5" r="2.5" fill="#A5D6FF"/><circle cx="21.5" cy="13.5" r="2.5" fill="#A5D6FF"/><path d="M8 18c0 3 3.6 5 8 5s8-2 8-5" stroke="#A5D6FF" strokeWidth="2" strokeLinecap="round"/></svg>
+            Copilot
+          </span>
+          {/* Codex */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 40 40" fill="none"><rect x="6" y="6" width="28" height="28" rx="6" fill="#fff"/><path d="M14 20h12M20 14v12" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/></svg>
+            Codex
+          </span>
+          {/* ChatGPT */}
+          <span className="flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-4 py-2 text-white text-sm font-medium shadow">
+            <svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#10A37F" strokeWidth="3"/><path d="M20 10v10l7 7" stroke="#10A37F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            ChatGPT
+          </span>
+        </div>
 
         {/* Projects Grid */}
         <section id="projects" className="w-full max-w-6xl mb-16">
