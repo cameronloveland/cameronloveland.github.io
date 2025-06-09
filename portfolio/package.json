@@ -13,8 +13,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-tsparticles": "^3.0.0",
-    "tsparticles-engine": "^3.0.0",
-    "tsparticles-plugin-polygon-mask": "^3.0.0"
+    "tsparticles-engine": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
