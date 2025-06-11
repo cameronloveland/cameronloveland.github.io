@@ -36,9 +36,3 @@ jobs:
           mkdir docs
           cp -r portfolio/out/. docs/
 
-      - name: Copy out folder to docs
-        run: |
-          rm -rf docs
-          mkdir docs
-          cp -r portfolio/out/. docs/
-          touch docs/.nojekyll
