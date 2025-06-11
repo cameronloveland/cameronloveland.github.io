@@ -35,4 +35,4 @@ jobs:
           rm -rf docs
           mkdir docs
           cp -r portfolio/out/. docs/
-
+          touch docs/.nojekyll
