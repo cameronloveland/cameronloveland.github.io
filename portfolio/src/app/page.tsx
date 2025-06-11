@@ -38,24 +38,19 @@ async function getReposWithReadme() {
 // Dummy blog posts data
 const blogPosts = [
   {
-    title: "How I Built My Portfolio with Next.js",
-    date: "2024-06-01",
-    summary: "A walkthrough of building a modern developer portfolio using Next.js, Tailwind CSS, and GitHub Actions.",
+    title: "Building My Portfolio with Next.js and Tailwind",
+    date: "2024-06-10",
+    summary: "In this post, I walk through how I worked with ChatGPT to build my new portfolio site using Next.js, Tailwind CSS, Copilot, and Codex. I detail every step we took to get to the final result, including dynamically pulling GitHub data and setting up automated deployments.",
     url: "#"
   },
   {
-    title: "Tips for Clean React Code",
-    date: "2024-05-15",
-    summary: "My favorite patterns and best practices for writing maintainable React code.",
-    url: "#"
-  },
-  {
-    title: "Automating Deployments with GitHub Actions",
-    date: "2024-04-20",
-    summary: "How to set up CI/CD for your static sites using GitHub Actions.",
+    title: "Automating Deployment with GitHub Actions and GitHub Pages",
+    date: "2024-06-10",
+    summary: "This post covers how to set up a simple GitHub Actions workflow to build and deploy a static site to GitHub Pages, including setting up a deploy YAML file, caching Node dependencies, and ensuring your site is always up to date.",
     url: "#"
   }
 ];
+
 
 export default async function Home() {
   const repos = await getReposWithReadme();
