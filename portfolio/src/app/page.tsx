@@ -19,7 +19,9 @@ import {
   SiCss3,
 } from "react-icons/si";
 import { IconType } from "react-icons";
-import CaptainsLogSidebar from './components/CaptainsLogSidebar';
+import { CaptainsLog } from './components/CaptainsLog';
+import { getRecentCommits } from './lib/github';
+import { CaptainsLogSidebar } from './components/CaptainsLogSidebar';
 
 async function getReposWithReadme() {
   const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
@@ -270,83 +272,4 @@ export default async function Home() {
       </footer>
     </div>
   );
-}
-
-// Helper: Returns an array of {icon, name} for a given repo
-function getTechIconsForRepo(repo: Repo) {
-  // Example: Map repo names to tech stacks. Adjust as needed!
-  const stack: Record<string, string[]> = {
-    "your-nextjs-repo": ["nextjs", "react", "tailwind", "copilot"],
-    "your-codex-repo": ["codex", "react"],
-    "your-chatgpt-repo": ["chatgpt", "react"],
-
-  };
-
-  const techs = stack[repo.name] ?? [];
-  return techs.map((tech) => {
-    switch (tech) {
-      case "react":
-        return (
-          <span title="React" key="react">
-            <svg width="18" height="18" viewBox="0 0 40 40" fill="none" className="inline align-middle mr-1"><circle cx="20" cy="20" r="3" fill="#61DAFB" /><g stroke="#61DAFB" strokeWidth="2" fill="none"><ellipse rx="18" ry="7" cx="20" cy="20" transform="rotate(60 20 20)" /><ellipse rx="18" ry="7" cx="20" cy="20" transform="rotate(120 20 20)" /><ellipse rx="18" ry="7" cx="20" cy="20" /></g></svg>
-          </span>
-        );
-      case "nextjs":
-        return (
-          <span title="Next.js" key="nextjs">
-            <svg width="18" height="18" viewBox="0 0 32 32" fill="none" className="inline align-middle mr-1">
-              <rect width="32" height="32" rx="16" fill="white" />
-              <path d="M16 7c-5 0-9 4-9 9s4 9 9 9c2.1 0 4.1-.7 5.7-2l-1.1-1.1c-1.3 1-2.9 1.6-4.6 1.6-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8c0 1.7-.6 3.3-1.6 4.6l1.1 1.1c1.3-1.6 2-3.6 2-5.7 0-5-4-9-9-9zm2.5 4.5l-6 6 1.4 1.4 6-6-1.4-1.4z" fill="#000" />
-            </svg>
-          </span>
-        );
-      case "tailwind":
-        return (
-          <span title="Tailwind CSS" key="tailwind">
-            <svg width="18" height="18" viewBox="0 0 48 48" fill="none" className="inline align-middle mr-1"><path d="M24 18c-4 0-6.7 2-8 6 1.3-2 3.3-3 6-3 2.1 0 3.7 1.1 4.8 3.2C28.7 27.1 30.3 28 32 28c4 0 6.7-2 8-6-1.3 2-3.3 3-6 3-2.1 0-3.7-1.1-4.8-3.2C27.3 20.9 25.7 20 24 20z" fill="#38BDF8" /><path d="M16 30c-4 0-6.7 2-8 6 1.3-2 3.3-3 6-3 2.1 0 3.7 1.1 4.8 3.2C20.7 39.1 22.3 40 24 40c4 0 6.7-2 8-6-1.3 2-3.3 3-6 3-2.1 0-3.7-1.1-4.8-3.2C19.3 31.9 17.7 31 16 31z" fill="#38BDF8" /></svg>
-          </span>
-        );
-      case "copilot":
-        return (
-          <span title="GitHub Copilot" key="copilot">
-            <svg width="18" height="18" viewBox="0 0 256 256" fill="none" className="inline align-middle mr-1">
-              <rect width="256" height="256" rx="64" fill="#22272B" />
-              <g>
-                <ellipse cx="85" cy="110" rx="21" ry="22" fill="#A5D6FF" />
-                <ellipse cx="171" cy="110" rx="21" ry="22" fill="#A5D6FF" />
-                <ellipse cx="128" cy="160" rx="60" ry="32" fill="#A5D6FF" fillOpacity="0.5" />
-                <ellipse cx="128" cy="128" rx="88" ry="80" fill="#A5D6FF" fillOpacity="0.15" />
-                <ellipse cx="128" cy="128" rx="104" ry="96" fill="#A5D6FF" fillOpacity="0.07" />
-              </g>
-              <circle cx="85" cy="110" r="10" fill="#22272B" />
-              <circle cx="171" cy="110" r="10" fill="#22272B" />
-            </svg>
-          </span>
-        );
-      case "codex":
-        return (
-          <span title="OpenAI Codex" key="codex">
-            <svg width="18" height="18" viewBox="0 0 40 40" fill="none" className="inline align-middle mr-1">
-              <g>
-                <path d="M20 3.5a16.5 16.5 0 1 1 0 33 16.5 16.5 0 0 1 0-33zm0 3A13.5 13.5 0 1 0 20 33.5 13.5 13.5 0 0 0 20 6.5z" fill="#10A37F" />
-                <path d="M20 10v10l7 7" stroke="#10A37F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </g>
-            </svg>
-          </span>
-        );
-      case "chatgpt":
-        return (
-          <span title="ChatGPT" key="chatgpt">
-            <svg width="18" height="18" viewBox="0 0 40 40" fill="none" className="inline align-middle mr-1">
-              <g>
-                <path fill="#10A37F" d="M20 3.5a16.5 16.5 0 1 1 0 33 16.5 16.5 0 0 1 0-33zm0 3A13.5 13.5 0 1 0 20 33.5 13.5 13.5 0 0 0 20 6.5z" />
-                <path fill="#fff" d="M28.7 17.7c.2-.6.3-1.2.3-1.8 0-3.2-2.6-5.8-5.8-5.8-1.2 0-2.3.4-3.2 1.1-.9-.7-2-1.1-3.2-1.1-3.2 0-5.8 2.6-5.8 5.8 0 .6.1 1.2.3 1.8-2.1.7-3.5 2.7-3.5 5 0 2.8 2.2 5 5 5h12c2.8 0 5-2.2 5-5 0-2.3-1.4-4.3-3.5-5z" />
-              </g>
-            </svg>
-          </span>
-        );
-      default:
-        return null;
-    }
-  });
 }
