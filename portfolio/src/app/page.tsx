@@ -24,13 +24,6 @@ export default async function Home() {
             >
               Projects
             </a>
-            <a
-              href="#blog"
-              className="text-neutral-400 hover:text-white transition font-medium"
-            >
-              Blog
-            </a>
-
             {/* Social icons using Font Awesome 6 */}
             <a
               href="https://github.com/cameronloveland"
