@@ -169,7 +169,7 @@ export default async function Home() {
               className="text-neutral-400 hover:text-white transition"
               aria-label="Twitter"
             >
-              <i className="fab fa-twitter text-lg"></i>
+              <i className="fab fa-x-twitter text-lg"></i>
             </a>
           </nav>
         </div>
