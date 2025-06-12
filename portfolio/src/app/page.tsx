@@ -19,6 +19,7 @@ import {
   SiCss3,
 } from "react-icons/si";
 import { IconType } from "react-icons";
+import CaptainsLogSidebar from './components/CaptainsLogSidebar';
 
 async function getReposWithReadme() {
   const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
@@ -245,31 +246,7 @@ export default async function Home() {
         </section>
 
         {/* Blog Section */}
-        <section id="blog" className="w-full max-w-3xl mb-16">
-          <h2 className="text-2xl font-semibold text-white mb-6 text-center">Blog</h2>
-          <ul className="divide-y divide-neutral-800">
-            {blogPosts.map((post) => (
-              <li key={post.title} className="py-6 flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="flex-1">
-                  <a
-                    href={post.url}
-                    className="block text-lg font-semibold text-white hover:text-blue-400 transition"
-                  >
-                    {post.title}
-                  </a>
-                  <p className="text-neutral-400 text-sm mt-1">{post.summary}</p>
-                </div>
-                <div className="sm:text-right text-neutral-500 text-xs sm:w-32 mt-2 sm:mt-0">
-                  {new Date(post.date).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <CaptainsLogSidebar />
 
         {/* Contact Section */}
         <section id="contact" className="w-full max-w-2xl flex flex-col items-center text-center mb-8">
