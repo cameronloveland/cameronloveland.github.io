@@ -1,10 +1,28 @@
 // page.tsx
-import React from 'react';
+import React, { JSX } from 'react';
 import { Repo } from './Repo';
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiJavascript,
+  SiTypescript,
+  SiNodedotjs,
+  SiGithub,
+  SiDocker,
+  SiPython,
+  SiVercel,
+  SiGraphql,
+  SiOpenai,
+  SiFirebase,
+  SiHtml5,
+  SiCss3,
+} from "react-icons/si";
+import { IconType } from "react-icons";
 
 async function getReposWithReadme() {
   const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
-    headers: { Accept: 'application/vnd.github.v3+json' },
+    headers: { Accept: 'application/vnd.github.mercy-preview+json' },
   });
   if (!response.ok) throw new Error('Failed to fetch repos');
   const repos: Repo[] = await response.json();
@@ -34,6 +52,53 @@ async function getReposWithReadme() {
 
   return reposWithReadme;
 }
+
+
+const topicIconMap: Record<string, IconType> = {
+  react: SiReact,
+  nextjs: SiNextdotjs,
+  tailwindcss: SiTailwindcss,
+  javascript: SiJavascript,
+  typescript: SiTypescript,
+  node: SiNodedotjs,
+  github: SiGithub,
+  docker: SiDocker,
+  python: SiPython,
+  vercel: SiVercel,
+  graphql: SiGraphql,
+  openai: SiOpenai,
+  firebase: SiFirebase,
+  html: SiHtml5,
+  css: SiCss3,
+};
+
+const topicColorMap: Record<string, string> = {
+  react: "#61DAFB",
+  nextjs: "#000000",
+  tailwindcss: "#38BDF8",
+  javascript: "#F7DF1E",
+  typescript: "#3178C6",
+  node: "#339933",
+  github: "#181717",
+  docker: "#2496ED",
+  python: "#3776AB",
+  vercel: "#000000",
+  graphql: "#E10098",
+  openai: "#10A37F",
+  firebase: "#FFCA28",
+  html: "#E34F26",
+  css: "#1572B6",
+};
+
+export function getTopicIcon(topic: string): JSX.Element {
+  const key = topic.toLowerCase();
+  const Icon = topicIconMap[key] || SiGithub;
+  const color = topicColorMap[key] || "#999999";
+
+  return <Icon className="text-sm" style={{ color }} />;
+}
+
+
 
 // Dummy blog posts data
 const blogPosts = [
@@ -156,10 +221,25 @@ export default async function Home() {
                 <p className="text-neutral-400 text-sm mb-2">
                   {repo.readmeSummary || <span className="italic text-neutral-600">No description</span>}
                 </p>
-                <div className="flex items-center gap-2 mb-2">
-                  {getTechIconsForRepo(repo)}
+
+                <div>
+                  {(repo.topics?.length ?? 0) > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {repo.topics?.map((topic) => (
+                        <span
+                          key={topic}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-neutral-700 bg-neutral-800 text-white hover:bg-neutral-700 transition"
+                        >
+                          {getTopicIcon(topic)}
+                          <span className="ml-0.5">{topic}</span> {/* <— preserves original casing */}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                 </div>
               </a>
+
             ))}
           </div>
         </section>
@@ -222,10 +302,10 @@ function getTechIconsForRepo(repo: Repo) {
     "your-nextjs-repo": ["nextjs", "react", "tailwind", "copilot"],
     "your-codex-repo": ["codex", "react"],
     "your-chatgpt-repo": ["chatgpt", "react"],
-    // fallback for all
-    "default": ["react", "nextjs", "tailwind"]
+
   };
-  const techs = stack[repo.name] || stack["default"];
+
+  const techs = stack[repo.name] ?? [];
   return techs.map((tech) => {
     switch (tech) {
       case "react":

@@ -4,4 +4,5 @@ export type Repo = {
   description: string | null;
   html_url: string;
   readmeSummary: string | null;
+  topics?: string[];
 };
