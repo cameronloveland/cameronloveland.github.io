@@ -44,14 +44,7 @@ export default function EarthBackground() {
           />
         ))}
       </div>
-      <div className="absolute bottom-0 left-1/2 w-[150%] h-[30vh] -translate-x-1/2 pointer-events-none overflow-hidden">
-        <img
-          ref={earthRef}
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cb/The_Blue_Marble_%28remastered%29.jpg"
-          alt="Earth"
-          className="w-full h-auto transition-transform duration-200 ease-out"
-        />
-      </div>
+
     </div>
   );
 }

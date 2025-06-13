@@ -94,8 +94,8 @@ export function CaptainsLogSidebar() {
                     transition={{ ease: 'easeInOut', duration: 0.2 }} // smoother, matches 200ms interval
                 />
             </div>
-            <ul className="divide-y divide-neutral-800">
-                <AnimatePresence mode="wait" initial={false}>
+            <ul className="divide-y divide-neutral-800 max-h-[500px] overflow-y-hidden" >
+                <AnimatePresence initial={false}>
                     {entries.map((entry, i) => (
                         <motion.li
                             key={entry.message + i + logType}

@@ -5,11 +5,15 @@ import { CaptainsLogSidebar } from './components/CaptainsLogSidebar';
 import { getTopicIcon } from './lib/getTopicIcon';
 import { getReposWithReadme } from './lib/getReposWithReadme';
 
+import EarthBackground from './components/EarthBackground';
+
 export default async function Home() {
   const repos = await getReposWithReadme();
 
   return (
+
     <div className="relative min-h-screen bg-neutral-950 flex flex-col">
+      <EarthBackground />
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
