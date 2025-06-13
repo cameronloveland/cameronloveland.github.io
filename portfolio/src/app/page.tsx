@@ -12,7 +12,8 @@ export default async function Home() {
 
   return (
 
-    <div className="relative min-h-screen bg-neutral-950 flex flex-col">
+    <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col">
+
       <EarthBackground />
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900">
