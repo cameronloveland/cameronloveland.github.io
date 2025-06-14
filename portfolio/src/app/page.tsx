@@ -1,12 +1,9 @@
 // page.tsx
-import React from 'react';
-import { Repo } from './Repo';
 import { CaptainsLogSidebar } from './components/CaptainsLogSidebar';
-import { getTopicIcon } from './lib/getTopicIcon';
-import { getReposWithReadme } from './lib/getReposWithReadme';
-
 import EarthBackground from './components/EarthBackground';
 import Header from './components/Header';
+import { Projects } from './components/Projects';
+import { getReposWithReadme } from './lib/getReposWithReadme';
 
 export default async function Home() {
   const repos = await getReposWithReadme();
@@ -47,45 +44,7 @@ export default async function Home() {
         </section>
 
         {/* Projects Grid */}
-        <section id="projects" className="w-full max-w-6xl mb-16">
-          <h2 className="text-2xl font-semibold text-white mb-6 text-center">Featured Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {repos.slice(0, 6).map((repo: Repo) => (
-              <a
-                key={repo.id}
-                href={repo.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="block bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow hover:shadow-lg transition group"
-              >
-                <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-blue-400 transition">
-                  {repo.name}
-                </h3>
-                <p className="text-neutral-400 text-sm mb-2">
-                  {repo.readmeSummary || <span className="italic text-neutral-600">No description</span>}
-                </p>
-
-                <div>
-                  {(repo.topics?.length ?? 0) > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {repo.topics?.map((topic) => (
-                        <span
-                          key={topic}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-neutral-700 bg-neutral-800 text-white hover:bg-neutral-700 transition"
-                        >
-                          {getTopicIcon(topic)}
-                          <span className="ml-0.5">{topic}</span> {/* <— preserves original casing */}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                </div>
-              </a>
-
-            ))}
-          </div>
-        </section>
+        <Projects repos={repos} />
 
         {/* Blog Section */}
         <CaptainsLogSidebar />
