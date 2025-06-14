@@ -90,9 +90,10 @@ export default async function Home() {
         </section>
 
         {/* Projects Grid */}
-        <section id="projects" className="w-full max-w-6xl mb-16">
-          <h2 className="text-2xl font-semibold text-white mb-6 text-center">Featured Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section id="projects" className="w-full max-w-6xl mb-16 self-start">
+          <h2 className="text-2xl font-semibold text-white mb-6">Featured Projects</h2>
+          <div className="terminal-container">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {repos.slice(0, 6).map((repo: Repo) => (
               <a
                 key={repo.id}
@@ -127,6 +128,7 @@ export default async function Home() {
               </a>
 
             ))}
+            </div>
           </div>
         </section>
 

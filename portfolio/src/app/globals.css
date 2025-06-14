@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Container styling for the futuristic terminal look */
+.terminal-container {
+  @apply border rounded-2xl p-6 font-mono;
+  background: rgba(10, 10, 10, 0.8);
+  border-color: rgba(0, 255, 170, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 170, 0.3),
+    inset 0 0 20px rgba(0, 255, 170, 0.15);
+  backdrop-filter: blur(4px);
+}
