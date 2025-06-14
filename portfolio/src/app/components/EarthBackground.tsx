@@ -1,12 +1,32 @@
+
+/*
+ * Tailwind config extension:
+ *
+ *   theme: {
+ *     extend: {
+ *       keyframes: {
+ *         twinkle: {
+ *           '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+ *           '50%': { opacity: '0.4', transform: 'scale(0.8)' },
+ *         },
+ *       },
+ *       animation: {
+ *         twinkle: 'twinkle 2s infinite ease-in-out',
+ *       },
+ *     },
+ *   },
+ */
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Star {
   id: number;
-  left: string;
-  top: string;
-  delay: string;
+  left: number;
+  top: number;
+  size: number;
+  opacity: number;
+  delay: number;
 }
 
 export default function EarthBackground() {
@@ -20,9 +40,11 @@ export default function EarthBackground() {
     for (let i = 0; i < 200; i++) {
       generated.push({
         id: i,
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        delay: `${Math.random() * 5}s`,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        size: 0.5 + Math.random() * 1.5,
+        opacity: 0.4 + Math.random() * 0.6,
+        delay: Math.random() * 5,
       });
     }
     setStars(generated);
@@ -41,7 +63,7 @@ export default function EarthBackground() {
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove}>
+    <div className="fixed inset-0 overflow-hidden -z-10" onMouseMove={handleMouseMove}>
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
@@ -53,12 +75,14 @@ export default function EarthBackground() {
         {stars.map((s) => (
           <div
             key={s.id}
-            className="absolute w-[2px] h-[2px] bg-white rounded-full opacity-80 animate-pulse"
+            className="absolute bg-white rounded-full animate-twinkle"
             style={{
-              left: s.left,
-              top: s.top,
-              animationDelay: s.delay,
-              animationDuration: '2s',
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: `${s.size}px`,
+              height: `${s.size}px`,
+              opacity: s.opacity,
+              animationDelay: `${s.delay}s`,
             }}
           />
         ))}
