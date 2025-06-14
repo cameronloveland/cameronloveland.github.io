@@ -17,7 +17,18 @@ export async function getRecentCommits() {
 
     const commits = await res.json();
 
-    return commits.slice(0, 5).map((commit: any) => ({
+    type GitHubCommit = {
+        commit: {
+            message: string;
+            author: {
+                name: string;
+                date: string;
+            };
+        };
+        html_url: string;
+    };
+
+    return commits.slice(0, 5).map((commit: GitHubCommit) => ({
         message: commit.commit.message,
         author: commit.commit.author.name,
         date: commit.commit.author.date,

@@ -81,7 +81,7 @@ export function CaptainsLogSidebar() {
     return (
         <aside className="fixed top-28 right-4 w-80 bg-neutral-900 text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden z-30">
             <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
-                <span>Captain's Log – {logType}</span>
+                <span>Captain&apos;s Log – {logType}</span>
                 <div className="flex gap-2">
                     <button onClick={prev} className="hover:text-white">←</button>
                     <button onClick={next} className="hover:text-white">→</button>
