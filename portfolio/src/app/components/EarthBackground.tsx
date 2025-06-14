@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import SpinningEarth from './SpinningEarth';
 
 interface Star {
   id: number;
@@ -48,7 +49,10 @@ export default function EarthBackground() {
 
 
   return (
-    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove}>
+
+    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove} >
+
+
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
@@ -90,9 +94,8 @@ export default function EarthBackground() {
         ))}
 
       </div>
+      <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
+    </div >
 
-      {/* Optional earth layer can go here, using ref={earthRef} */}
-      {/* <img ref={earthRef} src="/earth.png" alt="Earth" className="absolute bottom-0 left-1/2 transform -translate-x-1/2" /> */}
-    </div>
   );
 }
