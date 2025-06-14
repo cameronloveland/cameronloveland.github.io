@@ -7,6 +7,7 @@ interface Star {
   left: string;
   top: string;
   delay: string;
+  layer: number;
 }
 
 export default function EarthBackground() {
