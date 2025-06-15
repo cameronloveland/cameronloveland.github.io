@@ -87,25 +87,29 @@ export function Projects({ repos }: ProjectsProps) {
                                 >
                                     {repo.name}
                                 </a>
-                                {(repo.topics?.length ?? 0) > 0 && (
-                                    <div className="flex flex-wrap gap-1 ml-2">
-                                        {repo.topics?.map((topic) => (
-                                            <span
-                                                key={topic}
-                                                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
-                                            >
-                                                {getTopicIcon(topic)}
-                                                <span>{topic}</span>
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
+
                             </div>
+
                             <p className="text-neutral-400 text-xs mt-1">
                                 {repo.readmeSummary || (
                                     <span className="italic text-neutral-600">No description</span>
                                 )}
                             </p>
+                            {/* Subtle divider line between description and topics */}
+                            <div className="border-t border-neutral-800 my-2" />
+                            {(repo.topics?.length ?? 0) > 0 && (
+                                <div className="flex flex-wrap gap-1 ml-2">
+                                    {repo.topics?.map((topic) => (
+                                        <span
+                                            key={topic}
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
+                                        >
+                                            {getTopicIcon(topic)}
+                                            <span>{topic}</span>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </li>
                 ))}

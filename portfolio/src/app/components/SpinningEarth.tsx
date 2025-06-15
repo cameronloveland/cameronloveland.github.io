@@ -25,7 +25,7 @@ function GlowSphere() {
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.05}
+                    opacity={0.03}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
                     toneMapped={false}
@@ -34,7 +34,7 @@ function GlowSphere() {
 
             {/* Middle diffused glow */}
             <mesh>
-                <sphereGeometry args={[1.03, 256, 256, 60, 120]} />
+                <sphereGeometry args={[1.03, 256, 256, 60, 85]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
@@ -123,7 +123,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
             }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.01}  // even faint tones glow
+                        luminanceThreshold={0.5}  // even faint tones glow
                         luminanceSmoothing={0.5}   // soften edge transitions
                         intensity={0.9}            // gentle strength
                     />
