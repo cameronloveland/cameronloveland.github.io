@@ -4,6 +4,7 @@ import React, { useRef, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 
 type Offset = {
@@ -121,13 +122,13 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 camera.layers.enable(0); // default
                 camera.layers.enable(1); // glow layer
             }}>
-                {/* <EffectComposer>
+                <EffectComposer>
                     <Bloom
                         luminanceThreshold={0.02}  // even faint tones glow
                         luminanceSmoothing={1.0}   // soften edge transitions
-                        intensity={2.2}            // gentle strength
+                        intensity={0.2}            // gentle strength
                     />
-                </EffectComposer> */}
+                </EffectComposer>
 
                 <ambientLight intensity={0.4} />
                 <directionalLight position={[5, 5, 5]} intensity={1} />
@@ -143,7 +144,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={300} depth={100} count={500} factor={6} />
+                    <Stars radius={300} depth={500} count={5100} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
