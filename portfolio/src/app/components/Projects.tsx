@@ -8,48 +8,51 @@ type ProjectsProps = {
 
 export function Projects({ repos }: ProjectsProps) {
     return (
-        <section id="projects" className="w-full max-w-2xl mb-16">
-            <h2 className="text-xl font-bold text-white mb-4 px-4 pt-4">Featured Projects</h2>
-            <div className="flex flex-col gap-4">
-                {repos.slice(0, 6).map((repo: Repo) => (
-                    <a
-                        key={repo.id}
-                        href={repo.html_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-xl border border-neutral-800 bg-neutral-900/80 shadow px-5 py-4 transition hover:bg-neutral-800/80"
-                    >
+        <aside className="w-full max-w-2xl bg-neutral-900/80 text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">
+            {/* Header bar */}
+            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950/80 text-base font-bold uppercase text-neutral-200">
+                <span>Featured Projects</span>
+                <span className="text-xs font-normal text-neutral-500">
+                    {repos.length} total
+                </span>
+            </div>
+            {/* Projects list */}
+            <ul className="divide-y divide-neutral-800">
+                {repos.slice(0, 6).map((repo) => (
+                    <li key={repo.id} className="px-4 py-4 text-sm text-neutral-300">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
-                                <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition">
+                                <a
+                                    href={repo.html_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-base font-semibold text-white hover:text-blue-400 transition"
+                                >
                                     {repo.name}
-                                </h3>
-
+                                </a>
+                                {(repo.topics?.length ?? 0) > 0 && (
+                                    <div className="flex flex-wrap gap-1 ml-2">
+                                        {repo.topics?.map((topic) => (
+                                            <span
+                                                key={topic}
+                                                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
+                                            >
+                                                {getTopicIcon(topic)}
+                                                <span>{topic}</span>
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                            <p className="text-neutral-400 text-sm mt-1">
-                                {repo.readmeSummary || <span className="italic text-neutral-600">No description</span>}
+                            <p className="text-neutral-400 text-xs mt-1">
+                                {repo.readmeSummary || (
+                                    <span className="italic text-neutral-600">No description</span>
+                                )}
                             </p>
                         </div>
-                        <div className="flex flex-wrap mt-2">
-                            {(repo.topics?.length ?? 0) > 0 && (
-                                <div className="flex flex-wrap gap-1 ml-2">
-                                    {repo.topics?.map((topic) => (
-                                        <span
-                                            key={topic}
-                                            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
-                                        >
-                                            {getTopicIcon(topic)}
-                                            <span>{topic}</span>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </a>
-
-
+                    </li>
                 ))}
-            </div>
-        </section>
+            </ul>
+        </aside>
     );
 }

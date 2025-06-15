@@ -9,7 +9,9 @@ export default async function Home() {
 
   return (
     <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col">
-      <EarthBackground />
+      <div className="absolute inset-0 -z-10">
+        <EarthBackground />
+      </div>
       <Header />
 
       <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
@@ -83,7 +85,7 @@ export default async function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-neutral-900 py-6 mt-12 text-center text-neutral-500 text-sm">
+      <footer className="w-full border-t border-neutral-900 py-6 mt-12 text-center text-blue-300 text-sm bottom-0">
         &copy; {new Date().getFullYear()} Cameron Loveland. All rights reserved.
       </footer>
 
