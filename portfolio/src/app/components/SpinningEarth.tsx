@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
+
 type Offset = {
     x: number;
     y: number;
@@ -13,6 +14,55 @@ type Offset = {
 interface SpinningEarthProps {
     offset: Offset;
 }
+
+function GlowSphere() {
+    return (
+        <>
+            {/* Inner faint halo */}
+            <mesh>
+                <sphereGeometry args={[1.05, 64, 64]} />
+                <meshBasicMaterial
+                    color="#4fc3f7"
+                    transparent
+                    opacity={0.08}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                    depthWrite={false}
+                    toneMapped={false}
+                />
+            </mesh>
+
+            {/* Middle diffused glow */}
+            <mesh>
+                <sphereGeometry args={[1.15, 64, 64]} />
+                <meshBasicMaterial
+                    color="#4fc3f7"
+                    transparent
+                    opacity={0.04}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                    depthWrite={false}
+                    toneMapped={false}
+                />
+            </mesh>
+
+            {/* Outer haze */}
+            <mesh>
+                <sphereGeometry args={[1.35, 64, 64]} />
+                <meshBasicMaterial
+                    color="#4fc3f7"
+                    transparent
+                    opacity={0.015}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                    depthWrite={false}
+                    toneMapped={false}
+                />
+            </mesh>
+        </>
+    );
+}
+
 
 function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
@@ -32,11 +82,8 @@ function EarthWithLayers() {
 
     return (
         <group rotation={[0.41, 0, 0]}>
-            {/* Earth - day texture */}
-            <mesh ref={earthRef}>
-                <sphereGeometry args={[1, 64, 64]} />
-                <meshStandardMaterial map={dayMap} />
-            </mesh>
+            {/* Glow effect around the Earth */}
+            <GlowSphere />
 
 
             {/* Cloud layer */}
@@ -48,6 +95,12 @@ function EarthWithLayers() {
                     opacity={0.4}
                     depthWrite={false}
                 />
+            </mesh>
+
+            {/* Earth - main sphere */}
+            <mesh ref={earthRef}>
+                <sphereGeometry args={[1, 64, 64]} />
+                <meshPhongMaterial map={dayMap} />
             </mesh>
         </group>
     );
@@ -64,7 +117,18 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 top: "-25vh",         // Center vertically
             }}
         >
-            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }}>
+            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }} onCreated={({ camera }) => {
+                camera.layers.enable(0); // default
+                camera.layers.enable(1); // glow layer
+            }}>
+                {/* <EffectComposer>
+                    <Bloom
+                        luminanceThreshold={0.02}  // even faint tones glow
+                        luminanceSmoothing={1.0}   // soften edge transitions
+                        intensity={2.2}            // gentle strength
+                    />
+                </EffectComposer> */}
+
                 <ambientLight intensity={0.4} />
                 <directionalLight position={[5, 5, 5]} intensity={1} />
                 <Suspense fallback={null}>
