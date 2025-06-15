@@ -79,7 +79,7 @@ export function CaptainsLogSidebar() {
     };
 
     return (
-        <aside className="fixed top-28 right-4 w-80 bg-neutral-900 text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden z-30">
+        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">
             <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
                 <span>Captain&apos;s Log – {logType}</span>
                 <div className="flex gap-2">
