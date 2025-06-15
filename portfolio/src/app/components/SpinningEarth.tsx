@@ -5,6 +5,7 @@ import { Stars, useTexture } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { OrbitControls } from "@react-three/drei";
+import AuroraGlow from "./AuroraGlow";
 
 type Offset = {
     x: number;
@@ -51,6 +52,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         0
                     ]}>
                         <Earth />
+                        <AuroraGlow />
                     </group>
                     <Stars radius={300} depth={100} count={500} factor={6} />
                 </Suspense>
