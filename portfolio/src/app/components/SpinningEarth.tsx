@@ -18,9 +18,8 @@ function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
     const cloudsRef = useRef<THREE.Mesh>(null);
 
-    const [dayMap, nightMap, cloudMap] = useTexture([
+    const [dayMap, cloudMap] = useTexture([
         "/textures/earth.png",
-        "/textures/earth-night.png",
         "/textures/earth-clouds.png",
     ]);
 
@@ -39,16 +38,6 @@ function EarthWithLayers() {
                 <meshStandardMaterial map={dayMap} />
             </mesh>
 
-            {/* Night lights overlay */}
-            <mesh>
-                <sphereGeometry args={[1.01, 64, 64]} />
-                <meshBasicMaterial
-                    map={nightMap}
-                    transparent
-                    blending={THREE.AdditiveBlending}
-                    opacity={0.5}
-                />
-            </mesh>
 
             {/* Cloud layer */}
             <mesh ref={cloudsRef}>
@@ -67,28 +56,29 @@ function EarthWithLayers() {
 export default function SpinningEarth({ offset }: SpinningEarthProps) {
     return (
         <div
-            className="fixed left-1/2 bottom-0 pointer-events-none z-0"
+            className="fixed inset-0 pointer-events-none z-0"
             style={{
-                width: "120vw",
-                height: "60vw",
-                minHeight: "60vh",
-                maxHeight: "90vh",
-                transform: "translateX(-50%) translateY(20%)",
+                width: "150vw",       // Wider than the screen
+                height: "150vh",      // Taller than the screen
+                left: "-25vw",        // Center horizontally
+                top: "-25vh",         // Center vertically
             }}
         >
-            <Canvas camera={{ position: [0, -0.2, 1.6], fov: 45 }}>
+            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }}>
                 <ambientLight intensity={0.4} />
                 <directionalLight position={[5, 5, 5]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
+                        scale={0.8} // smaller than 1 makes it smaller
                         position={[
                             -(offset?.x * 0.05 || 0),
-                            -0.9 - (offset?.y * 0.3 || 0),
+                            -1.1 - (offset?.y * 0.3 || 0), // more negative = lower
                             0,
                         ]}
                     >
                         <EarthWithLayers />
                     </group>
+
                     <Stars radius={300} depth={100} count={500} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
