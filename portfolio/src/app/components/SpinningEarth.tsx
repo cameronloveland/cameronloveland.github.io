@@ -20,7 +20,7 @@ function GlowSphere() {
     return (
         <>
             {/* Inner faint halo */}
-            <mesh>
+            {/* <mesh>
                 <sphereGeometry args={[1.05, 64, 64]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
@@ -31,7 +31,7 @@ function GlowSphere() {
                     depthWrite={false}
                     toneMapped={false}
                 />
-            </mesh>
+            </mesh> */}
 
             {/* Middle diffused glow */}
             <mesh>
@@ -39,16 +39,15 @@ function GlowSphere() {
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.04}
+                    opacity={0.10}
                     blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
                     depthWrite={false}
                     toneMapped={false}
                 />
             </mesh>
 
             {/* Outer haze */}
-            <mesh>
+            {/* <mesh>
                 <sphereGeometry args={[1.35, 64, 64]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
@@ -59,7 +58,7 @@ function GlowSphere() {
                     depthWrite={false}
                     toneMapped={false}
                 />
-            </mesh>
+            </mesh> */}
         </>
     );
 }
@@ -124,9 +123,9 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
             }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.02}  // even faint tones glow
-                        luminanceSmoothing={1.0}   // soften edge transitions
-                        intensity={0.2}            // gentle strength
+                        luminanceThreshold={0.05}  // even faint tones glow
+                        luminanceSmoothing={0.9}   // soften edge transitions
+                        intensity={0.5}            // gentle strength
                     />
                 </EffectComposer>
 
@@ -144,7 +143,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={300} depth={500} count={5100} factor={6} />
+                    <Stars radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
