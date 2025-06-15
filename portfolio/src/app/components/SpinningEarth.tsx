@@ -20,26 +20,26 @@ function GlowSphere() {
     return (
         <>
             {/* Inner faint halo */}
-            {/* <mesh>
-                <sphereGeometry args={[1.05, 64, 64]} />
+            <mesh>
+                <sphereGeometry args={[1.01, 64, 64]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.08}
+                    opacity={0.05}
                     blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
                     depthWrite={false}
                     toneMapped={false}
                 />
-            </mesh> */}
+            </mesh>
 
             {/* Middle diffused glow */}
             <mesh>
-                <sphereGeometry args={[1.15, 64, 64]} />
+                <sphereGeometry args={[1.03, 256, 256, 60, 120]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.10}
+                    opacity={0.05}
+                    side={THREE.BackSide}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
                     toneMapped={false}
@@ -123,9 +123,9 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
             }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.05}  // even faint tones glow
-                        luminanceSmoothing={0.9}   // soften edge transitions
-                        intensity={0.5}            // gentle strength
+                        luminanceThreshold={0.01}  // even faint tones glow
+                        luminanceSmoothing={0.5}   // soften edge transitions
+                        intensity={0.9}            // gentle strength
                     />
                 </EffectComposer>
 

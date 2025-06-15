@@ -62,8 +62,8 @@ type ProjectsProps = {
 
 export function Projects({ repos }: ProjectsProps) {
     // Use dummyRepos if no repos prop is provided
-    //const displayRepos = repos && repos.length > 0 ? repos : dummyRepos;
-    const displayRepos = dummyRepos;
+    const displayRepos = repos && repos.length > 0 ? repos : dummyRepos;
+    // const displayRepos = dummyRepos;
 
     return (
         <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">
