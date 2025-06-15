@@ -9,6 +9,7 @@ interface Star {
   top: string;
   delay: string;
   layer: number;
+  color: string;
 }
 
 export default function EarthBackground() {
@@ -22,15 +23,18 @@ export default function EarthBackground() {
     const generated: Star[] = [];
     const layers = 3;
     const starsPerLayer = 70;
+    const colors = ["#ffffff", "#aaddff", "#ffd1a4", "#c9b3ff", "#99e0ff", "#ffeedd"];
 
     for (let layer = 1; layer <= layers; layer++) {
       for (let i = 0; i < starsPerLayer; i++) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
         generated.push({
           id: layer * 1000 + i,
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
           delay: `${Math.random() * 5}s`,
           layer,
+          color,
         });
       }
     }
@@ -52,7 +56,7 @@ export default function EarthBackground() {
   useEffect(() => {
     const interval = setInterval(() => {
       const left = Math.random() * window.innerWidth;
-      const top = Math.random() * window.innerHeight * 0.5;
+      const top = Math.random() * window.innerHeight;
 
       const duration = 1 + Math.random() * 0.5;
 
@@ -101,10 +105,11 @@ export default function EarthBackground() {
               .map((s) => (
                 <div
                   key={s.id}
-                  className="absolute rounded-full bg-white"
+                  className="absolute rounded-full"
                   style={{
                     left: s.left,
                     top: s.top,
+                    backgroundColor: s.color,
                     width: `${0.5 + Math.random() * (2 / layer)}px`,
                     height: `${0.5 + Math.random() * (2 / layer)}px`,
                     opacity: 0.2 + Math.random() * (1 / layer),
