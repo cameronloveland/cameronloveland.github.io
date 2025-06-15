@@ -67,6 +67,20 @@ export default function EarthBackground() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const handle = (e: CustomEvent) => {
+      const { x, y } = e.detail;
+      setOffset({ x, y });
+      if (earthRef.current) {
+        earthRef.current.style.transform = `translate(${x * 25}%, ${y * 15}%)`;
+      }
+    };
+
+    document.addEventListener("earthParallax", handle as EventListener);
+
+    return () => document.removeEventListener("earthParallax", handle as EventListener);
+  }, []);
+
   // Mouse movement for parallax
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const x = (e.clientX / window.innerWidth - 0.5) * -2; // ← inverted

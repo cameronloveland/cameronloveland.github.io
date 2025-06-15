@@ -7,12 +7,7 @@ export default function Header() {
 
                 {/* Navigation */}
                 <nav className="flex items-center gap-6">
-                    <a
-                        href="#projects"
-                        className="text-neutral-400 hover:text-white transition font-medium"
-                    >
-                        Projects
-                    </a>
+
                     {/* Social icons using Font Awesome 6 */}
                     <a
                         href="https://github.com/cameronloveland"
