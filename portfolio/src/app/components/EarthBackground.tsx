@@ -79,53 +79,53 @@ export default function EarthBackground() {
   };
 
   return (
+    <div onMouseMove={handleMouseMove}>
+      <div className="fixed inset-0 overflow-hidden z-0">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{
+            transform: `translate(${offset.x * 10}px, ${offset.y * 10}px)`,
+            transition: 'transform 0.05s linear',
+          }}
+        >
+          {[1, 2, 3].map((layer) => (
+            <div
+              key={layer}
+              className="absolute inset-0"
+              style={{
+                transform: `translate(${offset.x * (10 / layer)}px, ${offset.y * (10 / layer)}px)`,
+                transition: 'transform 0.05s linear',
+              }}
+            >
+              {stars
+                .filter((s) => s.layer === layer)
+                .map((s) => (
+                  <div
+                    key={s.id}
+                    className="absolute rounded-full"
+                    style={{
+                      left: s.left,
+                      top: s.top,
+                      backgroundColor: s.color,
+                      width: `${0.5 + Math.random() * (2 / layer)}px`,
+                      height: `${0.5 + Math.random() * (2 / layer)}px`,
+                      opacity: 0.2 + Math.random() * (1 / layer),
+                      animationName: 'twinkle',
+                      animationDuration: `${1.5 + Math.random() * 2.5}s`,
+                      animationTimingFunction: 'ease-in-out',
+                      animationIterationCount: 'infinite',
+                      animationDelay: s.delay,
+                    }}
+                  />
+                ))}
+            </div>
+          ))}
 
-    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove}>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-        style={{
-          transform: `translate(${offset.x * 10}px, ${offset.y * 10}px)`,
-          transition: 'transform 0.05s linear',
-        }}
-      >
-        {[1, 2, 3].map((layer) => (
-          <div
-            key={layer}
-            className="absolute inset-0"
-            style={{
-              transform: `translate(${offset.x * (10 / layer)}px, ${offset.y * (10 / layer)}px)`,
-              transition: 'transform 0.05s linear',
-            }}
-          >
-            {stars
-              .filter((s) => s.layer === layer)
-              .map((s) => (
-                <div
-                  key={s.id}
-                  className="absolute rounded-full"
-                  style={{
-                    left: s.left,
-                    top: s.top,
-                    backgroundColor: s.color,
-                    width: `${0.5 + Math.random() * (2 / layer)}px`,
-                    height: `${0.5 + Math.random() * (2 / layer)}px`,
-                    opacity: 0.2 + Math.random() * (1 / layer),
-                    animationName: 'twinkle',
-                    animationDuration: `${1.5 + Math.random() * 2.5}s`,
-                    animationTimingFunction: 'ease-in-out',
-                    animationIterationCount: 'infinite',
-                    animationDelay: s.delay,
-                  }}
-                />
-              ))}
-          </div>
-        ))}
-
-      </div>
-      <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
-      {shootingStars}
-    </div >
-
+        </div>
+        <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
+        {shootingStars}
+      </div >
+    </div>
   );
 }

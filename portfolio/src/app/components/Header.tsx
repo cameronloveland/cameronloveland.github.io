@@ -3,7 +3,7 @@ export default function Header() {
         <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900 rounded-b-2xl">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
                 {/* Site title */}
-                <span className="text-white font-bold text-lg tracking-tight">Cameron Loveland</span>
+                <span className="text-white font-bold text-lg tracking-tight">Portfolio</span>
 
                 {/* Navigation */}
                 <nav className="flex items-center gap-6">
