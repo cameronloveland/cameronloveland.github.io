@@ -4,6 +4,7 @@ import React, { useRef, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 
 type Offset = {
@@ -20,13 +21,12 @@ function GlowSphere() {
         <>
             {/* Inner faint halo */}
             <mesh>
-                <sphereGeometry args={[1.05, 64, 64]} />
+                <sphereGeometry args={[1.01, 64, 64]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.08}
+                    opacity={0.03}
                     blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
                     depthWrite={false}
                     toneMapped={false}
                 />
@@ -34,20 +34,20 @@ function GlowSphere() {
 
             {/* Middle diffused glow */}
             <mesh>
-                <sphereGeometry args={[1.15, 64, 64]} />
+                <sphereGeometry args={[1.03, 256, 256, 60, 85]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
                     transparent
-                    opacity={0.04}
-                    blending={THREE.AdditiveBlending}
+                    opacity={0.05}
                     side={THREE.BackSide}
+                    blending={THREE.AdditiveBlending}
                     depthWrite={false}
                     toneMapped={false}
                 />
             </mesh>
 
             {/* Outer haze */}
-            <mesh>
+            {/* <mesh>
                 <sphereGeometry args={[1.35, 64, 64]} />
                 <meshBasicMaterial
                     color="#4fc3f7"
@@ -58,7 +58,7 @@ function GlowSphere() {
                     depthWrite={false}
                     toneMapped={false}
                 />
-            </mesh>
+            </mesh> */}
         </>
     );
 }
@@ -76,7 +76,7 @@ function EarthWithLayers() {
     // Animate rotation
     useFrame(({ clock }) => {
         const t = clock.getElapsedTime();
-        if (earthRef.current) earthRef.current.rotation.y = t * 0.05;
+        if (earthRef.current) earthRef.current.rotation.y = t * 0.01;
         if (cloudsRef.current) cloudsRef.current.rotation.y = t * 0.03;
     });
 
@@ -121,13 +121,13 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 camera.layers.enable(0); // default
                 camera.layers.enable(1); // glow layer
             }}>
-                {/* <EffectComposer>
+                <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.02}  // even faint tones glow
-                        luminanceSmoothing={1.0}   // soften edge transitions
-                        intensity={2.2}            // gentle strength
+                        luminanceThreshold={0.5}  // even faint tones glow
+                        luminanceSmoothing={0.5}   // soften edge transitions
+                        intensity={0.9}            // gentle strength
                     />
-                </EffectComposer> */}
+                </EffectComposer>
 
                 <ambientLight intensity={0.4} />
                 <directionalLight position={[5, 5, 5]} intensity={1} />
@@ -143,7 +143,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={300} depth={100} count={500} factor={6} />
+                    <Stars radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
