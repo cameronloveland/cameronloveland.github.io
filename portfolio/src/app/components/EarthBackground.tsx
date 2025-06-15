@@ -41,17 +41,6 @@ export default function EarthBackground() {
     setStars(generated);
   }, []);
 
-  // Mouse movement for parallax
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * -2; // ← inverted
-    const y = (e.clientY / window.innerHeight - 0.5) * -2; // ← inverted
-    setOffset({ x, y });
-
-    if (earthRef.current) {
-      earthRef.current.style.transform = `translate(${x * 25}%, ${y * 15}%)`;
-    }
-  };
-
   // Generate shooting stars every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -78,11 +67,20 @@ export default function EarthBackground() {
     return () => clearInterval(interval);
   }, []);
 
+  // Mouse movement for parallax
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * -2; // ← inverted
+    const y = (e.clientY / window.innerHeight - 0.5) * -2; // ← inverted
+    setOffset({ x, y });
+
+    if (earthRef.current) {
+      earthRef.current.style.transform = `translate(${x * 25}%, ${y * 15}%)`;
+    }
+  };
+
   return (
 
-    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove} >
-
-
+    <div className="fixed inset-0 overflow-hidden z-0" onMouseMove={handleMouseMove}>
       <div
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
