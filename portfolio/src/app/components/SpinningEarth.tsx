@@ -76,7 +76,7 @@ function EarthWithLayers() {
     // Animate rotation
     useFrame(({ clock }) => {
         const t = clock.getElapsedTime();
-        if (earthRef.current) earthRef.current.rotation.y = t * 0.05;
+        if (earthRef.current) earthRef.current.rotation.y = t * 0.01;
         if (cloudsRef.current) cloudsRef.current.rotation.y = t * 0.03;
     });
 
