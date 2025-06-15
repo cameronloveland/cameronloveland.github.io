@@ -52,6 +52,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         0
                     ]}>
                         <Earth />
+                        {/* Adjust intensity or radius for a brighter glow */}
                         <AuroraGlow />
                     </group>
                     <Stars radius={300} depth={100} count={500} factor={6} />

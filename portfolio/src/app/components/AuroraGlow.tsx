@@ -11,11 +11,20 @@ interface AuroraGlowProps {
   color?: string | number; // Color of the aurora
 }
 
+/**
+ * AuroraGlow renders a soft atmospheric rim around the Earth.
+ *
+ * - `radius` controls how far the glow sits from the surface.
+ *   Increase it for a larger cinematic aura.
+ * - `intensity` adjusts the brightness.
+ * - `fade` determines how quickly the glow falls off.
+ * - `color` sets the glow tint.
+ */
 export default function AuroraGlow({
-  radius = 1.05,
-  intensity = 0.8,
-  fade = 1.5,
-  color = '#50fcd5',
+  radius = 1.15,
+  intensity = 1.2,
+  fade = 2.5,
+  color = '#55aaff',
 }: AuroraGlowProps) {
   const materialRef = useRef<ShaderMaterial>(null);
   const { camera } = useThree();
