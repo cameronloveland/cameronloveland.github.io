@@ -37,40 +37,6 @@ export default function EarthBackground() {
     setStars(generated);
   }, []);
 
-  // Create shooting stars every 12–25 seconds
-  useEffect(() => {
-    const createStar = () => {
-      const left = Math.random() * window.innerWidth;
-      const top = Math.random() * window.innerHeight * 0.4; // appear in top 40% of screen
-      const duration = 1.2 + Math.random() * 1.8;
-
-      const star = (
-        <div
-          key={Date.now()}
-          className="shooting-star"
-          style={{
-            left: `${left}px`,
-            top: `${top}px`,
-            animationDuration: `${duration}s`,
-          }}
-        />
-      );
-
-      setShootingStars((prev) => [...prev.slice(-2), star]);
-
-      // Next one in 12–25 seconds
-      const nextDelay = 12000 + Math.random() * 13000;
-      timeoutRef.current = setTimeout(createStar, nextDelay);
-    };
-
-    const timeoutRef = { current: null as null | ReturnType<typeof setTimeout> };
-    createStar();
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   // Mouse movement for parallax
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const x = (e.clientX / window.innerWidth - 0.5) * -2; // ← inverted
@@ -103,7 +69,7 @@ export default function EarthBackground() {
       );
 
       setShootingStars((prev) => [...prev.slice(-1), star]); // limit to last 4 stars
-    }, 3000); // new shooting star every 3s
+    }, 10000 + Math.random() * 10000); // new shooting star every 0s
 
     return () => clearInterval(interval);
   }, []);
