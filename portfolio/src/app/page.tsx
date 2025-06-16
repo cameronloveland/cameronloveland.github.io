@@ -6,9 +6,10 @@ import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
 
+
+
 export default async function Home() {
   const repos = await getReposWithReadme();
-
   return (
     <>
       <ClientLayout>
@@ -25,7 +26,11 @@ export default async function Home() {
             <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8">
               {/* Projects - 1/3 width on desktop */}
               <div className="lg:col-span-1">
-                <Projects repos={repos} />
+                <section className="perspective-[1200px] ">
+                  <div className="rotate-y-[8deg]">
+                    <Projects repos={repos} />
+                  </div>
+                </section>
               </div>
               <div className='lg:col-span-1'>
                 {/* Hero Section */}
@@ -65,9 +70,15 @@ export default async function Home() {
                 </section>
               </div>
               {/* Captain's Log - 1/3 width */}
-              <div className="lg:col-span-1">
-                <CaptainsLogSidebar />
-              </div>
+              <section className="perspective-[1200px]">
+
+                <div className="rotate-y-[-8deg] ...">
+                  <CaptainsLogSidebar />
+                </div>
+
+
+              </section>
+
             </section>
           </main>
 
