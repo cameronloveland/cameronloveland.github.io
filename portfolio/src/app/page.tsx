@@ -5,6 +5,7 @@ import { Projects } from './components/Projects';
 import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
+import AmbientAudioToggle from './components/AmbientAudioToggle';
 
 
 
@@ -18,7 +19,7 @@ export default async function Home() {
             <EarthBackground />
           </div>
           <Header />
-
+          <AmbientAudioToggle />
           <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
 
 
