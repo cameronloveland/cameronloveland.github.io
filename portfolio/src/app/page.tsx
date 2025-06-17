@@ -5,21 +5,21 @@ import { Projects } from './components/Projects';
 import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
-import AmbientAudioToggle from './components/AmbientAudioToggle';
-
-
+import HoverSoundGlobal from './components/HoverSoundGlobal';
 
 export default async function Home() {
   const repos = await getReposWithReadme();
   return (
     <>
+
       <ClientLayout>
         <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-x-hidden">
           <div className="absolute inset-0 -z-10">
             <EarthBackground />
           </div>
           <Header />
-          <AmbientAudioToggle />
+          <HoverSoundGlobal />
+
           <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
 
 
