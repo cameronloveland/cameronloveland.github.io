@@ -6,7 +6,7 @@ export default function HoverSoundGlobal() {
     const lastPlayRef = useRef(0);
 
     useEffect(() => {
-        audioRef.current = new Audio('/sfx/hover-beep.mp3');
+        audioRef.current = new Audio('/sfx/hover-beep-bad-name.mp3');
         audioRef.current.volume = 0.2;
 
         const handleHover = () => {
