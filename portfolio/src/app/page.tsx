@@ -71,14 +71,13 @@ export default async function Home() {
                 </section>
               </div>
               {/* Captain's Log - 1/3 width */}
-              <section className="perspective-[1200px]">
-
-                <div className="rotate-y-[-8deg] ...">
-                  <CaptainsLogSidebar />
-                </div>
-
-
-              </section>
+              <div className="lg:col-span-1">
+                <section className="perspective-[1200px]">
+                  <div className="rotate-y-[-8deg] ...">
+                    <CaptainsLogSidebar />
+                  </div>
+                </section>
+              </div>
 
             </section>
           </main>
