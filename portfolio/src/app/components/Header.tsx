@@ -5,7 +5,7 @@ import { HiSpeakerWave, HiSpeakerXMark } from 'react-icons/hi2';
 import { FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 export default function Header() {
-    const [audioOn, setAudioOn] = useState(true);
+    const [audioOn, setAudioOn] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const voiceRef = useRef<HTMLAudioElement>(null);
 
