@@ -2,7 +2,7 @@
 
 export async function getRecentCommits() {
     const res = await fetch(
-        "https://api.github.com/repos/cameronloveland/cameronloveland.github.io/commits",
+        "https://api.github.com/repos/cameronloveland/cameronloveland.github.io/commits?per_page=5",
         {
             headers: {
                 Accept: "application/vnd.github.v3+json",
