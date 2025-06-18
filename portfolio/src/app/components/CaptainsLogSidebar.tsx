@@ -3,9 +3,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getRecentCommits } from '../lib/github';
+import { getBranches, getOpenPRs, getRecentCommits } from '../lib/github';
 
-export type LogType = 'commits' | 'updates' | 'alerts';
+export type LogType = 'commits' | 'branches' | 'pulls';
 
 export type LogEntry = {
     message: string;
@@ -14,34 +14,24 @@ export type LogEntry = {
     author?: string;
 };
 
-const dummyUpdates: LogEntry[] = [
-    { message: 'Created portfolio scaffold using Next.js + Tailwind', date: '2024-06-03', author: 'Cameron' },
-    { message: 'Integrated GitHub API for dynamic repo data', date: '2024-06-04', author: 'Cameron' },
-    { message: 'Redesigned layout with framer-motion animations', date: '2024-06-05', author: 'Cameron' },
-    { message: "Switched from blog section to Captain's Log concept", date: '2024-06-07', author: 'Cameron' },
-    { message: 'Added commit rotation and log type toggling', date: '2024-06-08', author: 'Cameron' },
-];
-
-const dummyAlerts: LogEntry[] = [
-    { message: 'Detected detached HEAD during local dev', date: '2024-06-04', author: 'Git Helper' },
-    { message: 'GitHub Pages build failed due to incorrect `out` path', date: '2024-06-05', author: 'CI/CD Monitor' },
-    { message: 'npm install failed due to package scope typo', date: '2024-06-05', author: 'BuildBot' },
-    { message: 'Duplicate deploy copy step found in workflow YAML', date: '2024-06-06', author: 'CI Linter' },
-    { message: 'Mismatch between project basePath and GitHub Pages config', date: '2024-06-07', author: 'ConfigChecker' },
-];
-
-const logOrder: LogType[] = ['updates', 'commits', 'alerts'];
+const logOrder: LogType[] = ['commits', 'branches', 'pulls'];
 
 export function CaptainsLogSidebar() {
     const [index, setIndex] = useState(0);
     const [logType, setLogType] = useState<LogType>(logOrder[0]);
     const [commits, setCommits] = useState<LogEntry[]>([]);
+    const [branches, setBrances] = useState<LogEntry[]>([]);
+    const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         async function fetchCommits() {
-            const data = await getRecentCommits();
-            setCommits(data);
+            const recentCommits = await getRecentCommits();
+            setCommits(recentCommits);
+            const recentBranches = await getBranches();
+            setBrances(recentBranches);
+            const recentPulls = await getOpenPRs();
+            setPulls(recentPulls);
         }
         fetchCommits();
     }, []);
@@ -65,8 +55,8 @@ export function CaptainsLogSidebar() {
 
     const entries: LogEntry[] = {
         commits,
-        updates: dummyUpdates,
-        alerts: dummyAlerts,
+        branches,
+        pulls
     }[logType];
 
     const next = () => {
