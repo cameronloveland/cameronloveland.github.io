@@ -26,8 +26,22 @@ export default function Header() {
     return (
         <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
-                {/* Left: Site title */}
-                <span className="text-white font-bold text-lg tracking-tight">Portfolio</span>
+                <a
+                    href="https://github.com/cameronloveland"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className=" flex items-center gap-3 hover:text-cyan-300 transition"
+                    aria-label="GitHub Portfolio"
+                >
+                    <img
+                        src="https://github.com/cameronloveland.png"
+                        alt="Cameron Loveland"
+                        className="w-8 h-8 rounded-full border-2 border-neutral-700 shadow-sm"
+                    />
+                    <span className="text-white font-bold text-lg tracking-tight">
+                        Cameron Loveland <span className="text-neutral-400">/ Portfolio</span>
+                    </span>
+                </a>
 
                 {/* Social icons centered */}
                 <nav className="absolute left-1/2 transform -translate-x-1/2 flex gap-6">
