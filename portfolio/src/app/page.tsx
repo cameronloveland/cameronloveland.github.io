@@ -21,19 +21,10 @@ export default async function Home() {
           <HoverSoundGlobal />
 
           <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
-
-
             {/* Main Content Grid */}
-            <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g">
-              {/* Projects - 1/3 width on desktop */}
-              <div className="lg:col-span-1">
-                <section className="perspective-[1200px] ">
-                  <div className="rotate-y-[8deg]">
-                    <Projects repos={repos} />
-                  </div>
-                </section>
-              </div>
-              <div className='lg:col-span-1'>
+            <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
+
+              <div className='lg:col-span-1 lg:col-start-2'>
                 {/* Hero Section */}
                 <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed">
                   <img
@@ -52,15 +43,26 @@ export default async function Home() {
                   </p>
                 </section>
               </div>
+            </section>
+
+            <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bottom-0">
+              {/* Projects - 1/3 width on desktop */}
+              <div className="lg:col-span-1  animate-slide-in-left">
+                <section className="perspective-[1200px] ">
+                  <div className="rotate-y-[8deg]">
+                    <Projects repos={repos} />
+                  </div>
+                </section>
+              </div>
+              <div className="lg:col-span-1"> </div>
               {/* Captain's Log - 1/3 width */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 animate-slide-in-right">
                 <section className="perspective-[1200px]">
                   <div className="rotate-y-[-8deg] ...">
                     <CaptainsLogSidebar />
                   </div>
                 </section>
               </div>
-
             </section>
           </main>
         </div>

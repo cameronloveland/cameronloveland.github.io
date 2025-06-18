@@ -108,3 +108,40 @@ body {
 .fade-in-delayed {
   animation: fadeInDelayed 5s forwards;
 }
+
+@layer utilities {
+  @keyframes slideInFromLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    0% {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in-left {
+    animation: slideInFromLeft 1s ease-out 5s forwards;
+    /* 5s delay for hero fade */
+    opacity: 0;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInFromRight 1s ease-out 5s forwards;
+    opacity: 0;
+  }
+}
