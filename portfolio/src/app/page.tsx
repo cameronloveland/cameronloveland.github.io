@@ -24,7 +24,7 @@ export default async function Home() {
 
 
             {/* Main Content Grid */}
-            <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8">
+            <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g">
               {/* Projects - 1/3 width on desktop */}
               <div className="lg:col-span-1">
                 <section className="perspective-[1200px] ">
@@ -81,8 +81,6 @@ export default async function Home() {
 
             </section>
           </main>
-
-
         </div>
         <Footer />
 

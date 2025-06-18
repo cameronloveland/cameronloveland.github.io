@@ -96,25 +96,56 @@ export function CaptainsLogSidebar() {
             </div>
             <ul className="divide-y divide-neutral-800 max-h-[500px] overflow-y-hidden" >
                 <AnimatePresence initial={false}>
-                    {entries.map((entry, i) => (
-                        <motion.li
-                            key={entry.message + i + logType}
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ delay: i * 0.05 }}
-                            className="px-4 py-3 text-sm text-neutral-300"
-                        >
-                            <span className="font-mono text-xs text-neutral-500 block mb-1">
-                                {new Date(entry.date).toLocaleDateString()} – {entry.author || 'Unknown'}
-                            </span>
-                            <span className="inline-block bg-neutral-800 px-2 py-1 rounded text-xs font-bold uppercase mr-2 text-neutral-400">
-                                {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer">{logType}</a> : logType}
-                            </span>
-                            {entry.message}
-                        </motion.li>
-                    ))}
+                    {entries.map((entry, i) => {
+                        const logLevel = logType.toLowerCase();
+                        const logClassMap: Record<string, string> = {
+                            commit: 'bg-sky-900 text-sky-300',
+                            alert: 'bg-red-900 text-red-400',
+                            update: 'bg-amber-900 text-amber-300',
+                            telemetry: 'bg-teal-900 text-teal-300',
+                        };
+                        const levelClass = logClassMap[logLevel] || 'bg-neutral-800 text-neutral-400';
+
+                        return (
+                            <motion.li
+                                key={entry.message + i + logType}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -5 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="group bg-neutral-900 hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex justify-between items-center"
+                            >
+                                {/* Left side */}
+                                <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                    <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
+                                        {logType}
+                                    </span>
+                                    <span className="text-neutral-300">
+                                        {entry.message}
+                                        <span className="ml-2 text-neutral-500 italic">
+                                            — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                                        </span>
+                                    </span>
+                                </div>
+
+                                {/* Right side: fade in GitHub link */}
+                                {entry.url && (
+                                    <a
+                                        href={entry.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-neutral-500 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+                                    >
+                                        View →
+                                    </a>
+                                )}
+                            </motion.li>
+                        );
+                    })}
                 </AnimatePresence>
+
+
+
             </ul>
         </aside>
     );
