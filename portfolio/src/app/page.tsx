@@ -35,7 +35,7 @@ export default async function Home() {
               </div>
               <div className='lg:col-span-1'>
                 {/* Hero Section */}
-                <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12">
+                <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed">
                   <img
                     src="https://github.com/cameronloveland.png"
                     alt="Cameron Loveland"

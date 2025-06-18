@@ -24,8 +24,8 @@ export default function Header() {
     }, [audioOn]);
 
     return (
-        <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900">
-            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+        <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900 fade-in-delayed transition-opacity duration-700 opacity-0">
+            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 " >
                 <a
                     href="https://github.com/cameronloveland"
                     target="_blank"

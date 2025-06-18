@@ -72,3 +72,39 @@ body {
     animation: fade-in 1s ease-out forwards;
   }
 }
+
+@keyframes fadeOutDelayed {
+  0% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@keyframes fadeInDelayed {
+
+  0%,
+  80% {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-out-delayed {
+  animation: fadeOutDelayed 5s forwards;
+}
+
+.fade-in-delayed {
+  animation: fadeInDelayed 5s forwards;
+}
