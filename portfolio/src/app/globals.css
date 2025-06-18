@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@400;600&display=swap');
+
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
 @theme inline {
@@ -59,7 +63,7 @@ body {
   @keyframes fade-in {
     from {
       opacity: 0;
-      transform: translateY(800px);
+      transform: translateY(200px);
     }
 
     to {
@@ -69,7 +73,7 @@ body {
   }
 
   .animate-fade-in {
-    animation: fade-in 1s ease-out forwards;
+    animation: fade-in 0.8s ease-out forwards;
   }
 }
 
@@ -142,6 +146,43 @@ body {
 
   .animate-slide-in-right {
     animation: slideInFromRight 1s ease-out 5s forwards;
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .tilt-left {
+    transform: perspective(1000px) rotateY(10deg);
+    transition: transform 0.4s ease;
+  }
+
+  .tilt-right {
+    transform: perspective(1000px) rotateY(-10deg);
+    transition: transform 0.4s ease;
+  }
+
+  .tilt-left:hover,
+  .tilt-right:hover {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+}
+
+
+@layer utilities {
+  @keyframes fadeSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(100px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 1.5s ease-out 5s forwards;
     opacity: 0;
   }
 }

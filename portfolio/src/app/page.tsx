@@ -49,7 +49,7 @@ export default async function Home() {
               {/* Projects - 1/3 width on desktop */}
               <div className="lg:col-span-1  animate-slide-in-left">
                 <section className="perspective-[1200px] ">
-                  <div className="rotate-y-[8deg]">
+                  <div className="tilt-left">
                     <Projects repos={repos} />
                   </div>
                 </section>
@@ -58,7 +58,7 @@ export default async function Home() {
               {/* Captain's Log - 1/3 width */}
               <div className="lg:col-span-1 animate-slide-in-right">
                 <section className="perspective-[1200px]">
-                  <div className="rotate-y-[-8deg] ...">
+                  <div className="tilt-right">
                     <CaptainsLogSidebar />
                   </div>
                 </section>
