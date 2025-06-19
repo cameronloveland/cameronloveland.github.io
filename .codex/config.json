@@ -1,5 +1,8 @@
 {
     "context": [
+        "Use `next/font/google` with `preload: false` to avoid build-time font fetch errors.",
+        "Do not rely on online font fetching during `next build`. Assume CI or Codex may be offline.",
+        "If using custom fonts, prefer self-hosted fonts or load fonts client-side.",
         "This is a Next.js + React + Tailwind portfolio site with a sci-fi spaceship cockpit theme.",
         "Please follow SRP, SOC, and SOLID principles where applicable.",
         "Use modular, reusable components. Avoid bloated pages.",

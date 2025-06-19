@@ -5,7 +5,8 @@ import { Projects } from './components/Projects';
 import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
-import HoverSoundGlobal from './components/HoverSoundGlobal';
+import { HoverSoundGlobal } from './components/audio';
+
 
 export default async function Home() {
   const repos = await getReposWithReadme();

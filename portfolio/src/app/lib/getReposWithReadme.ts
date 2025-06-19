@@ -1,4 +1,12 @@
-import { Repo } from '../Repo';
+export type Repo = {
+    id: number;
+    name: string;
+    description: string | null;
+    html_url: string;
+    readmeSummary: string | null;
+    topics?: string[];
+};
+
 
 export async function getReposWithReadme() {
     const response = await fetch('https://api.github.com/users/cameronloveland/repos', {

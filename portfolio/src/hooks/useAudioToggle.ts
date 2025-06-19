@@ -22,11 +22,7 @@ export function useAudioToggle() {
     return {
         audioOn,
         setAudioOn,
-        elements: (
-            <>
-                <audio ref={audioRef} src="/sfx/spaceship-ambience.mp3" />
-                <audio ref={voiceRef} src="/sfx/voice-welcome.mp3" />
-            </>
-        ),
+        audioRef,
+        voiceRef,
     };
 }
