@@ -1,27 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import { HiSpeakerWave, HiSpeakerXMark } from 'react-icons/hi2';
 import { FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { useAudioToggle } from './AmbientAudioToggle';
 
 export default function Header() {
-    const [audioOn, setAudioOn] = useState(false);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const voiceRef = useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-        if (!audioRef.current || !voiceRef.current) return;
-
-        audioRef.current.volume = 0.2;
-        audioRef.current.loop = true;
-
-        if (audioOn) {
-            audioRef.current.play().catch(() => { });
-            voiceRef.current.play().catch(() => { });
-        } else {
-            audioRef.current.pause();
-        }
-    }, [audioOn]);
+    const { audioOn, setAudioOn, elements } = useAudioToggle();
 
     return (
         <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900 fade-in-delayed transition-opacity duration-700 opacity-0">
@@ -86,9 +70,7 @@ export default function Header() {
 
             </div>
 
-            {/* Audio elements */}
-            <audio ref={audioRef} src="/sfx/spaceship-ambience.mp3" />
-            <audio ref={voiceRef} src="/sfx/voice-welcome.mp3" />
+            {elements}
         </header>
     );
 }
