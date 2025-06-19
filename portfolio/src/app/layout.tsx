@@ -6,11 +6,15 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,  // ✅ prevents fetch on build
 });
+
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false, // ✅ prevents fetch on build
 });
 
 export const metadata: Metadata = {
