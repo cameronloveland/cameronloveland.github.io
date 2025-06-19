@@ -94,7 +94,7 @@ export default function EarthBackground() {
 
   return (
     <div onMouseMove={handleMouseMove}>
-      <div className="fixed inset-0 overflow-hidden z-0">
+      <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
@@ -140,6 +140,6 @@ export default function EarthBackground() {
         <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
         {shootingStars}
       </div >
-    </div>
+    </div >
   );
 }

@@ -13,14 +13,23 @@ module.exports = {
             transform: 'scale(1)',
           },
           '50%': {
-            opacity: '0.8',  // was 1.0
-            transform: 'scale(1.1)',  // was 1.3
+            opacity: '0.8',
+            transform: 'scale(1.1)',
           },
         },
-
       },
       animation: {
         twinkle: 'twinkle 2s ease-in-out infinite',
+      },
+      fontFamily: {
+        heading: ['var(--font-heading)', 'sans-serif'],
+        body: ['var(--font-body)', 'sans-serif'],
+      },
+      colors: {
+        background: '#0f172a',
+        accent: '#38bdf8',
+        secondary: '#64748b',
+        primaryText: '#f8fafc',
       },
     },
   },

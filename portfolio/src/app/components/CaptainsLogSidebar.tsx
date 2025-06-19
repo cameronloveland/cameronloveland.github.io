@@ -3,9 +3,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getRecentCommits } from '../lib/github';
+import { getBranches, getOpenPRs, getRecentCommits } from '../lib/github';
 
-export type LogType = 'commits' | 'updates' | 'alerts';
+export type LogType = 'commits' | 'branches' | 'pulls';
 
 export type LogEntry = {
     message: string;
@@ -14,34 +14,24 @@ export type LogEntry = {
     author?: string;
 };
 
-const dummyUpdates: LogEntry[] = [
-    { message: 'Created portfolio scaffold using Next.js + Tailwind', date: '2024-06-03', author: 'Cameron' },
-    { message: 'Integrated GitHub API for dynamic repo data', date: '2024-06-04', author: 'Cameron' },
-    { message: 'Redesigned layout with framer-motion animations', date: '2024-06-05', author: 'Cameron' },
-    { message: "Switched from blog section to Captain's Log concept", date: '2024-06-07', author: 'Cameron' },
-    { message: 'Added commit rotation and log type toggling', date: '2024-06-08', author: 'Cameron' },
-];
-
-const dummyAlerts: LogEntry[] = [
-    { message: 'Detected detached HEAD during local dev', date: '2024-06-04', author: 'Git Helper' },
-    { message: 'GitHub Pages build failed due to incorrect `out` path', date: '2024-06-05', author: 'CI/CD Monitor' },
-    { message: 'npm install failed due to package scope typo', date: '2024-06-05', author: 'BuildBot' },
-    { message: 'Duplicate deploy copy step found in workflow YAML', date: '2024-06-06', author: 'CI Linter' },
-    { message: 'Mismatch between project basePath and GitHub Pages config', date: '2024-06-07', author: 'ConfigChecker' },
-];
-
-const logOrder: LogType[] = ['updates', 'commits', 'alerts'];
+const logOrder: LogType[] = ['commits', 'branches', 'pulls'];
 
 export function CaptainsLogSidebar() {
     const [index, setIndex] = useState(0);
     const [logType, setLogType] = useState<LogType>(logOrder[0]);
     const [commits, setCommits] = useState<LogEntry[]>([]);
+    const [branches, setBrances] = useState<LogEntry[]>([]);
+    const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         async function fetchCommits() {
-            const data = await getRecentCommits();
-            setCommits(data);
+            const recentCommits = await getRecentCommits();
+            setCommits(recentCommits);
+            const recentBranches = await getBranches();
+            setBrances(recentBranches);
+            const recentPulls = await getOpenPRs();
+            setPulls(recentPulls);
         }
         fetchCommits();
     }, []);
@@ -65,8 +55,8 @@ export function CaptainsLogSidebar() {
 
     const entries: LogEntry[] = {
         commits,
-        updates: dummyUpdates,
-        alerts: dummyAlerts,
+        branches,
+        pulls
     }[logType];
 
     const next = () => {
@@ -96,25 +86,56 @@ export function CaptainsLogSidebar() {
             </div>
             <ul className="divide-y divide-neutral-800 max-h-[500px] overflow-y-hidden" >
                 <AnimatePresence initial={false}>
-                    {entries.map((entry, i) => (
-                        <motion.li
-                            key={entry.message + i + logType}
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ delay: i * 0.05 }}
-                            className="px-4 py-3 text-sm text-neutral-300"
-                        >
-                            <span className="font-mono text-xs text-neutral-500 block mb-1">
-                                {new Date(entry.date).toLocaleDateString()} – {entry.author || 'Unknown'}
-                            </span>
-                            <span className="inline-block bg-neutral-800 px-2 py-1 rounded text-xs font-bold uppercase mr-2 text-neutral-400">
-                                {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer">{logType}</a> : logType}
-                            </span>
-                            {entry.message}
-                        </motion.li>
-                    ))}
+                    {entries.map((entry, i) => {
+                        const logLevel = logType.toLowerCase();
+                        const logClassMap: Record<string, string> = {
+                            commit: 'bg-sky-900 text-sky-300',
+                            alert: 'bg-red-900 text-red-400',
+                            update: 'bg-amber-900 text-amber-300',
+                            telemetry: 'bg-teal-900 text-teal-300',
+                        };
+                        const levelClass = logClassMap[logLevel] || 'bg-neutral-800 text-neutral-400';
+
+                        return (
+                            <motion.li
+                                key={entry.message + i + logType}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -5 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="group bg-neutral-900 hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex justify-between items-center"
+                            >
+                                {/* Left side */}
+                                <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                    <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
+                                        {logType}
+                                    </span>
+                                    <span className="text-neutral-300">
+                                        {entry.message}
+                                        <span className="ml-2 text-neutral-500 italic">
+                                            — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                                        </span>
+                                    </span>
+                                </div>
+
+                                {/* Right side: fade in GitHub link */}
+                                {entry.url && (
+                                    <a
+                                        href={entry.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-neutral-500 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+                                    >
+                                        View →
+                                    </a>
+                                )}
+                            </motion.li>
+                        );
+                    })}
                 </AnimatePresence>
+
+
+
             </ul>
         </aside>
     );
