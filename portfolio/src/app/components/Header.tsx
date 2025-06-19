@@ -1,28 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { HiSpeakerWave, HiSpeakerXMark } from 'react-icons/hi2';
 import { FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { AudioToggle } from './audio';
 
 export default function Header() {
-    const [audioOn, setAudioOn] = useState(false);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const voiceRef = useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-        if (!audioRef.current || !voiceRef.current) return;
-
-        audioRef.current.volume = 0.2;
-        audioRef.current.loop = true;
-
-        if (audioOn) {
-            audioRef.current.play().catch(() => { });
-            voiceRef.current.play().catch(() => { });
-        } else {
-            audioRef.current.pause();
-        }
-    }, [audioOn]);
-
     return (
         <header className="fixed top-0 left-0 w-full z-20 bg-neutral-950/80 backdrop-blur border-b border-neutral-900 fade-in-delayed transition-opacity duration-700 opacity-0">
             <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 " >
@@ -75,20 +56,8 @@ export default function Header() {
                 </nav>
 
                 {/* Audio toggle */}
-
-                <button
-                    onClick={() => setAudioOn(!audioOn)}
-                    title="Toggle ambient audio"
-                    className={`text-neutral-500 hover:text-cyan-300 text-lg hover:text-cyan-300 ${audioOn ? 'text-cyan-300' : 'text-neutral-500'}`}
-                >
-                    {audioOn ? <HiSpeakerWave /> : <HiSpeakerXMark />}
-                </button>
-
+                <AudioToggle />
             </div>
-
-            {/* Audio elements */}
-            <audio ref={audioRef} src="/sfx/spaceship-ambience.mp3" />
-            <audio ref={voiceRef} src="/sfx/voice-welcome.mp3" />
         </header>
     );
 }
