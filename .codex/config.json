@@ -1,0 +1,19 @@
+{
+    "context": [
+        "This is a Next.js + React + Tailwind portfolio site with a sci-fi spaceship cockpit theme.",
+        "Please follow SRP, SOC, and SOLID principles where applicable.",
+        "Use modular, reusable components. Avoid bloated pages.",
+        "Use Tailwind CSS classes and prefer semantic HTML structure.",
+        "Assume TypeScript is enabled and strict.",
+        "Lint and build must pass. Avoid breaking `npm run build`, `npm run lint`, or `tsc --noEmit`."
+    ],
+    "lint": {
+        "command": "npm run lint"
+    },
+    "build": {
+        "command": "npm run build"
+    },
+    "format": {
+        "command": "npm run format"
+    }
+}
