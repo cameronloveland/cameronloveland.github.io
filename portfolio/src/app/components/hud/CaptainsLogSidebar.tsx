@@ -56,7 +56,6 @@ export default function CaptainsLogSidebar() {
 
             if (elapsed < duration) {
                 frameId = requestAnimationFrame(animate);
-                console.log(frameId);
             } else {
                 setIndex((prevIndex) => (prevIndex + 1) % logOrder.length);
             }

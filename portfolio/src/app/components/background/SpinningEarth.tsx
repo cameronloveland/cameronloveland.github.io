@@ -109,7 +109,8 @@ function EarthWithLayers() {
     );
 }
 
-export default function SpinningEarth({ offset }: SpinningEarthProps) {
+export default function SpinningEarth({ }: SpinningEarthProps) {
+
     return (
         <div
             className="fixed inset-0 pointer-events-none z-0"
@@ -137,9 +138,15 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 <Suspense fallback={null}>
                     <group
                         scale={0.72}
+                        // position={[
+                        //     -(offset?.x * 0.05 || 0),
+                        //     -1.1 - (offset?.y * 0.3 || 0), // more negative = lower
+                        //     0,
+                        // ]}
+
                         position={[
                             0,           // Center horizontally
-                            -0.8,        // Lower the earth (negative y moves it down)
+                            -0.5,        // Lower the earth (negative y moves it down)
                             0,
                         ]}
                     >

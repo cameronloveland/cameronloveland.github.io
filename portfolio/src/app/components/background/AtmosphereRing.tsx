@@ -10,21 +10,21 @@ export default function AtmosphereRing() {
                 color: { value: new THREE.Color("#4fc3f7") },
             },
             vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
             fragmentShader: `
-                uniform vec3 color;
-                varying vec2 vUv;
-                void main() {
-                    float dist = length(vUv - 0.5);
-                    float alpha = smoothstep(0.5, 0.3, dist);
-                    gl_FragColor = vec4(color, alpha * 0.6);
-                }
-            `,
+        uniform vec3 color;
+        varying vec2 vUv;
+        void main() {
+          float dist = length(vUv - 0.5);
+          float alpha = smoothstep(0.5, 0.25, dist);
+          gl_FragColor = vec4(color, alpha * 0.6);
+        }
+      `,
             transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
@@ -34,8 +34,8 @@ export default function AtmosphereRing() {
     }, []);
 
     return (
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[1.05, 1.3, 64]} />
+        <mesh rotation={[0, 0, 0]} position={[0, 0, -0.11]}>
+            <ringGeometry args={[1.01, 1.3, 128]} />
             <primitive object={material} attach="material" />
         </mesh>
     );
