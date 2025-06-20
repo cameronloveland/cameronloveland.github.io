@@ -6,8 +6,7 @@ export async function getRecentCommits() {
         {
             headers: {
                 Accept: "application/vnd.github.v3+json",
-                // Optional: include a token if rate-limited
-                // Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
             },
             next: { revalidate: 3600 }, // Revalidate every hour
         }
@@ -67,6 +66,7 @@ export async function getOpenPRs() {
         {
             headers: {
                 Accept: "application/vnd.github.v3+json",
+                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
             },
             next: { revalidate: 3600 },
         }
@@ -102,12 +102,16 @@ export type Repo = {
 
 export async function getReposWithReadme() {
     const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
-        headers: { Accept: 'application/vnd.github.mercy-preview+json' },
+        headers: {
+            Accept: 'application/vnd.github.v3+json',
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        },
     });
     // if (!response.ok) throw new Error('Failed to fetch repos');
     const repos: Repo[] = await response.json();
 
     // Fetch README for each repo and extract the first paragraph
+
     const reposWithReadme = await Promise.all(
         repos.map(async (repo) => {
             try {
@@ -117,9 +121,8 @@ export async function getReposWithReadme() {
                 );
                 if (!readmeRes.ok) return { ...repo, readmeSummary: repo.description || "" };
                 const readme = await readmeRes.text();
-                // Extract the first non-empty line (or paragraph)
                 const summary = readme
-                    .split(/\r?\n\r?\n/) // split by paragraphs
+                    .split(/\r?\n\r?\n/)
                     .map((s) => s.trim())
                     .find((s) => s && !s.startsWith('#')) || repo.description || "";
                 return { ...repo, readmeSummary: summary };
