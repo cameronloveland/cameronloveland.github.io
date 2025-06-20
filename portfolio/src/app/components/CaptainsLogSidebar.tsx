@@ -161,10 +161,19 @@ export function CaptainsLogSidebar() {
                                             href={entry.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-xs text-neutral-500 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+                                            className={`text-xs font-semibold px-3 py-1 rounded-md shadow-md transition-all duration-300
+    ${{
+                                                    commits: 'bg-sky-600 text-white hover:bg-sky-500',
+                                                    branches: 'bg-green-600 text-white hover:bg-green-500',
+                                                    pulls: 'bg-purple-600 text-white hover:bg-purple-500',
+                                                }[logType] || 'bg-neutral-600 text-white hover:bg-neutral-500'
+                                                }
+    opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0
+  `}
                                         >
                                             View →
                                         </a>
+
                                     </div>
                                 )}
                             </motion.li>
