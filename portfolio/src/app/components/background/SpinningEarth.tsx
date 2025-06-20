@@ -114,21 +114,21 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
         <div
             className="fixed inset-0 pointer-events-none z-0"
             style={{
-                width: "150vw",       // Wider than the screen
-                height: "150vh",      // Taller than the screen
-                left: "-25vw",        // Center horizontally
-                top: "-25vh",         // Center vertically
+                width: "100vw",       // Match viewport width
+                height: "100vh",      // Match viewport height
+                left: "0",
+                top: "0",
             }}
         >
-            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }} onCreated={({ camera }) => {
+            <Canvas camera={{ position: [0, 0, 2.5], fov: 45 }} onCreated={({ camera }) => {
                 camera.layers.enable(0); // default
                 camera.layers.enable(1); // glow layer
             }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.5}  // even faint tones glow
-                        luminanceSmoothing={0.5}   // soften edge transitions
-                        intensity={0.9}            // gentle strength
+                        luminanceThreshold={0.5}
+                        luminanceSmoothing={0.5}
+                        intensity={0.9}
                     />
                 </EffectComposer>
 
@@ -136,10 +136,10 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 <directionalLight position={[5, 5, 5]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
-                        scale={0.8} // smaller than 1 makes it smaller
+                        scale={0.72}
                         position={[
-                            -(offset?.x * 0.05 || 0),
-                            -1.1 - (offset?.y * 0.3 || 0), // more negative = lower
+                            0,           // Center horizontally
+                            -0.8,        // Lower the earth (negative y moves it down)
                             0,
                         ]}
                     >
