@@ -1,0 +1,36 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ─────────────────────────
+# Global ignores
+# ─────────────────────────
+
+.DS_Store
+*.pem
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+next-env.d.ts
+
+# Env files
+.env*
+.vercel
+
+# ─────────────────────────
+# App-specific ignores (was inside /portfolio)
+# ─────────────────────────
+
+portfolio/node_modules
+portfolio/.pnp
+portfolio/.pnp.*
+portfolio/.next/
+portfolio/build
+portfolio/coverage
+
+# Yarn v2+
+portfolio/.yarn/*
+!portfolio/.yarn/patches
+!portfolio/.yarn/plugins
+!portfolio/.yarn/releases
+!portfolio/.yarn/versions
