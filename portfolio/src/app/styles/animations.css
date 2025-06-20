@@ -75,11 +75,11 @@
 }
 
 .fade-out-delayed {
-  animation: fadeOutDelayed 5s forwards;
+  animation: fadeOutDelayed 2s forwards;
 }
 
 .fade-in-delayed {
-  animation: fadeInDelayed 5s forwards;
+  animation: fadeInDelayed 2s forwards;
 }
 
 @layer utilities {
@@ -108,13 +108,12 @@
   }
 
   .animate-slide-in-left {
-    animation: slideInFromLeft 1s ease-out 5s forwards;
-    /* 5s delay for hero fade */
+    animation: slideInFromLeft 1s ease-out 2.5s forwards;
     opacity: 0;
   }
 
   .animate-slide-in-right {
-    animation: slideInFromRight 1s ease-out 5s forwards;
+    animation: slideInFromRight 1s ease-out 2.5s forwards;
     opacity: 0;
   }
 }
@@ -151,7 +150,7 @@
   }
 
   .animate-fade-slide-up {
-    animation: fadeSlideUp 1.5s ease-out 1s forwards;
+    animation: fadeSlideUp 1.5s ease-out 2s forwards;
     opacity: 0;
   }
 }

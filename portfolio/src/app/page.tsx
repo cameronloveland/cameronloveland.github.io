@@ -15,9 +15,8 @@ export default async function Home() {
     <>
       <ClientLayout>
 
-        <div className="relative  min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-x-hidden">
-
-          <div className="absolute inset-0 z-[-2]">
+        <div className="relative  min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
+          <div className="absolute inset-0 z-[-2] ">
             <EarthBackground />
           </div>
           <div className="fixed inset-0 z-[1]">
