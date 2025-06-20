@@ -1,7 +1,7 @@
 // app/components/CaptainsLogSidebar.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getBranches, getOpenPRs, getRecentCommits } from '../lib/github';
 
@@ -23,6 +23,7 @@ export function CaptainsLogSidebar() {
     const [branches, setBrances] = useState<LogEntry[]>([]);
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
+    const listRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
         async function fetchCommits() {
@@ -53,6 +54,13 @@ export function CaptainsLogSidebar() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const ul = listRef.current;
+        if (ul) {
+            ul.scrollTop = ul.scrollHeight;
+        }
+    }, [entries]);
+
     const entries: LogEntry[] = {
         commits,
         branches,
@@ -69,7 +77,7 @@ export function CaptainsLogSidebar() {
     };
 
     return (
-        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">
+        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12 flex flex-col h-[60vh]">
             <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
                 <span>Captain&apos;s Log – {logType}</span>
                 <div className="flex gap-2">
@@ -84,7 +92,10 @@ export function CaptainsLogSidebar() {
                     transition={{ ease: 'easeInOut', duration: 0.2 }} // smoother, matches 200ms interval
                 />
             </div>
-            <ul className="divide-y divide-neutral-800 max-h-[500px] overflow-y-hidden" >
+            <ul
+                ref={listRef}
+                className="divide-y divide-neutral-800 flex-1 overflow-y-auto"
+            >
                 <AnimatePresence initial={false}>
                     {entries.map((entry, i) => {
                         const logLevel = logType.toLowerCase();
