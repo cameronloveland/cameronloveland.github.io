@@ -51,7 +51,7 @@ export function CaptainsLogSidebar() {
 
     useEffect(() => {
         let startTime: number | null = null;
-        const duration = 10000; // 10 seconds total for full progress (adjust if needed)
+        const duration = 20000; // 10 seconds total for full progress (adjust if needed)
 
         const animate = (timestamp: number) => {
             if (startTime === null) startTime = timestamp;

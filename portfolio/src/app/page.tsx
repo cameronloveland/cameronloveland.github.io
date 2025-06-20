@@ -2,9 +2,9 @@ import { CaptainsLogSidebar } from './components/CaptainsLogSidebar';
 import EarthBackground from './components/EarthBackground';
 import Header from './components/Header';
 import { Projects } from './components/Projects';
-import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
+import { getReposWithReadme } from './lib/github';
 
 
 
