@@ -43,12 +43,14 @@ export default function EarthBackground() {
 
   // Slowly move stars to the left and recycle them
   useEffect(() => {
-    const speed = 0.02; // percent per tick
-    const interval = setInterval(() => {
+    let animationFrameId: number;
+    const speed = 0.001; // slower movement
+
+    const animate = () => {
       setStars(prev =>
         prev.map((s) => {
           const current = parseFloat(s.left);
-          let next = current - speed * s.layer; // layers move at different speeds
+          let next = current - speed * s.layer;
           if (next < -5) {
             next = 100 + Math.random() * 5;
             return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
@@ -56,11 +58,14 @@ export default function EarthBackground() {
           return { ...s, left: `${next}%` };
         })
       );
-    }, 50);
-    return () => clearInterval(interval);
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // Generate shooting stars every 3 seconds
+
   useEffect(() => {
     const interval = setInterval(() => {
       const left = Math.random() * window.innerWidth;
@@ -81,7 +86,7 @@ export default function EarthBackground() {
       );
 
       setShootingStars((prev) => [...prev.slice(-1), star]); // limit to last 4 stars
-    }, 10000 + Math.random() * 10000); // new shooting star every 0s
+    }, 10000 + Math.random() * 10000); // new shooting star every 10-20s
 
     return () => clearInterval(interval);
   }, []);
@@ -143,10 +148,10 @@ export default function EarthBackground() {
                       backgroundColor: s.color,
                       width: `${0.5 + Math.random() * (2 / layer)}px`,
                       height: `${0.5 + Math.random() * (2 / layer)}px`,
-                      opacity: 0.2 + Math.random() * (1 / layer),
+                      opacity: 0.5 + Math.random() * (0.1 / layer), // higher min opacity, less range
                       animationName: 'twinkle',
-                      animationDuration: `${1.5 + Math.random() * 2.5}s`,
-                      animationTimingFunction: 'ease-in-out',
+                      animationDuration: `${1 + Math.random() * 2}s`, // slower twinkle
+                      animationTimingFunction: 'ease-in',
                       animationIterationCount: 'infinite',
                       animationDelay: s.delay,
                     }}
