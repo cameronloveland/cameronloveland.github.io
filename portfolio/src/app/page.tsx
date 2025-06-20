@@ -3,7 +3,7 @@ import { Footer } from "./components/Footer";
 import Header from './components/Header';
 
 import { EarthBackground } from './components/background';
-import CockpitOverlay from './components/background/CockpitOverlay';
+
 import { CaptainsLogSidebar, Projects } from './components/hud';
 
 import { getReposWithReadme } from './lib/github';
@@ -19,9 +19,9 @@ export default async function Home() {
           <div className="absolute inset-0 z-[-2] ">
             <EarthBackground />
           </div>
-          <div className="fixed inset-0 z-[1]">
+          {/* <div className="fixed inset-0 z-[1]">
             <CockpitOverlay />
-          </div>
+          </div> */}
 
           <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-28 relative">
             <Header />
