@@ -150,7 +150,7 @@
   }
 
   .animate-fade-slide-up {
-    animation: fadeSlideUp 1.5s ease-out 5s forwards;
+    animation: fadeSlideUp 1.5s ease-out 1s forwards;
     opacity: 0;
   }
 }
