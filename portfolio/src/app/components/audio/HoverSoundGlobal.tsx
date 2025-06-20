@@ -1,11 +1,13 @@
-'use client';
-import { useEffect, useRef } from 'react';
+"use client";
+import { useEffect, useRef } from "react";
 
-export default function HoverSoundGlobal() {
+export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const lastPlayRef = useRef(0);
 
     useEffect(() => {
+        if (!enabled) return;
+
         audioRef.current = new Audio('/sfx/ui-click-menu-modern-interface-select-small-01-230473.mp3');
         audioRef.current.volume = 0.1;
 
@@ -41,7 +43,7 @@ export default function HoverSoundGlobal() {
                 a.removeEventListener('mouseenter', handleHover);
             });
         };
-    }, []);
+    }, [enabled]);
 
     return null;
 }

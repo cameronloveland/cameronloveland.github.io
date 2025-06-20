@@ -1,2 +1,2 @@
-export { default as AmbientAudioToggle } from './AmbientAudioToggle';
+export { default as AudioToggle } from './AudioToggle';
 export { default as HoverSoundGlobal } from './HoverSoundGlobal';

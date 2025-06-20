@@ -5,7 +5,7 @@ import { Projects } from './components/Projects';
 import { getReposWithReadme } from './lib/getReposWithReadme';
 import { Footer } from "./components/Footer";
 import ClientLayout from './components/ClientLayout';
-import { HoverSoundGlobal } from './components/audio';
+
 
 
 export default async function Home() {
@@ -18,8 +18,8 @@ export default async function Home() {
           <div className="absolute inset-0 -z-10">
             <EarthBackground />
           </div>
+
           <Header />
-          <HoverSoundGlobal />
 
           <main className="flex-1 flex flex-col items-center px-4 py-12 pt-28">
             {/* Main Content Grid */}
