@@ -54,18 +54,18 @@ export function CaptainsLogSidebar() {
         return () => clearInterval(interval);
     }, []);
 
+    const entries: LogEntry[] = {
+        commits,
+        branches,
+        pulls
+    }[logType];
+
     useEffect(() => {
         const ul = listRef.current;
         if (ul) {
             ul.scrollTop = ul.scrollHeight;
         }
     }, [entries]);
-
-    const entries: LogEntry[] = {
-        commits,
-        branches,
-        pulls
-    }[logType];
 
     const next = () => {
         setIndex((prev) => (prev + 1) % logOrder.length);
@@ -77,8 +77,8 @@ export function CaptainsLogSidebar() {
     };
 
     return (
-        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12 flex flex-col h-[60vh]">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
+        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12 flex flex-col h-[40vh]">
+            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 ">
                 <span>Captain&apos;s Log – {logType}</span>
                 <div className="flex gap-2">
                     <button onClick={prev} className="hover:text-white">←</button>

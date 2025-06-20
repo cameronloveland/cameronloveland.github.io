@@ -159,19 +159,20 @@ body {
 
 @layer utilities {
   .tilt-left {
-    transform: perspective(1000px) rotateY(10deg);
+    transform: perspective(1000px) rotateY(6deg);
     transition: transform 0.4s ease;
   }
 
   .tilt-right {
-    transform: perspective(1000px) rotateY(-10deg);
+    transform: perspective(1000px) rotateY(-6deg);
     transition: transform 0.4s ease;
   }
 
-  .tilt-left:hover,
+  /*TODO revisit - determine if we like this */
+  /* .tilt-left:hover,
   .tilt-right:hover {
     transform: perspective(1000px) rotateY(0deg);
-  }
+  } */
 }
 
 
