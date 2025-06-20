@@ -42,13 +42,10 @@ export default function CaptainsLogSidebar() {
     }, [index]);
 
     useEffect(() => {
-        setProgress(0); // reset progress when logType changes
-    }, [logType]);
 
-
-    useEffect(() => {
+        let frameId: number;
         let startTime: number | null = null;
-        const duration = 20000; // 10 seconds total for full progress (adjust if needed)
+        const duration = 15000; // 20 seconds
 
         const animate = (timestamp: number) => {
             if (startTime === null) startTime = timestamp;
@@ -58,34 +55,21 @@ export default function CaptainsLogSidebar() {
             setProgress(newProgress);
 
             if (elapsed < duration) {
-                requestAnimationFrame(animate);
+                frameId = requestAnimationFrame(animate);
+                console.log(frameId);
             } else {
-                // When done, reset for next type
                 setIndex((prevIndex) => (prevIndex + 1) % logOrder.length);
-                setProgress(0);
-                startTime = null;
-                requestAnimationFrame(animate); // Restart
             }
         };
 
-        const raf = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(raf);
-    }, []);
+        frameId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(frameId); // Clean up on type change
+    }, [logType]);
 
     const entries: LogEntry[] = {
         commits,
         pulls,
     }[logType];
-
-    useEffect(() => {
-        const el = listRef.current;
-        if (!el) return;
-
-        const maxScroll = el.scrollHeight - el.clientHeight;
-        const targetScrollTop = (progress / 100) * maxScroll;
-        el.scrollTop = targetScrollTop;
-    }, [progress, entries]);
-    ;
 
 
     const next = () => {
@@ -114,7 +98,7 @@ export default function CaptainsLogSidebar() {
                     }[logType] ?? 'bg-blue-500'
                         }`}
                     animate={{ width: `${progress}%` }}
-                    transition={{ ease: 'easeInOut', duration: 0.2 }}
+                    transition={{ ease: 'linear', duration: 0.1 }} // Smooth and continuous
                 />
             </div>
             <ul
