@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import AtmosphereRing from "./AtmosphereRing";
 
 
 type Offset = {
@@ -63,22 +64,6 @@ function GlowSphere() {
     );
 }
 
-function GlowRing() {
-    return (
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[1.15, 0.015, 16, 100]} />
-            <meshBasicMaterial
-                color="#4fc3f7"
-                transparent
-                opacity={0.4}
-                blending={THREE.AdditiveBlending}
-                depthWrite={false}
-                toneMapped={false}
-            />
-        </mesh>
-    );
-}
-
 
 function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
@@ -100,8 +85,8 @@ function EarthWithLayers() {
         <group rotation={[0.41, 0, 0]}>
             {/* Glow effect around the Earth */}
             <GlowSphere />
-            {/* Equatorial ring */}
-            <GlowRing />
+            {/* Equatorial atmospheric ring */}
+            <AtmosphereRing />
 
 
             {/* Cloud layer */}
