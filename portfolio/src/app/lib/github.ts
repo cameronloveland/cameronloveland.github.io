@@ -1,13 +1,10 @@
-// lib/getCommits.ts
 
 export async function getRecentCommits() {
     const res = await fetch(
         "https://api.github.com/repos/cameronloveland/cameronloveland.github.io/commits?per_page=6",
         {
             headers: {
-                Accept: "application/vnd.github.v3+json",
-                // Optional: include a token if rate-limited
-                // Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                Accept: "application/vnd.github.v3+json"
             },
             next: { revalidate: 3600 }, // Revalidate every hour
         }
@@ -36,37 +33,12 @@ export async function getRecentCommits() {
     }));
 }
 
-export async function getBranches() {
-    const res = await fetch(
-        "https://api.github.com/repos/cameronloveland/cameronloveland.github.io/branches",
-        {
-            headers: {
-                Accept: "application/vnd.github.v3+json",
-            },
-            next: { revalidate: 3600 },
-        }
-    );
-    if (!res.ok) throw new Error("Failed to fetch branches");
-    const branches = await res.json();
-
-    type GitHubBranch = {
-        name: string;
-        protected: boolean;
-    };
-
-    return branches.slice(0, 5).map((branch: GitHubBranch) => ({
-        message: `Branch: ${branch.name}`,
-        date: new Date().toISOString(),
-        author: 'GitHub',
-    }));
-
-}
 export async function getOpenPRs() {
     const res = await fetch(
         "https://api.github.com/repos/cameronloveland/cameronloveland.github.io/pulls?state=open&per_page=6",
         {
             headers: {
-                Accept: "application/vnd.github.v3+json",
+                Accept: "application/vnd.github.v3+json"
             },
             next: { revalidate: 3600 },
         }
@@ -101,25 +73,31 @@ export type Repo = {
 };
 
 export async function getReposWithReadme() {
-    const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
-        headers: { Accept: 'application/vnd.github.mercy-preview+json' },
+    const res = await fetch('https://api.github.com/users/cameronloveland/repos', {
+        headers: {
+            Accept: 'application/vnd.github.v3+json'
+        },
+        next: { revalidate: 3600 },
     });
-    // if (!response.ok) throw new Error('Failed to fetch repos');
-    const repos: Repo[] = await response.json() ?? [];
+    console.log(res);
+    if (!res.ok) { throw new Error('Failed to fetch repos'); }
+    const repos = await res.json() as Repo[];
 
-    // Fetch README for each repo and extract the first paragraph
     const reposWithReadme = await Promise.all(
         repos.map(async (repo) => {
             try {
+
                 const readmeRes = await fetch(
                     `https://api.github.com/repos/cameronloveland/${repo.name}/readme`,
-                    { headers: { Accept: 'application/vnd.github.v3.raw' } }
+                    {
+                        headers: { Accept: 'application/vnd.github.v3.raw' },
+                    },
+
                 );
                 if (!readmeRes.ok) return { ...repo, readmeSummary: repo.description || "" };
                 const readme = await readmeRes.text();
-                // Extract the first non-empty line (or paragraph)
                 const summary = readme
-                    .split(/\r?\n\r?\n/) // split by paragraphs
+                    .split(/\r?\n\r?\n/)
                     .map((s) => s.trim())
                     .find((s) => s && !s.startsWith('#')) || repo.description || "";
                 return { ...repo, readmeSummary: summary };
