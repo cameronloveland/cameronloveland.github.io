@@ -109,7 +109,6 @@
 
   .animate-slide-in-left {
     animation: slideInFromLeft 1s ease-out 2.5s forwards;
-    /* 5s delay for hero fade */
     opacity: 0;
   }
 
@@ -151,7 +150,7 @@
   }
 
   .animate-fade-slide-up {
-    animation: fadeSlideUp 1.5s ease-out 1s forwards;
+    animation: fadeSlideUp 1.5s ease-out 2s forwards;
     opacity: 0;
   }
 }

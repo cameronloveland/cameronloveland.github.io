@@ -104,8 +104,8 @@ export async function getReposWithReadme() {
     const response = await fetch('https://api.github.com/users/cameronloveland/repos', {
         headers: { Accept: 'application/vnd.github.mercy-preview+json' },
     });
-    if (!response.ok) throw new Error('Failed to fetch repos');
-    const repos: Repo[] = await response.json();
+    // if (!response.ok) throw new Error('Failed to fetch repos');
+    const repos: Repo[] = await response.json() ?? [];
 
     // Fetch README for each repo and extract the first paragraph
     const reposWithReadme = await Promise.all(
