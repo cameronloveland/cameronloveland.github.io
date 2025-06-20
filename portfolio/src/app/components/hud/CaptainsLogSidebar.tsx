@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getBranches, getOpenPRs, getRecentCommits } from '../../lib/github';
+import { getOpenPRs, getRecentCommits } from '../../lib/github';
 
-export type LogType = 'commits' | 'branches' | 'pulls';
+export type LogType = 'commits' | 'pulls';
 
 export type LogEntry = {
     message: string;
@@ -13,13 +13,12 @@ export type LogEntry = {
     author?: string;
 };
 
-const logOrder: LogType[] = ['commits', 'branches', 'pulls'];
+const logOrder: LogType[] = ['commits', 'pulls'];
 
 export default function CaptainsLogSidebar() {
     const [index, setIndex] = useState(0);
     const [logType, setLogType] = useState<LogType>(logOrder[0]);
     const [commits, setCommits] = useState<LogEntry[]>([]);
-    const [branches, setBrances] = useState<LogEntry[]>([]);
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
@@ -29,8 +28,6 @@ export default function CaptainsLogSidebar() {
             try {
                 const recentCommits = await getRecentCommits();
                 setCommits(recentCommits);
-                const recentBranches = await getBranches();
-                setBrances(recentBranches);
                 const recentPulls = await getOpenPRs();
                 setPulls(recentPulls);
             } catch (err) {
@@ -77,7 +74,6 @@ export default function CaptainsLogSidebar() {
 
     const entries: LogEntry[] = {
         commits,
-        branches,
         pulls,
     }[logType];
 
@@ -114,7 +110,6 @@ export default function CaptainsLogSidebar() {
                 <motion.div
                     className={`h-full ${{
                         commits: 'bg-sky-500',
-                        branches: 'bg-green-500',
                         pulls: 'bg-purple-500',
                     }[logType] ?? 'bg-blue-500'
                         }`}
@@ -130,7 +125,6 @@ export default function CaptainsLogSidebar() {
                     {entries.map((entry, i) => {
                         const levelClass = {
                             commits: 'bg-sky-900 text-sky-300',
-                            branches: 'bg-green-900 text-green-300',
                             pulls: 'bg-purple-900 text-purple-300',
                         }[logType] || 'bg-neutral-800 text-neutral-400';
 
@@ -141,7 +135,7 @@ export default function CaptainsLogSidebar() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -5 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
+                                className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
                             >
                                 <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
                                     <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
@@ -156,26 +150,23 @@ export default function CaptainsLogSidebar() {
                                 </div>
 
                                 {entry.url && (
-                                    <div className="flex justify-end">
+                                    <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                                         <a
                                             href={entry.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`text-xs font-semibold px-3 py-1 rounded-md shadow-md transition-all duration-300
-    ${{
+                                            className={`text-xs font-semibold px-3 py-1 rounded-md shadow-md
+                                                ${{
                                                     commits: 'bg-sky-600 text-white hover:bg-sky-500',
-                                                    branches: 'bg-green-600 text-white hover:bg-green-500',
                                                     pulls: 'bg-purple-600 text-white hover:bg-purple-500',
-                                                }[logType] || 'bg-neutral-600 text-white hover:bg-neutral-500'
-                                                }
-    opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0
-  `}
+                                                }[logType] || 'bg-neutral-600 text-white hover:bg-neutral-500'}
+                                            `}
                                         >
                                             View →
                                         </a>
-
                                     </div>
                                 )}
+
                             </motion.li>
                         );
                     })}
