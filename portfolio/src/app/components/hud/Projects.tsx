@@ -1,7 +1,6 @@
 import React from "react";
-import { getTopicIcon } from "../lib/getTopicIcon";
+import { getTopicIcon } from "../../lib/getTopicIcon";
 
-// Dummy Repo type
 type Repo = {
     id: number;
     name: string;
@@ -10,60 +9,12 @@ type Repo = {
     topics?: string[];
 };
 
-// Dummy data for testing layout
-const dummyRepos: Repo[] = [
-    {
-        id: 1,
-        name: "astro-visualizer",
-        html_url: "#",
-        readmeSummary: "A 3D visualization tool for astronomy data using Three.js and React.",
-        topics: ["threejs", "react", "visualization"],
-    },
-    {
-        id: 2,
-        name: "weatherly",
-        html_url: "#",
-        readmeSummary: "A beautiful weather dashboard powered by OpenWeatherMap API.",
-        topics: ["nextjs", "api", "tailwindcss"],
-    },
-    {
-        id: 3,
-        name: "portfolio-site",
-        html_url: "#",
-        readmeSummary: "My personal portfolio and blog, statically generated with Next.js.",
-        topics: ["nextjs", "typescript", "blog"],
-    },
-    {
-        id: 4,
-        name: "taskmaster",
-        html_url: "#",
-        readmeSummary: "A simple and effective task manager app.",
-        topics: ["react", "zustand", "productivity"],
-    },
-    {
-        id: 5,
-        name: "space-news",
-        html_url: "#",
-        readmeSummary: "Aggregates the latest news from space agencies and astronomy blogs.",
-        topics: ["news", "api", "react"],
-    },
-    {
-        id: 6,
-        name: "code-snippets",
-        html_url: "#",
-        readmeSummary: "A collection of useful code snippets for web development.",
-        topics: ["javascript", "typescript", "snippets"],
-    },
-];
-
 type ProjectsProps = {
     repos?: Repo[];
 };
 
-export function Projects({ repos }: ProjectsProps) {
-    // Use dummyRepos if no repos prop is provided
-    const displayRepos = repos && repos.length > 0 ? repos : dummyRepos;
-    // const displayRepos = dummyRepos;
+export default function Projects({ repos }: ProjectsProps) {
+    const displayRepos = repos ?? [];
 
     return (
         <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">

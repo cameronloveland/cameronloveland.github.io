@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getBranches, getOpenPRs, getRecentCommits } from '../lib/github';
+import { getBranches, getOpenPRs, getRecentCommits } from '../../lib/github';
 
 export type LogType = 'commits' | 'branches' | 'pulls';
 
@@ -15,7 +15,7 @@ export type LogEntry = {
 
 const logOrder: LogType[] = ['commits', 'branches', 'pulls'];
 
-export function CaptainsLogSidebar() {
+export default function CaptainsLogSidebar() {
     const [index, setIndex] = useState(0);
     const [logType, setLogType] = useState<LogType>(logOrder[0]);
     const [commits, setCommits] = useState<LogEntry[]>([]);
