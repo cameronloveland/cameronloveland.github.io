@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, Suspense } from "react";
+import React, { useRef, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -17,49 +17,39 @@ interface SpinningEarthProps {
 }
 
 function GlowSphere() {
+    const glowMaterial = useMemo(
+        () =>
+            new THREE.ShaderMaterial({
+                uniforms: {
+                    glowColor: { value: new THREE.Color("#4fc3f7") },
+                },
+                vertexShader: `
+                    varying vec3 vNormal;
+                    void main() {
+                        vNormal = normalize(normalMatrix * normal);
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 glowColor;
+                    varying vec3 vNormal;
+                    void main() {
+                        float intensity = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+                        gl_FragColor = vec4(glowColor, intensity);
+                    }
+                `,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+            }),
+        []
+    );
+
     return (
-        <>
-            {/* Inner faint halo */}
-            <mesh>
-                <sphereGeometry args={[1.01, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.03}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Middle diffused glow */}
-            <mesh>
-                <sphereGeometry args={[1.03, 256, 256, 60, 85]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.05}
-                    side={THREE.BackSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Outer haze */}
-            {/* <mesh>
-                <sphereGeometry args={[1.35, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.015}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh> */}
-        </>
+        <mesh>
+            <sphereGeometry args={[1.05, 64, 64]} />
+            <primitive object={glowMaterial} attach="material" />
+        </mesh>
     );
 }
 
