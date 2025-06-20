@@ -1,0 +1,27 @@
+# <type>(<scope>): <short summary>
+#
+# Example:
+# feat(api): add user login endpoint
+#
+# Types:
+#   feat     - A new feature
+#   fix      - A bug fix
+#   docs     - Documentation only changes
+#   style    - Changes that do not affect meaning (e.g., formatting)
+#   refactor - Code change that neither fixes a bug nor adds a feature
+#   perf     - Code change that improves performance
+#   test     - Adding or updating tests
+#   build    - Changes that affect the build system or dependencies
+#   ci       - Changes to CI configuration
+#   chore    - Routine tasks (e.g., linting, config)
+#   revert   - Reverts a previous commit
+#
+# Scope (optional): A noun describing what area is affected (e.g., "api", "ui", "db", "auth")
+#
+# Summary: Limit to 72 characters or fewer
+
+<type>(<scope>): <short summary>
+
+[optional body: explain what and why vs. how]
+
+[optional footer: BREAKING CHANGE: ..., Closes #123]
