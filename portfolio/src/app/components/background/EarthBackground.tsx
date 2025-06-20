@@ -41,6 +41,25 @@ export default function EarthBackground() {
     setStars(generated);
   }, []);
 
+  // Slowly move stars to the left and recycle them
+  useEffect(() => {
+    const speed = 0.02; // percent per tick
+    const interval = setInterval(() => {
+      setStars(prev =>
+        prev.map((s) => {
+          const current = parseFloat(s.left);
+          let next = current - speed * s.layer; // layers move at different speeds
+          if (next < -5) {
+            next = 100 + Math.random() * 5;
+            return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
+          }
+          return { ...s, left: `${next}%` };
+        })
+      );
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
   // Generate shooting stars every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
