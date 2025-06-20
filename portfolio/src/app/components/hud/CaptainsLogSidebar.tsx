@@ -110,7 +110,7 @@ export default function CaptainsLogSidebar() {
                     <button onClick={next} className="hover:text-white">→</button>
                 </div>
             </div>
-            <div className="h-[1px] w-full bg-neutral-800">
+            <div className="h-[1px] w-full">
                 <motion.div
                     className={`h-full ${{
                         commits: 'bg-sky-500',
@@ -141,7 +141,7 @@ export default function CaptainsLogSidebar() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -5 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="group bg-neutral-900 hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
+                                className="group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
                             >
                                 <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
                                     <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
