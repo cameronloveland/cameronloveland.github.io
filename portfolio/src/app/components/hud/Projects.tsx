@@ -1,5 +1,5 @@
 import React from "react";
-import { TopicIcon } from "../TopicIcon";
+import { TopicIcon } from "./TopicIcon";
 
 type Repo = {
     id: number;

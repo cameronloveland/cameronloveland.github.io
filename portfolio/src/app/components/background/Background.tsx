@@ -1,7 +1,7 @@
 'use client';
 
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import SpinningEarth from './SpinningEarth';
+import { SpinningEarth } from './Earth';
 
 interface Star {
   id: number;
@@ -12,7 +12,7 @@ interface Star {
   color: string;
 }
 
-export default function EarthBackground() {
+export default function Background() {
   const [stars, setStars] = useState<Star[]>([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const earthRef = useRef<HTMLImageElement>(null);
