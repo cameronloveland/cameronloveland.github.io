@@ -5,7 +5,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import AtmosphereRing from "./AtmosphereRing";
+
+import GlowSphere from "./GlowSphere";
 
 
 type Offset = {
@@ -16,54 +17,6 @@ type Offset = {
 interface SpinningEarthProps {
     offset: Offset;
 }
-
-function GlowSphere() {
-    return (
-        <>
-            {/* Inner faint halo */}
-            <mesh>
-                <sphereGeometry args={[1.01, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.03}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Middle diffused glow */}
-            <mesh>
-                <sphereGeometry args={[1.03, 256, 256, 60, 85]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.05}
-                    side={THREE.BackSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Outer haze */}
-            {/* <mesh>
-                <sphereGeometry args={[1.35, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.015}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh> */}
-        </>
-    );
-}
-
 
 function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
@@ -82,12 +35,11 @@ function EarthWithLayers() {
     });
 
     return (
+
+
         <group rotation={[0.41, 0, 0]}>
             {/* Glow effect around the Earth */}
             <GlowSphere />
-            {/* Equatorial atmospheric ring */}
-            <AtmosphereRing />
-
 
             {/* Cloud layer */}
             <mesh ref={cloudsRef}>
@@ -109,27 +61,26 @@ function EarthWithLayers() {
     );
 }
 
-export default function SpinningEarth({ }: SpinningEarthProps) {
-
+export default function SpinningEarth({ offset }: SpinningEarthProps) {
     return (
         <div
             className="fixed inset-0 pointer-events-none z-0"
             style={{
-                width: "100vw",       // Match viewport width
-                height: "100vh",      // Match viewport height
-                left: "0",
-                top: "0",
+                width: "150vw",       // Wider than the screen
+                height: "150vh",      // Taller than the screen
+                left: "-25vw",        // Center horizontally
+                top: "-25vh",         // Center vertically
             }}
         >
-            <Canvas camera={{ position: [0, 0, 2.5], fov: 45 }} onCreated={({ camera }) => {
+            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }} onCreated={({ camera }) => {
                 camera.layers.enable(0); // default
                 camera.layers.enable(1); // glow layer
             }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.5}
-                        luminanceSmoothing={0.5}
-                        intensity={0.9}
+                        luminanceThreshold={0.5}  // even faint tones glow
+                        luminanceSmoothing={0.5}   // soften edge transitions
+                        intensity={0.9}            // gentle strength
                     />
                 </EffectComposer>
 
@@ -137,23 +88,17 @@ export default function SpinningEarth({ }: SpinningEarthProps) {
                 <directionalLight position={[5, 5, 5]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
-                        scale={0.72}
-                        // position={[
-                        //     -(offset?.x * 0.05 || 0),
-                        //     -1.1 - (offset?.y * 0.3 || 0), // more negative = lower
-                        //     0,
-                        // ]}
-
+                        scale={0.4} // smaller than 1 makes it smaller
                         position={[
-                            0,           // Center horizontally
-                            -0.5,        // Lower the earth (negative y moves it down)
+                            -(offset?.x * 0.05 || 0),
+                            0 - (offset?.y * 1.5 || 0), // more negative = lower
                             0,
                         ]}
                     >
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={100} depth={500} count={1000} factor={6} />
+                    <Stars layers={0} radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
