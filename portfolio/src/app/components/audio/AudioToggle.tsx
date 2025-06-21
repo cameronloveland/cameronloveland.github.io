@@ -11,12 +11,12 @@ export default function AudioToggle() {
   useEffect(() => {
     if (!ambientRef.current || !voiceRef.current) return;
 
-    ambientRef.current.volume = 0.2;
+    ambientRef.current.volume = 0.3;
     ambientRef.current.loop = true;
 
     if (enabled) {
-      ambientRef.current.play().catch(() => {});
-      voiceRef.current.play().catch(() => {});
+      ambientRef.current.play().catch(() => { });
+      voiceRef.current.play().catch(() => { });
     } else {
       ambientRef.current.pause();
     }

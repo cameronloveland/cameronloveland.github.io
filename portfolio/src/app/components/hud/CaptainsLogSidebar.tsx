@@ -45,7 +45,7 @@ export default function CaptainsLogSidebar() {
 
         let frameId: number;
         let startTime: number | null = null;
-        const duration = 15000; // 20 seconds
+        const duration = 15000; // 15 seconds
         let lastUpdateTime = 0;
         const throttleMs = 100; // update at most every 100ms
 
@@ -89,7 +89,9 @@ export default function CaptainsLogSidebar() {
     return (
         <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12 flex flex-col h-[35vh]">
             <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
-                <span>Captain&apos;s Log – {logType}</span>
+                <span>
+                    Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
+                </span>
                 <div className="flex gap-2">
                     <button onClick={prev} className="hover:text-white">←</button>
                     <button onClick={next} className="hover:text-white">→</button>
