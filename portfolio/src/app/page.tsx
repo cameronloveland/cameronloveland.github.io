@@ -23,10 +23,10 @@ export default async function Home() {
           {/* <div className="fixed inset-0 z-[1]">
             <CockpitOverlay />
           </div> */}
-
+          <FloatingAstronaut />
           <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-28 relative">
             <Header />
-            <FloatingAstronaut />
+
             {/* Main Content Grid */}
             <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
 

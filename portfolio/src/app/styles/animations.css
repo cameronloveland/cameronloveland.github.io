@@ -194,7 +194,7 @@
 
   75% {
     top: 30;
-    opacity: 1;
+    opacity: 0;
   }
 
   100% {
@@ -203,16 +203,56 @@
   }
 }
 
-.floating-astronaut {
+.astronaut-wrapper {
   position: absolute;
+  top: 37%;
   left: 42%;
-  top: -300px;
-  /* Start position */
-  animation:
-    slideInFromTopFade 4s ease-out forwards,
-    driftRotateZoom 120s ease-in-out 2s infinite;
-  will-change: top, opacity, transform;
   width: 220px;
+
   pointer-events: none;
   z-index: 1;
+
+  animation:
+    slideInFromTopFade 1.6s forwards,
+    driftRotateZoom 120s ease-in-out 2s infinite;
+
+  will-change: transform, opacity;
+
+  image-rendering: auto;
+  backface-visibility: hidden;
+}
+
+/* .thruster-flame {
+  position: absolute;
+  bottom: -100px;
+  width: 10px;
+  height: 20px;
+  background: radial-gradient(ellipse at center, #00f6ff 0%, #0099cc 100%);
+  opacity: 0;
+  border-radius: 50% 50% 0 0;
+  animation: thrusterPulse 4s ease-in-out infinite;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+} */
+
+@keyframes thrusterPulse {
+
+  0%,
+  90%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0) scaleY(0.5);
+  }
+
+  92%,
+  94% {
+    opacity: 0.9;
+    transform: translate(-50%, 15px) scaleY(1.2);
+  }
+
+  96% {
+    opacity: 0.5;
+    transform: translate(-50%, 10px) scaleY(0.8);
+  }
 }
