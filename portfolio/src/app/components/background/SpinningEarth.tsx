@@ -2,11 +2,12 @@
 
 import React, { useRef, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars, useTexture, OrbitControls } from "@react-three/drei";
+import { useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
-import GlowSphere from "./GlowSphere";
+import GlowSphere, { GLOW_LAYER } from "./GlowSphere";
+import Starfield from "./Starfield";
 
 
 type Offset = {
@@ -74,7 +75,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
         >
             <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }} onCreated={({ camera }) => {
                 camera.layers.enable(0); // default
-                camera.layers.enable(1); // glow layer
+                camera.layers.enable(GLOW_LAYER); // glow layer
             }}>
                 <EffectComposer>
                     <Bloom
@@ -98,7 +99,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={100} depth={500} count={1000} factor={6} />
+                    <Starfield />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
