@@ -3,6 +3,8 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
 
+export const GLOW_LAYER = 1;
+
 export default function GlowSphere() {
     const glowMaterial = useMemo(() => {
         return new THREE.ShaderMaterial({
@@ -33,7 +35,7 @@ export default function GlowSphere() {
     }, []);
 
     return (
-        <mesh layers={1}>
+        <mesh layers={GLOW_LAYER}>
             {/* Slightly larger radius than clouds */}
             <sphereGeometry args={[1.06, 64, 64]} />
             <primitive object={glowMaterial} attach="material" />
