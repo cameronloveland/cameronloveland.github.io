@@ -44,7 +44,7 @@ export default function EarthBackground() {
   // Slowly move stars to the left and recycle them
   useEffect(() => {
     let animationFrameId: number;
-    const speed = 0.0002; // slower movement
+    const speed = 0.001; // slower movement
 
     const animate = () => {
       setStars(prev =>
@@ -148,10 +148,10 @@ export default function EarthBackground() {
                       backgroundColor: s.color,
                       width: `${0.5 + Math.random() * (2 / layer)}px`,
                       height: `${0.5 + Math.random() * (2 / layer)}px`,
-                      opacity: 0.5 + Math.random() * (0.3 / layer), // higher min opacity, less range
+                      opacity: 0.5 + Math.random() * (0.1 / layer), // higher min opacity, less range
                       animationName: 'twinkle',
                       animationDuration: `${1 + Math.random() * 2}s`, // slower twinkle
-                      animationTimingFunction: 'ease-in-out',
+                      animationTimingFunction: 'ease-in',
                       animationIterationCount: 'infinite',
                       animationDelay: s.delay,
                     }}

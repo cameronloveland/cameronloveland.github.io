@@ -46,13 +46,19 @@ export default function CaptainsLogSidebar() {
         let frameId: number;
         let startTime: number | null = null;
         const duration = 15000; // 20 seconds
+        let lastUpdateTime = 0;
+        const throttleMs = 100; // update at most every 100ms
 
         const animate = (timestamp: number) => {
             if (startTime === null) startTime = timestamp;
+
             const elapsed = timestamp - startTime;
 
-            const newProgress = Math.min((elapsed / duration) * 100, 100);
-            setProgress(newProgress);
+            if (timestamp - lastUpdateTime >= throttleMs) {
+                const newProgress = Math.min((elapsed / duration) * 100, 100);
+                setProgress(newProgress);
+                lastUpdateTime = timestamp;
+            }
 
             if (elapsed < duration) {
                 frameId = requestAnimationFrame(animate);
