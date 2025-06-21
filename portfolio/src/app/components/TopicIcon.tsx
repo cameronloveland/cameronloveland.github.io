@@ -37,7 +37,7 @@ const topicColorMap: Record<string, string> = {
     css: "#1572B6",
 };
 
-export function getTopicIcon(topic: string): JSX.Element {
+export function TopicIcon(topic: string): JSX.Element {
     const key = topic.toLowerCase();
     const Icon = topicIconMap[key] || SiGithub;
     const color = topicColorMap[key] || "#999999";

@@ -1,5 +1,5 @@
 import React from "react";
-import { getTopicIcon } from "../../lib/getTopicIcon";
+import { TopicIcon } from "../TopicIcon";
 
 type Repo = {
     id: number;
@@ -55,7 +55,7 @@ export default function Projects({ repos }: ProjectsProps) {
                                             key={topic}
                                             className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
                                         >
-                                            {getTopicIcon(topic)}
+                                            {TopicIcon(topic)}
                                             <span>{topic}</span>
                                         </span>
                                     ))}
