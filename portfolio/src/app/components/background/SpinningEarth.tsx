@@ -72,15 +72,19 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 top: "-25vh",         // Center vertically
             }}
         >
-            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }} onCreated={({ camera }) => {
-                camera.layers.enable(0); // default
-                camera.layers.enable(1); // glow layer
-            }}>
+            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }}
+
+                onCreated={({ camera }) => {
+                    camera.layers.enable(0); // default
+                    camera.layers.enable(1); // glow layer
+
+                }}>
                 <EffectComposer>
                     <Bloom
-                        luminanceThreshold={0.5}  // even faint tones glow
-                        luminanceSmoothing={0.5}   // soften edge transitions
-                        intensity={0.9}            // gentle strength
+                        mipmapBlur
+                        luminanceThreshold={0.5}
+                        luminanceSmoothing={0.5}
+                        intensity={0}
                     />
                 </EffectComposer>
 

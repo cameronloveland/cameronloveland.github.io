@@ -41,29 +41,30 @@ export default function EarthBackground() {
     setStars(generated);
   }, []);
 
-  // Slowly move stars to the left and recycle them
-  useEffect(() => {
-    let animationFrameId: number;
-    const speed = 0.001; // slower movement
+  // TODO revisit more efficient star movement
+  // // Slowly move stars to the left and recycle them
+  // useEffect(() => {
+  //   let animationFrameId: number;
+  //   const speed = 0.001; // slower movement
 
-    const animate = () => {
-      setStars(prev =>
-        prev.map((s) => {
-          const current = parseFloat(s.left);
-          let next = current - speed * s.layer;
-          if (next < -5) {
-            next = 100 + Math.random() * 5;
-            return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
-          }
-          return { ...s, left: `${next}%` };
-        })
-      );
-      animationFrameId = requestAnimationFrame(animate);
-    };
+  //   const animate = () => {
+  //     setStars(prev =>
+  //       prev.map((s) => {
+  //         const current = parseFloat(s.left);
+  //         let next = current - speed * s.layer;
+  //         if (next < -5) {
+  //           next = 100 + Math.random() * 5;
+  //           return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
+  //         }
+  //         return { ...s, left: `${next}%` };
+  //       })
+  //     );
+  //     animationFrameId = requestAnimationFrame(animate);
+  //   };
 
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
+  //   animationFrameId = requestAnimationFrame(animate);
+  //   return () => cancelAnimationFrame(animationFrameId);
+  // }, []);
 
 
   useEffect(() => {
