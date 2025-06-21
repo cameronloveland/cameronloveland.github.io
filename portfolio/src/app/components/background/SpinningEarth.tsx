@@ -98,7 +98,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         <EarthWithLayers />
                     </group>
 
-                    <Stars layers={0} radius={100} depth={500} count={1000} factor={6} />
+                    <Stars radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
