@@ -6,6 +6,8 @@ import { Stars, useTexture, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
+import GlowSphere from "./GlowSphere";
+
 
 type Offset = {
     x: number;
@@ -15,54 +17,6 @@ type Offset = {
 interface SpinningEarthProps {
     offset: Offset;
 }
-
-function GlowSphere() {
-    return (
-        <>
-            {/* Inner faint halo */}
-            <mesh>
-                <sphereGeometry args={[1.01, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.03}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Middle diffused glow */}
-            <mesh>
-                <sphereGeometry args={[1.03, 256, 256, 60, 85]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.05}
-                    side={THREE.BackSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh>
-
-            {/* Outer haze */}
-            {/* <mesh>
-                <sphereGeometry args={[1.35, 64, 64]} />
-                <meshBasicMaterial
-                    color="#4fc3f7"
-                    transparent
-                    opacity={0.015}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
-                    depthWrite={false}
-                    toneMapped={false}
-                />
-            </mesh> */}
-        </>
-    );
-}
-
 
 function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
@@ -81,10 +35,11 @@ function EarthWithLayers() {
     });
 
     return (
+
+
         <group rotation={[0.41, 0, 0]}>
             {/* Glow effect around the Earth */}
             <GlowSphere />
-
 
             {/* Cloud layer */}
             <mesh ref={cloudsRef}>
@@ -133,17 +88,17 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 <directionalLight position={[5, 5, 5]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
-                        scale={0.8} // smaller than 1 makes it smaller
+                        scale={0.4} // smaller than 1 makes it smaller
                         position={[
                             -(offset?.x * 0.05 || 0),
-                            -1.1 - (offset?.y * 0.3 || 0), // more negative = lower
+                            0 - (offset?.y * 1.5 || 0), // more negative = lower
                             0,
                         ]}
                     >
                         <EarthWithLayers />
                     </group>
 
-                    <Stars radius={100} depth={500} count={1000} factor={6} />
+                    <Stars layers={0} radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
             </Canvas>
