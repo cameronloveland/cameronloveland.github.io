@@ -5,7 +5,7 @@ import * as THREE from "three";
 
 export default function AtmosphereRing() {
     const material = useMemo(() => {
-        const m = new THREE.ShaderMaterial({
+        return new THREE.ShaderMaterial({
             uniforms: {
                 color: { value: new THREE.Color("#4fc3f7") },
             },
@@ -19,23 +19,25 @@ export default function AtmosphereRing() {
             fragmentShader: `
         uniform vec3 color;
         varying vec2 vUv;
+
         void main() {
-          float dist = length(vUv - 0.5);
-          float alpha = smoothstep(0.5, 0.25, dist);
-          gl_FragColor = vec4(color, alpha * 0.6);
+          float dist = length(vUv - 0.5); // center of ring
+          float ring = smoothstep(0.45, 0.4, dist) - smoothstep(0.5, 0.45, dist); // inner to outer edge
+          float alpha = ring * 0.6;
+          gl_FragColor = vec4(color, alpha);
         }
       `,
             transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
+            side: THREE.DoubleSide,
+            toneMapped: false,
         });
-        m.toneMapped = false;
-        return m;
     }, []);
 
     return (
-        <mesh rotation={[0, 0, 0]} position={[0, 0, -0.11]}>
-            <ringGeometry args={[1.01, 1.3, 128]} />
+        <mesh rotation={[0, 0, 0]} position={[0, 0, 0.02]}>
+            <ringGeometry args={[1.02, 1.3, 128]} />
             <primitive object={material} attach="material" />
         </mesh>
     );
