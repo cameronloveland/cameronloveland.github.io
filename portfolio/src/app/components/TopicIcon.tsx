@@ -1,6 +1,10 @@
 import React, { JSX } from 'react';
 import { IconType } from 'react-icons';
-import { SiReact, SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript, SiNodedotjs, SiGithub, SiDocker, SiPython, SiVercel, SiGraphql, SiOpenai, SiFirebase, SiHtml5, SiCss3 } from 'react-icons/si';
+import {
+    SiReact, SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript,
+    SiNodedotjs, SiGithub, SiDocker, SiPython, SiVercel, SiGraphql,
+    SiOpenai, SiFirebase, SiHtml5, SiCss3
+} from 'react-icons/si';
 
 const topicIconMap: Record<string, IconType> = {
     react: SiReact,
@@ -19,6 +23,7 @@ const topicIconMap: Record<string, IconType> = {
     html: SiHtml5,
     css: SiCss3,
 };
+
 const topicColorMap: Record<string, string> = {
     react: "#61DAFB",
     nextjs: "#000000",
@@ -37,11 +42,16 @@ const topicColorMap: Record<string, string> = {
     css: "#1572B6",
 };
 
-export function TopicIcon(topic: string): JSX.Element {
+// ✅ Now a React component with props
+type TopicIconProps = {
+    topic: string;
+    className?: string;
+};
+
+export function TopicIcon({ topic, className }: TopicIconProps): JSX.Element {
     const key = topic.toLowerCase();
     const Icon = topicIconMap[key] || SiGithub;
     const color = topicColorMap[key] || "#999999";
 
-    return <Icon className="text-sm" style={{ color }
-    } />;
+    return <Icon className={`text-sm ${className ?? ''}`} style={{ color }} />;
 }
