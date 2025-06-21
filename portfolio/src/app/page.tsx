@@ -1,4 +1,5 @@
 import ClientLayout from './components/ClientLayout';
+import FloatingAstronaut from './components/FloatingAstronaut';
 import { Footer } from "./components/Footer";
 import Header from './components/Header';
 
@@ -14,7 +15,7 @@ export default async function Home() {
   return (
     <>
       <ClientLayout>
-
+        <FloatingAstronaut />
         <div className="relative  min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
           <div className="absolute inset-0 z-[-2] ">
             <EarthBackground />
