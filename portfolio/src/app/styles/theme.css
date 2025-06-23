@@ -33,3 +33,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.hud-aside-container {
+  @apply w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-sm border border-neutral-800 shadow-lg overflow-hidden mb-12;
+}

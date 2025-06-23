@@ -20,7 +20,9 @@ export default async function Home() {
           <div className="absolute inset-0 z-[-2] ">
             <EarthBackground />
           </div>
-          {/* <div className="fixed inset-0 z-[1]">
+          {/* 
+          TODO revisit adding this or delete it
+          <div className="fixed inset-0 z-[1]">
             <CockpitOverlay />
           </div> */}
 

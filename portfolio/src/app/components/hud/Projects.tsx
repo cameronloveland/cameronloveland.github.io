@@ -17,7 +17,7 @@ export default function Projects({ repos }: ProjectsProps) {
     const displayRepos = repos ?? [];
 
     return (
-        <aside className="w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-xl border border-neutral-800 shadow-lg overflow-hidden mb-12">
+        <aside className="hud-aside-container">
             <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
                 <span>Featured Projects</span>
                 <span className="text-xs font-normal text-neutral-500">
