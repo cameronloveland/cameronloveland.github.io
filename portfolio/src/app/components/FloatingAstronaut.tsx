@@ -32,13 +32,16 @@ export default function FloatingAstronaut() {
     }, []);
 
     return (
-        <Image
-            src="/worried-astronaut.png"
-            alt="Floating Astronaut"
-            width={120}
-            height={120}
-            ref={astroRef}
-            className="floating-astronaut"
-        />
+        <div className="astronaut-wrapper">
+            <Image
+                src="/worried-astronaut.png"
+                alt="Floating Astronaut"
+                width={220}
+                height={220}
+                ref={astroRef}
+            />
+            <div className="thruster-flame" />
+        </div>
+
     );
 }
