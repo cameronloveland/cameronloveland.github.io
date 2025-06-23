@@ -131,6 +131,7 @@
 
   .animate-slide-in-up {
     animation: slide-in-up 1s ease-out 2.5s forwards;
+    opacity: 0;
   }
 
 }
