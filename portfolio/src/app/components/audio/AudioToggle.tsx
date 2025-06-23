@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
-import HoverSoundGlobal from "./HoverSoundGlobal";
+import HoverSoundGlobal from "./EnableHoverSound";
 
 export default function AudioToggle() {
   const [enabled, setEnabled] = useState(false);
