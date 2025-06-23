@@ -1,4 +1,4 @@
-import ThemePreview from "../components/ThemePreview";
+import ThemePreview from "./ThemePreview";
 
 
 export default function ThemePage() {
