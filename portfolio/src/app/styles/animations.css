@@ -150,7 +150,7 @@
   }
 
   .animate-fade-slide-up {
-    animation: fadeSlideUp 1.5s ease-out 2s forwards;
+    animation: fadeSlideUp 1.5s ease-out 1s forwards;
     opacity: 0;
   }
 }
@@ -221,38 +221,3 @@
   image-rendering: auto;
   backface-visibility: hidden;
 }
-
-/* .thruster-flame {
-  position: absolute;
-  bottom: -100px;
-  width: 10px;
-  height: 20px;
-  background: radial-gradient(ellipse at center, #00f6ff 0%, #0099cc 100%);
-  opacity: 0;
-  border-radius: 50% 50% 0 0;
-  animation: thrusterPulse 4s ease-in-out infinite;
-  filter: blur(2px);
-  pointer-events: none;
-  z-index: 0;
-} */
-
-/* @keyframes thrusterPulse {
-
-  0%,
-  90%,
-  100% {
-    opacity: 0;
-    transform: translate(-50%, 0) scaleY(0.5);
-  }
-
-  92%,
-  94% {
-    opacity: 0.9;
-    transform: translate(-50%, 15px) scaleY(1.2);
-  }
-
-  96% {
-    opacity: 0.5;
-    transform: translate(-50%, 10px) scaleY(0.8);
-  }
-} */
