@@ -6,6 +6,7 @@ import Header from './components/Header';
 import { EarthBackground } from './components/background/Earth';
 
 import { CaptainsLogSidebar, Projects } from './components/hud';
+import MiddleComponent from './components/hud/MiddleComponent';
 
 import { getReposWithReadme } from './lib/github';
 
@@ -62,7 +63,14 @@ export default async function Home() {
                   </div>
                 </section>
               </div>
-              <div className="lg:col-span-1"> </div>
+              {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
+              <div className="lg:col-span-1 animate-slide-in-up">
+                <section className="perspective-[1200px]">
+                  <div>
+                    <MiddleComponent />
+                  </div>
+                </section>
+              </div>
               {/* Captain's Log - 1/3 width */}
               <div className="lg:col-span-1 animate-slide-in-right">
                 <section className="perspective-[1200px]">
