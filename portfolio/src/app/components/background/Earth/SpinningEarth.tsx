@@ -53,7 +53,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                         scale={0.4} // smaller than 1 makes it smaller
                         position={[
                             -(offset?.x * 0.05 || 0),
-                            0 - (offset?.y * 1.5 || 0), // more negative = lower
+                            0 - (offset?.y * 0.15 || 0), // more negative = lower
                             0,
                         ]}
                     >
