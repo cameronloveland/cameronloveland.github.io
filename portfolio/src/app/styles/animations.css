@@ -230,8 +230,6 @@
   width: 220px;
 
   pointer-events: none;
-  z-index: 1;
-
   animation:
     slideInFromTopFade 1.6s forwards,
     driftRotateZoom 120s ease-in-out 2s infinite;
