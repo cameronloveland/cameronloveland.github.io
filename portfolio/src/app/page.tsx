@@ -6,7 +6,7 @@ import Header from './components/Header';
 import { EarthBackground } from './components/background/Earth';
 
 import { CaptainsLogSidebar, Projects } from './components/hud';
-import MiddleComponent from './components/hud/MiddleComponent';
+import Terminal from './components/hud/Terminal';
 
 import { getReposWithReadme } from './lib/github';
 
@@ -67,7 +67,7 @@ export default async function Home() {
               <div className="lg:col-span-1 animate-slide-in-up">
                 <section className="perspective-[1200px]">
                   <div>
-                    <MiddleComponent />
+                    <Terminal />
                   </div>
                 </section>
               </div>
