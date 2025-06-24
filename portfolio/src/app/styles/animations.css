@@ -107,6 +107,18 @@
     }
   }
 
+  @keyframes slide-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(60px) scale(0.98);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
   .animate-slide-in-left {
     animation: slideInFromLeft 1s ease-out 2.5s forwards;
     opacity: 0;
@@ -116,7 +128,15 @@
     animation: slideInFromRight 1s ease-out 2.5s forwards;
     opacity: 0;
   }
+
+  .animate-slide-in-up {
+    animation: slide-in-up 1s ease-out 2.5s forwards;
+    opacity: 0;
+  }
+
 }
+
+
 
 @layer utilities {
   .tilt-left {
