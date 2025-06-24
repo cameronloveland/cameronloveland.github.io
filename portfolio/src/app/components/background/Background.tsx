@@ -2,6 +2,9 @@
 
 import React, { JSX, useEffect, useRef, useState } from 'react';
 import { SpinningEarth } from './Earth';
+import NebulaLayer from './NebulaLayer';
+import GalaxyLayer from './GalaxyLayer';
+import CometCanvas from './CometCanvas';
 
 interface Star {
   id: number;
@@ -120,6 +123,9 @@ export default function Background() {
   return (
     <div onMouseMove={handleMouseMove}>
       <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
+        <NebulaLayer />
+        <GalaxyLayer />
+        <CometCanvas />
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"

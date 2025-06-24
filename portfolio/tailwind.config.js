@@ -17,9 +17,27 @@ module.exports = {
             transform: 'scale(1.1)',
           },
         },
+        nebulaFloat: {
+          '0%, 100%': {
+            transform: 'scale(1) translate(0, 0)',
+          },
+          '50%': {
+            transform: 'scale(1.1) translate(5%, -5%)',
+          },
+        },
+        galaxyRotate: {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg)',
+          },
+        },
       },
       animation: {
         twinkle: 'twinkle 2s ease-in-out infinite',
+        nebulaFloat: 'nebulaFloat 40s ease-in-out infinite',
+        galaxyRotate: 'galaxyRotate 90s linear infinite',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'sans-serif'],
