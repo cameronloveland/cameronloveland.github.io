@@ -14,28 +14,6 @@ export default function GalaxyLayer() {
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </radialGradient>
         </defs>
-        <g transform="translate(200,200)">
-          <path
-            d="M0 0 Q80 20 120 80"
-            stroke="url(#galaxy)"
-            strokeWidth="2"
-          />
-          <path
-            d="M0 0 Q-80 -20 -120 -80"
-            stroke="url(#galaxy)"
-            strokeWidth="2"
-          />
-          <path
-            d="M0 0 Q-20 80 -80 120"
-            stroke="url(#galaxy)"
-            strokeWidth="2"
-          />
-          <path
-            d="M0 0 Q20 -80 80 -120"
-            stroke="url(#galaxy)"
-            strokeWidth="2"
-          />
-        </g>
       </svg>
     </div>
   );
