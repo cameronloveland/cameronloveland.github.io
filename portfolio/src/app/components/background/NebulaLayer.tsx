@@ -18,7 +18,7 @@ export default function NebulaLayer() {
       height: '70vw',
       background:
         'radial-gradient(circle at 70% 40%, rgba(0,128,255,0.4), rgba(0,0,0,0))',
-      animationDelay: '5s',
+      animationDelay: '15s',
     },
   ];
 
@@ -27,7 +27,7 @@ export default function NebulaLayer() {
       {nebulae.map((n, i) => (
         <div
           key={i}
-          className="absolute blur-3xl opacity-60 animate-nebulaFloat"
+          className="absolute blur-3xl opacity-30 animate-nebulaFloat animate-nebulaPulse"
           style={{
             top: n.top,
             left: n.left,
