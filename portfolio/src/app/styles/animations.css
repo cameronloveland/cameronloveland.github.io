@@ -230,7 +230,7 @@
   width: 220px;
 
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 
   animation:
     slideInFromTopFade 1.6s forwards,
