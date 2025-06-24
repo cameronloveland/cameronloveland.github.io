@@ -3,7 +3,7 @@ import FloatingAstronaut from './components/FloatingAstronaut';
 import { Footer } from "./components/Footer";
 import Header from './components/Header';
 
-import { EarthBackground } from './components/background/Earth';
+import { EarthBackground } from './components/background';
 
 import { CaptainsLogSidebar, Projects } from './components/hud';
 import Terminal from './components/hud/Terminal';
