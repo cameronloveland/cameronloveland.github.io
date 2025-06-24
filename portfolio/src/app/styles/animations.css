@@ -230,7 +230,7 @@
   width: 220px;
 
   pointer-events: none;
-  z-index: 5;
+  z-index: 15; /* ensure astronaut sits above main content */
 
   animation:
     slideInFromTopFade 1.6s forwards,
