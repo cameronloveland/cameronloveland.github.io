@@ -31,8 +31,8 @@ module.exports = {
           '100%': { transform: 'translate(0,0) scale(1) rotate(0deg)' },
         },
         nebulaPulse: {
-          '0%, 100%': { opacity: '0.2' },
-          '50%': { opacity: '0.4' },
+          '0%, 100%': { opacity: '0.1' },
+          '50%': { opacity: '0.35' },
         },
         nebulaHue: {
           '0%': { filter: 'hue-rotate(0deg)' },
@@ -43,7 +43,7 @@ module.exports = {
         twinkle: 'twinkle 2s ease-in-out infinite',
         nebulaFloat: 'nebulaFloat 45s ease-in-out infinite',
         nebulaPulse: 'nebulaPulse 8s ease-in-out infinite',
-        nebulaHue: 'nebulaHue 30s linear infinite',
+        nebulaHue: 'nebulaHue 20s linear infinite',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'sans-serif'],
