@@ -1,10 +1,11 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
 
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { EffectComposer, Selection, SelectiveBloom } from "@react-three/postprocessing";
 
 
 import EarthWithLayers from "./EarthWithLayers";
@@ -20,6 +21,7 @@ interface SpinningEarthProps {
 }
 
 export default function SpinningEarth({ offset }: SpinningEarthProps) {
+    const lightRef = useRef<THREE.DirectionalLight>(null);
     return (
         <div
             className="fixed inset-0 pointer-events-none z-0"
@@ -37,32 +39,37 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                     camera.layers.enable(1); // glow layer
 
                 }}>
-                <EffectComposer>
-                    <Bloom
-                        mipmapBlur
-                        luminanceThreshold={0.5}
-                        luminanceSmoothing={0.5}
-                        intensity={0}
-                    />
-                </EffectComposer>
+                <Selection>
+                    <EffectComposer>
+                        <SelectiveBloom
+                            selectionLayer={1}
+                            luminanceThreshold={0.5}
+                            luminanceSmoothing={0.5}
+                            intensity={0.6}
+                            mipmapBlur
+                            lights={[lightRef]}
+                        />
+                    </EffectComposer>
 
-                <ambientLight intensity={0.4} />
-                <directionalLight position={[5, 5, 5]} intensity={1} />
-                <Suspense fallback={null}>
-                    <group
-                        scale={0.4} // smaller than 1 makes it smaller
-                        position={[
-                            -(offset?.x * 0.05 || 0),
-                            0 - (offset?.y * 0.15 || 0), // more negative = lower
-                            0,
-                        ]}
-                    >
-                        <EarthWithLayers />
-                    </group>
+                    <ambientLight intensity={0.4} />
+                    <directionalLight ref={lightRef} position={[5, 5, 5]} intensity={1} />
 
-                    <Stars radius={100} depth={500} count={1000} factor={6} />
-                </Suspense>
-                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
+                    <Suspense fallback={null}>
+                        <group
+                            scale={0.4} // smaller than 1 makes it smaller
+                            position={[
+                                -(offset?.x * 0.05 || 0),
+                                0 - (offset?.y * 0.15 || 0), // more negative = lower
+                                0,
+                            ]}
+                        >
+                            <EarthWithLayers />
+                        </group>
+
+                        <Stars radius={100} depth={500} count={1000} factor={6} />
+                    </Suspense>
+                    <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
+                </Selection>
             </Canvas>
         </div>
     );

@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import GlowSphere from "./GlowSphere";
+import { Select } from "@react-three/postprocessing";
 
 export default function EarthWithLayers() {
     const earthRef = useRef<THREE.Mesh>(null);
@@ -25,7 +26,9 @@ export default function EarthWithLayers() {
     return (
         <group rotation={[0.41, 0, 0]}>
             {/* Glow effect around the Earth */}
-            <GlowSphere />
+            <Select enabled>
+                <GlowSphere />
+            </Select>
 
             {/* Cloud layer */}
             <mesh ref={cloudsRef}>
