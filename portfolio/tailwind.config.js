@@ -18,11 +18,17 @@ module.exports = {
           },
         },
         nebulaFloat: {
-          '0%': { transform: 'translate(0,0) scale(1)' },
-          '25%': { transform: 'translate(120px,-80px) scale(1.05)' },
-          '50%': { transform: 'translate(-130px,60px) scale(1.1)' },
-          '75%': { transform: 'translate(80px,120px) scale(1.05)' },
-          '100%': { transform: 'translate(0,0) scale(1)' },
+          '0%': { transform: 'translate(0,0) scale(1) rotate(0deg)' },
+          '25%': {
+            transform: 'translate(180px,-120px) scale(1.15) rotate(15deg)',
+          },
+          '50%': {
+            transform: 'translate(-200px,100px) scale(1.25) rotate(-10deg)',
+          },
+          '75%': {
+            transform: 'translate(140px,160px) scale(1.15) rotate(10deg)',
+          },
+          '100%': { transform: 'translate(0,0) scale(1) rotate(0deg)' },
         },
         nebulaPulse: {
           '0%, 100%': { opacity: '0.2' },
@@ -35,7 +41,7 @@ module.exports = {
       },
       animation: {
         twinkle: 'twinkle 2s ease-in-out infinite',
-        nebulaFloat: 'nebulaFloat 60s ease-in-out infinite',
+        nebulaFloat: 'nebulaFloat 45s ease-in-out infinite',
         nebulaPulse: 'nebulaPulse 8s ease-in-out infinite',
         nebulaHue: 'nebulaHue 30s linear infinite',
       },
