@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useRef } from "react";
+import React, { Suspense, useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -22,6 +22,7 @@ interface SpinningEarthProps {
 
 export default function SpinningEarth({ offset }: SpinningEarthProps) {
     const lightRef = useRef<THREE.DirectionalLight>(null);
+    const bloomLights = useMemo(() => [lightRef], []);
     return (
         <div
             className="fixed inset-0 pointer-events-none z-0"
@@ -47,7 +48,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                             luminanceSmoothing={0.5}
                             intensity={0.6}
                             mipmapBlur
-                            lights={[lightRef]}
+                            lights={bloomLights}
                         />
                     </EffectComposer>
 
