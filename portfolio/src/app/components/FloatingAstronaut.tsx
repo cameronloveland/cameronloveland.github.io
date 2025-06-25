@@ -7,17 +7,15 @@ export default function FloatingAstronaut() {
     const astroRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
+        const handleParallax = (e: Event) => {
             if (!astroRef.current) return;
 
-            const { innerWidth, innerHeight } = window;
-            const offsetX = (e.clientX - innerWidth / 2) / innerWidth;
-            const offsetY = (e.clientY - innerHeight / 2) / innerHeight;
+            const { x, y } = (e as CustomEvent<{ x: number; y: number }>).detail;
 
-            const moveX = offsetX * 20;
-            const moveY = offsetY * 20;
-            const rotateX = offsetY * -10;
-            const rotateY = offsetX * 10;
+            const moveX = x * 20;
+            const moveY = y * 20;
+            const rotateX = y * -10;
+            const rotateY = x * 10;
 
             astroRef.current.style.transform = `
         translate(${moveX}px, ${moveY}px)
@@ -27,8 +25,8 @@ export default function FloatingAstronaut() {
       `;
         };
 
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+        document.addEventListener("earthParallax", handleParallax as EventListener);
+        return () => document.removeEventListener("earthParallax", handleParallax as EventListener);
     }, []);
 
     return (
