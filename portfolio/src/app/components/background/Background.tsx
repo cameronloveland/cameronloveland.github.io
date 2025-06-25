@@ -146,7 +146,7 @@ export default function Background() {
                 .map((s) => (
                   <div
                     key={s.id}
-                    className="absolute rounded-full"
+                    className="absolute rounded-full animate-twinkle"
                     style={{
                       left: s.left,
                       top: s.top,
@@ -154,10 +154,7 @@ export default function Background() {
                       width: `${0.5 + Math.random() * (2 / layer)}px`,
                       height: `${0.5 + Math.random() * (2 / layer)}px`,
                       opacity: 0.5 + Math.random() * (0.1 / layer), // higher min opacity, less range
-                      animationName: 'twinkle',
                       animationDuration: `${1 + Math.random() * 2}s`, // slower twinkle
-                      animationTimingFunction: 'ease-in',
-                      animationIterationCount: 'infinite',
                       animationDelay: s.delay,
                     }}
                   />
