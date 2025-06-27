@@ -14,6 +14,10 @@ interface Comet {
 export default function CometCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cometsRef = useRef<Comet[]>([]);
+  const isVisibleRef = useRef<boolean>(
+    typeof document !== 'undefined' ? document.visibilityState === 'visible' : true
+  );
+  const maxComets = 5;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,6 +38,8 @@ export default function CometCanvas() {
     window.addEventListener('resize', resize);
 
     const spawnComet = () => {
+      if (!isVisibleRef.current) return;
+      if (cometsRef.current.length >= maxComets) return;
       const angle = Math.random() * Math.PI * 2;
       const speed = 0.6 + Math.random() * 0.3;
       cometsRef.current.push({
@@ -46,6 +52,12 @@ export default function CometCanvas() {
         opacity: 1,
       });
     };
+
+    const handleVisibility = () => {
+      isVisibleRef.current = document.visibilityState === 'visible';
+      if (isVisibleRef.current) spawnComet();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     const interval = setInterval(spawnComet, 15000 + Math.random() * 10000);
     spawnComet();
@@ -91,6 +103,7 @@ export default function CometCanvas() {
       cancelAnimationFrame(animationId);
       clearInterval(interval);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
