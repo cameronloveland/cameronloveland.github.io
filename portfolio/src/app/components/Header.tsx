@@ -5,7 +5,7 @@ import { AudioToggle } from './audio';
 
 export default function Header() {
     return (
-        <header className="fixed top-0 left-0 w-full bg-neutral-950/80 backdrop-blur border-neutral-900 fade-in-delayed transition-colors duration-300 opacity-0">
+        <header className="z-50 fixed top-0 left-0 w-full bg-neutral-950/80 backdrop-blur border-neutral-900 fade-in-delayed transition-colors duration-300 opacity-0">
 
             <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 " >
                 <a
