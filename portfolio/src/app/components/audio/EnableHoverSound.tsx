@@ -23,9 +23,11 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
         };
 
         const attachHoverListeners = () => {
-            document.querySelectorAll('a').forEach((a) => {
-                a.removeEventListener('mouseenter', handleHover); // just in case
-                a.addEventListener('mouseenter', handleHover);
+            const interactiveElements = document.querySelectorAll('a, .icon-button');
+
+            interactiveElements.forEach((el) => {
+                el.removeEventListener('mouseenter', handleHover);
+                el.addEventListener('mouseenter', handleHover);
             });
         };
 
