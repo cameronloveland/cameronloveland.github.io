@@ -20,8 +20,10 @@ export default function Header() {
                         alt="Cameron Loveland"
                         className="w-8 h-8 rounded-full border-2 border-neutral-700 shadow-sm"
                     />
-                    <span className="text-white font-bold text-lg tracking-tight">
-                        Cameron Loveland <span className="text-neutral-400">/ Portfolio</span>
+                    <span className="font-bold text-lg tracking-tight">
+                        <span className="text-accent">cameron</span>
+                        <span className="text-secondary">loveland</span>
+                        <span className="text-neutral-400">/ portfolio</span>
                     </span>
                 </a>
 

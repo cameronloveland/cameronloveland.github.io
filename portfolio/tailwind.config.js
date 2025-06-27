@@ -1,8 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -39,9 +38,10 @@ module.exports = {
         body: ['var(--font-body)', 'sans-serif'],
       },
       colors: {
-        background: '#0f172a',
+        primary: '#38bdf8',
         accent: '#38bdf8',
         secondary: '#64748b',
+        background: '#0f172a',
         primaryText: '#f8fafc',
       },
     },
