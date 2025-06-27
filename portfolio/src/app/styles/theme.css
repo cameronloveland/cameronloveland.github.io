@@ -39,3 +39,9 @@ body {
   max-height: 25vh;
   min-height: 25vh;
 }
+
+@layer utilities {
+  .icon-button {
+    @apply cursor-pointer text-neutral-500 hover:text-cyan-300 transition;
+  }
+}
