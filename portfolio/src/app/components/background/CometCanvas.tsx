@@ -34,17 +34,19 @@ export default function CometCanvas() {
     window.addEventListener('resize', resize);
 
     const spawnComet = () => {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 0.6 + Math.random() * 0.3;
-      cometsRef.current.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        trail: [],
-        life: 0,
-        opacity: 1,
-      });
+      if (cometsRef.current.length === 0) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.6 + Math.random() * 0.3;
+        cometsRef.current.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          trail: [],
+          life: 0,
+          opacity: 1,
+        });
+      }
     };
 
     const interval = setInterval(spawnComet, 15000 + Math.random() * 10000);
