@@ -112,6 +112,8 @@ tailwind.config.js      # Extended sci-fi color/animation palette
 - [ ] Comets and astronaut float layers
 - [ ] Astronaut jetpack animation and idle float logic
 - [ ] Interactive ship controls (possibly via terminal or key commands)
+- [ ] Earth Day/Night mapping
+- [ ] Other planets, sun?
 
 ---
 
