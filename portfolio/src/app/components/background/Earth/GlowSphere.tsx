@@ -28,12 +28,14 @@ export default function GlowSphere() {
             blending: THREE.AdditiveBlending,
             transparent: true,
             depthWrite: false,
+            depthTest: true,
             toneMapped: false,
+            side: THREE.BackSide,
         });
     }, []);
 
     return (
-        <mesh layers={1}>
+        <mesh layers={1} renderOrder={1}>
             {/* Slightly larger radius than clouds */}
             <sphereGeometry args={[1.06, 64, 64]} />
             <primitive object={glowMaterial} attach="material" />
