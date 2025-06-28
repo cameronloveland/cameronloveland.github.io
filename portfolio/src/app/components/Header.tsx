@@ -33,7 +33,7 @@ export default function Header() {
                         href="https://github.com/cameronloveland"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
+                        className="icon-button text-neutral-400"
                         aria-label="GitHub"
                     >
                         <FaGithub className="text-lg" />
@@ -42,7 +42,7 @@ export default function Header() {
                         href="https://linkedin.com/in/your-linkedin"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
+                        className="icon-button text-neutral-400"
                         aria-label="LinkedIn"
                     >
                         <FaLinkedin className="text-lg" />
@@ -51,7 +51,7 @@ export default function Header() {
                         href="https://twitter.com/your-twitter"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
+                        className="icon-button text-neutral-400"
                         aria-label="Twitter"
                     >
                         <FaXTwitter className="text-lg" />

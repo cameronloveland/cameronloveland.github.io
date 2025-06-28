@@ -9,10 +9,13 @@ export default async function Home() {
   const repos = await getReposWithReadme();
   return (
     <>
+
       <div className="relative  min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-[-2] ">
           <EarthBackground />
         </div>
+
+
 
         <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-28 relative">
           <FloatingAstronaut />
