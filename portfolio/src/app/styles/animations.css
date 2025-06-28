@@ -239,3 +239,47 @@
   image-rendering: auto;
   backface-visibility: hidden;
 }
+
+@layer utilities {
+  @keyframes nebulaFloat {
+    0% {
+      transform: translate(-5%, 0) scale(1) rotate(0deg);
+    }
+    25% {
+      transform: translate(5%, -10%) scale(1.05) rotate(2deg);
+    }
+    50% {
+      transform: translate(-10%, 5%) scale(1.1) rotate(-2deg);
+    }
+    75% {
+      transform: translate(5%, 10%) scale(1.05) rotate(2deg);
+    }
+    100% {
+      transform: translate(-5%, 0) scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes nebulaPulse {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .animate-nebula-float {
+    animation: nebulaFloat 45s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .animate-nebula-pulse {
+    animation: nebulaPulse 30s ease-in-out infinite;
+    will-change: opacity;
+  }
+
+  .nebula-bg {
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 70%);
+  }
+}
