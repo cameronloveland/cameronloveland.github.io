@@ -43,32 +43,6 @@ export default function Background() {
     setStars(generated);
   }, []);
 
-  // TODO revisit more efficient star movement
-  // // Slowly move stars to the left and recycle them
-  // useEffect(() => {
-  //   let animationFrameId: number;
-  //   const speed = 0.001; // slower movement
-
-  //   const animate = () => {
-  //     setStars(prev =>
-  //       prev.map((s) => {
-  //         const current = parseFloat(s.left);
-  //         let next = current - speed * s.layer;
-  //         if (next < -5) {
-  //           next = 100 + Math.random() * 5;
-  //           return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
-  //         }
-  //         return { ...s, left: `${next}%` };
-  //       })
-  //     );
-  //     animationFrameId = requestAnimationFrame(animate);
-  //   };
-
-  //   animationFrameId = requestAnimationFrame(animate);
-  //   return () => cancelAnimationFrame(animationFrameId);
-  // }, []);
-
-
   useEffect(() => {
     const interval = setInterval(() => {
       const left = Math.random() * window.innerWidth;
@@ -122,7 +96,7 @@ export default function Background() {
   return (
     <div onMouseMove={handleMouseMove}>
       <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
-        <NebulaLayer />
+        {/* <NebulaLayer /> */}
         <CometCanvas />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -146,22 +120,19 @@ export default function Background() {
                 .map((s) => (
                   <div
                     key={s.id}
-                    className="absolute rounded-full"
+                    className="absolute rounded-full animate-twinkle"
                     style={{
                       left: s.left,
                       top: s.top,
                       backgroundColor: s.color,
                       width: `${0.5 + Math.random() * (2 / layer)}px`,
                       height: `${0.5 + Math.random() * (2 / layer)}px`,
-                      opacity: 0.5 + Math.random() * (0.1 / layer), // higher min opacity, less range
-                      animationName: 'twinkle',
-                      animationDuration: `${1 + Math.random() * 2}s`, // slower twinkle
-                      animationTimingFunction: 'ease-in',
-                      animationIterationCount: 'infinite',
+                      opacity: 0.5 + Math.random() * (0.1 / layer),
                       animationDelay: s.delay,
                     }}
                   />
                 ))}
+
             </div>
           ))}
 

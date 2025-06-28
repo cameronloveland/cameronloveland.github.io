@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 export default function NebulaLayer() {
@@ -27,14 +29,14 @@ export default function NebulaLayer() {
       {nebulae.map((n, i) => (
         <div
           key={i}
-          className="absolute blur-3xl opacity-30 animate-nebulaFloat animate-nebulaPulse"
+          className="absolute blur-3xl opacity-30 rounded-full animate-nebula-float animate-nebula-pulse"
           style={{
             top: n.top,
             left: n.left,
             width: n.width,
             height: n.height,
             background: n.background,
-            animationDelay: n.animationDelay,
+            animationDelay: n.animationDelay, // applies to both animations
           }}
         />
       ))}
