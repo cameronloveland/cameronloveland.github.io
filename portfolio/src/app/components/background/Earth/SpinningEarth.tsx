@@ -3,10 +3,7 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls } from "@react-three/drei";
-
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-
-
 import EarthWithLayers from "./EarthWithLayers";
 
 
@@ -39,15 +36,16 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 }}>
                 <EffectComposer>
                     <Bloom
-                        mipmapBlur
-                        luminanceThreshold={0.5}
-                        luminanceSmoothing={0.5}
-                        intensity={0}
+                        intensity={0} // less glow
+                        luminanceThreshold={100}
+                        luminanceSmoothing={1}
+                        kernelSize={1} // smaller = less "halo"
+                        mipmapBlur={false}
                     />
                 </EffectComposer>
 
                 <ambientLight intensity={0.4} />
-                <directionalLight position={[5, 5, 5]} intensity={1} />
+                <directionalLight position={[0.8, 1.1, -0.7]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
                         scale={0.4} // smaller than 1 makes it smaller
@@ -62,7 +60,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
 
                     <Stars radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
-                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.05} />
+                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.03} />
             </Canvas>
         </div>
     );
