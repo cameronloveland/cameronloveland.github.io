@@ -42,31 +42,6 @@ export default function Background() {
     setStars(generated);
   }, []);
 
-  // TODO revisit more efficient star movement
-  // // Slowly move stars to the left and recycle them
-  // useEffect(() => {
-  //   let animationFrameId: number;
-  //   const speed = 0.001; // slower movement
-
-  //   const animate = () => {
-  //     setStars(prev =>
-  //       prev.map((s) => {
-  //         const current = parseFloat(s.left);
-  //         let next = current - speed * s.layer;
-  //         if (next < -5) {
-  //           next = 100 + Math.random() * 5;
-  //           return { ...s, left: `${next}%`, top: `${Math.random() * 100}%` };
-  //         }
-  //         return { ...s, left: `${next}%` };
-  //       })
-  //     );
-  //     animationFrameId = requestAnimationFrame(animate);
-  //   };
-
-  //   animationFrameId = requestAnimationFrame(animate);
-  //   return () => cancelAnimationFrame(animationFrameId);
-  // }, []);
-
 
   useEffect(() => {
     const interval = setInterval(() => {

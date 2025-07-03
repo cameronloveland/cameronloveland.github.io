@@ -14,10 +14,10 @@ export default function FloatingAstronaut() {
             const offsetX = (e.clientX - innerWidth / 2) / innerWidth;
             const offsetY = (e.clientY - innerHeight / 2) / innerHeight;
 
-            const moveX = offsetX * 20;
-            const moveY = offsetY * 20;
+            const moveX = offsetX * -20;
+            const moveY = offsetY * -20;
             const rotateX = offsetY * -10;
-            const rotateY = offsetX * 10;
+            const rotateY = offsetX * -10;
 
             astroRef.current.style.transform = `
         translate(${moveX}px, ${moveY}px)
