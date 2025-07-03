@@ -1,8 +1,8 @@
-import FloatingAstronaut from './components/FloatingAstronaut';
-import { EarthBackground } from './components/background';
-import { CaptainsLogSidebar, Projects } from './components/hud';
-import Terminal from './components/hud/Terminal';
-import { getReposWithReadme } from './lib/github';
+import FloatingAstronaut from '../components/FloatingAstronaut';
+import { EarthBackground } from '../components/background';
+import { CaptainsLogSidebar, Projects } from '../components/hud';
+import Terminal from '../components/hud/Terminal';
+import { getReposWithReadme } from '../lib/github';
 
 
 export default async function Home() {
