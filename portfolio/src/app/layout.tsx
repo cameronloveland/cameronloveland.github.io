@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import "./styles/theme.css";
-import "./styles/fonts.css";
-import "./styles/animations.css";
+import "../styles/theme.css";
+import "../styles/fonts.css";
+import "../styles/animations.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-import Header from "./components/Header";
-import { Footer } from "./components/Footer";
-import ParallaxHandler from "./components/ParallaxHandler";
+import Header from "../components/Header";
+import { Footer } from "../components/Footer";
+import ParallaxHandler from "../components/ParallaxHandler";
 
 export const metadata: Metadata = {
   title: "Portfolio | Cameron Loveland",
