@@ -47,15 +47,6 @@ export default function Header() {
                     >
                         <FaLinkedin className="text-lg" />
                     </a>
-                    <a
-                        href="https://twitter.com/your-twitter"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
-                        aria-label="Twitter"
-                    >
-                        <FaXTwitter className="text-lg" />
-                    </a>
                 </nav>
 
                 {/* Audio toggle */}
