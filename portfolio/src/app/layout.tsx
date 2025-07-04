@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import { Footer } from "../components/Footer";
 import ParallaxHandler from "../components/ParallaxHandler";
 
+
 export const metadata: Metadata = {
   title: "Portfolio | Cameron Loveland",
   description: "Beefed up GitHub Pages portfolio with interactive elements and animations.",
