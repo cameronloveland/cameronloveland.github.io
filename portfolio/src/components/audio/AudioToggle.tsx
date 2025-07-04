@@ -4,7 +4,7 @@ import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import HoverSoundGlobal from "./EnableHoverSound";
 
 export default function AudioToggle() {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true);
   const ambientRef = useRef<HTMLAudioElement>(null);
   const voiceRef = useRef<HTMLAudioElement>(null);
 

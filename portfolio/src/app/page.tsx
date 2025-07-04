@@ -1,3 +1,4 @@
+import CockpitOverlay from '@/components/background/CockpitOverlay';
 import FloatingAstronaut from '../components/FloatingAstronaut';
 import { EarthBackground } from '../components/background';
 import { CaptainsLogSidebar, Projects } from '../components/hud';
@@ -14,8 +15,10 @@ export default async function Home() {
           <EarthBackground />
         </div>
 
-        <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-28 relative">
+        <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
+
           <FloatingAstronaut />
+          <CockpitOverlay />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
 
@@ -30,12 +33,12 @@ export default async function Home() {
                 <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight opacity-0 animate-fade-in delay-[300ms]">
                   Cameron Loveland
                 </h1>
-                <p className="text-neutral-400 text-md opacity-0 animate-fade-in delay-[500ms]">
+                <p className="text-neutral-300 text-2xl opacity-0 animate-fade-in delay-[500ms]">
                   Software Engineer
                 </p>
-                <p className="text-neutral-500 italic text-sm mt-1 opacity-0 animate-fade-in delay-[700ms]">
+                {/* <p className="text-neutral-400 italic text-xl mt-1 opacity-0 animate-fade-in delay-[700ms]">
                   Welcome aboard — this is my interactive portfolio site.
-                </p>
+                </p> */}
               </section>
             </div>
           </section>
