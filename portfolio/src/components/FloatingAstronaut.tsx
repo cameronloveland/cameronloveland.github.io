@@ -5,41 +5,53 @@ import Image from "next/image";
 
 export default function FloatingAstronaut() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const puffContainerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
     const spawnParticles = () => {
-        const wrapper = containerRef.current;
-        if (!wrapper) return;
-        const count = Math.floor(Math.random() * 3) + 2;
+        const container = puffContainerRef.current;
+        if (!container) return;
+        const count = Math.floor(Math.random() * 3) + 3; // 3-5 puffs
+
         for (let i = 0; i < count; i++) {
             const puff = document.createElement("div");
             puff.className = "steam-puff";
 
-            const angle = Math.random() * 2 * Math.PI;
+            // starting position at the center of the astronaut
+            Object.assign(puff.style, {
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background:
+                    "radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(150,220,255,0.6) 60%, rgba(50,120,255,0.2) 100%)",
+                filter: "blur(2px) drop-shadow(0 0 6px rgba(150,220,255,0.6))",
+                pointerEvents: "none",
+                transform: "translate(-50%, -50%)",
+                opacity: "0.8",
+                zIndex: "1",
+                transition: "transform 0.8s ease-out, opacity 0.8s ease-out",
+            });
+
+            const angle = Math.random() * Math.PI * 2;
             const distance = 40 + Math.random() * 40;
-            const x = Math.cos(angle) * distance;
-            const y = Math.sin(angle) * distance;
-            const scale = 0.9 + Math.random() * 0.5;
+            const scale = 0.8 + Math.random() * 0.6;
             const rotation = Math.random() * 360;
 
-            puff.style.position = "absolute";
-            puff.style.top = "50%";
-            puff.style.left = "50%";
-            puff.style.width = "6px";
-            puff.style.height = "40px";
-            puff.style.borderRadius = "50% 50% 20% 20%";
-            puff.style.background = "linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(100, 180, 255, 0.6), rgba(50, 120, 255, 0.1))";
-            puff.style.filter = "blur(1px) drop-shadow(0 0 6px rgba(150, 220, 255, 0.6))";
-            puff.style.pointerEvents = "none";
-            puff.style.transform = `translate(${x}px, ${y}px) scale(${scale}) rotate(${rotation}deg)`;
-            puff.style.opacity = "0.7";
-            puff.style.animation = "jetPuff 0.4s ease-out forwards";
-            puff.style.zIndex = "-1";
-            puff.style.transformOrigin = "center center";
+            container.appendChild(puff);
 
-            wrapper.appendChild(puff);
-            setTimeout(() => puff.remove(), 800);
+            // trigger transition to final position on next frame
+            requestAnimationFrame(() => {
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                puff.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale}) rotate(${rotation}deg)`;
+                puff.style.opacity = "0";
+            });
+
+            setTimeout(() => puff.remove(), 1000);
         }
     };
 
@@ -94,7 +106,7 @@ export default function FloatingAstronaut() {
 
     return (
         <div className="astronaut-wrapper" onClick={handleClick}>
-            <div className="astronaut" ref={containerRef}>
+            <div className="astronaut relative" ref={containerRef}>
                 <Image
                     src="/worried-astronaut.png"
                     alt="Floating Astronaut"
@@ -102,6 +114,7 @@ export default function FloatingAstronaut() {
                     height={220}
                     ref={imgRef}
                 />
+                <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none" />
             </div>
         </div>
     );
