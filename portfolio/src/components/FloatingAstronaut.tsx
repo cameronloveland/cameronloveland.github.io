@@ -4,8 +4,25 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 export default function FloatingAstronaut() {
+    const wrapperRef = useRef<HTMLDivElement>(null);
     const astroRef = useRef<HTMLImageElement>(null);
     const [isLaunching, setIsLaunching] = useState(false);
+
+    const spawnParticles = () => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+        const count = Math.floor(Math.random() * 3) + 1;
+        for (let i = 0; i < count; i++) {
+            const puff = document.createElement("div");
+            puff.className = "steam-puff";
+            const dx = (Math.random() - 0.5) * 10; // -5 to 5px
+            const dy = -30 - Math.random() * 20; // -30px to -50px
+            puff.style.setProperty("--dx", `${dx}px`);
+            puff.style.setProperty("--dy", `${dy}px`);
+            wrapper.appendChild(puff);
+            setTimeout(() => puff.remove(), 800);
+        }
+    };
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -37,6 +54,7 @@ export default function FloatingAstronaut() {
     const handleClick = () => {
         if (!astroRef.current || isLaunching) return;
         setIsLaunching(true);
+        spawnParticles();
 
         astroRef.current.style.transition = "transform 0.6s ease-in-out";
         const y = -20 - Math.random() * 40; // -20vh to -60vh
@@ -56,7 +74,7 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick}>
+        <div className="astronaut-wrapper" onClick={handleClick} ref={wrapperRef}>
             <Image
                 src="/worried-astronaut.png"
                 alt="Floating Astronaut"
