@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-export function useSlowScroll(
-  ref: React.RefObject<HTMLElement>,
+export function useSlowScroll<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
   duration: number = 15000
 ) {
   useEffect(() => {

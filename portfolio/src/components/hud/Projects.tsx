@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { TopicIcon } from "./TopicIcon";
 import { useSlowScroll } from "../../hooks/useSlowScroll";
@@ -17,7 +19,7 @@ type ProjectsProps = {
 export default function Projects({ repos }: ProjectsProps) {
     const displayRepos = repos ?? [];
     const listRef = useRef<HTMLUListElement>(null);
-    useSlowScroll(listRef);
+    useSlowScroll<HTMLUListElement>(listRef);
 
     return (
         <aside className="hud-aside-container">

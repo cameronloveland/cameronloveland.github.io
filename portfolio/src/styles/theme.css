@@ -35,7 +35,9 @@ body {
 }
 
 .auto-scroll {
-  @apply overflow-y-auto scrollbar-hidden;
+  @apply overflow-y-auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   animation: slowScroll var(--scroll-duration) linear forwards;
 }
 

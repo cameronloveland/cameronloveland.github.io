@@ -23,7 +23,7 @@ export default function CaptainsLogSidebar() {
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
-    useSlowScroll(listRef);
+    useSlowScroll<HTMLUListElement>(listRef);
 
     useEffect(() => {
         async function fetchCommits() {
