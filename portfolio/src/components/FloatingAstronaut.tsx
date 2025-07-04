@@ -91,14 +91,12 @@ export default function FloatingAstronaut() {
         const nextVariant = Math.random() > 0.5 ? 1 : 2;
         setThrustedImage(`/thrusted-astronaut-${nextVariant}.png`);
 
-        if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.volume = 0.3;
-            audioRef.current.play();
-            setTimeout(() => {
-                if (audioRef.current) audioRef.current.pause();
-            }, Math.max(0, (audioRef.current?.duration || 2) * 1000 - 1000));
+        if (audioRef.current?.src) {
+            const puffSound = new Audio(audioRef.current.src);
+            puffSound.volume = 0.3;
+            puffSound.play().catch(() => { });
         }
+
 
         containerRef.current.style.transition = "transform 0.6s ease-in-out";
         const x = (Math.random() * 100 - 50) + "vw";
