@@ -9,6 +9,7 @@ export default function FloatingAstronaut() {
     const imgRef = useRef<HTMLImageElement>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted.png");
 
     const spawnParticles = () => {
         const container = puffContainerRef.current;
@@ -88,6 +89,10 @@ export default function FloatingAstronaut() {
         setIsLaunching(true);
         spawnParticles();
 
+        // Randomly pick a thrust variant
+        const variant = Math.random() < 0.5 ? 1 : 2;
+        setThrustedImage(`/thrusted-astronaut-${variant}.png`);
+
         if (audioRef.current) {
             audioRef.current.currentTime = 0;
             audioRef.current.volume = 0.3;
@@ -116,12 +121,12 @@ export default function FloatingAstronaut() {
             <div className="astronaut relative" ref={containerRef}>
                 <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
-                    src="/worried-astronaut.png"
+                    src={isLaunching ? thrustedImage : "/worried-astronaut.png"}
                     alt="Floating Astronaut"
                     width={220}
                     height={220}
                     ref={imgRef}
-                    className="relative z-10"
+                    className="relative z-10 transition-transform duration-300"
                 />
                 <audio ref={audioRef} src="/sfx/steam-puff.mp3" preload="auto" />
             </div>
