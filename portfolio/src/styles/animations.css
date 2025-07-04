@@ -229,7 +229,7 @@
   left: 42%;
   width: 220px;
 
-  pointer-events: none;
+  pointer-events: auto;
   animation:
     slideInFromTopFade 1.6s forwards,
     driftRotateZoom 120s ease-in-out 2s infinite;
