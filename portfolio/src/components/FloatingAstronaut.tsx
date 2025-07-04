@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 export default function FloatingAstronaut() {
-    const wrapperRef = useRef<HTMLDivElement>(null);
-    const astroRef = useRef<HTMLImageElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
     const spawnParticles = () => {
-        const wrapper = wrapperRef.current;
+        const wrapper = containerRef.current;
         if (!wrapper) return;
         const count = Math.floor(Math.random() * 3) + 1;
         for (let i = 0; i < count; i++) {
@@ -26,7 +26,7 @@ export default function FloatingAstronaut() {
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            if (!astroRef.current || isLaunching) return;
+            if (!containerRef.current || isLaunching) return;
 
             const { innerWidth, innerHeight } = window;
             const offsetX = (e.clientX - innerWidth / 2) / innerWidth;
@@ -37,7 +37,7 @@ export default function FloatingAstronaut() {
             const rotateX = offsetY * -10;
             const rotateY = offsetX * -10;
 
-            astroRef.current.style.transform = `
+            containerRef.current.style.transform = `
         translate(${moveX}px, ${moveY}px)
         rotateX(${rotateX}deg)
         rotateY(${rotateY}deg)
@@ -52,20 +52,20 @@ export default function FloatingAstronaut() {
     }, [isLaunching]);
 
     const handleClick = () => {
-        if (!astroRef.current || isLaunching) return;
+        if (!containerRef.current || isLaunching) return;
         setIsLaunching(true);
         spawnParticles();
 
-        astroRef.current.style.transition = "transform 0.6s ease-in-out";
+        containerRef.current.style.transition = "transform 0.6s ease-in-out";
         const y = -20 - Math.random() * 40; // -20vh to -60vh
         const r = (Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1);
         const s = 1.1 + Math.random() * 0.3; // scale between 1.1 and 1.4
-        astroRef.current.style.transform = `translateY(${y}vh) rotate(${r}deg) scale(${s})`;
+        containerRef.current.style.transform = `translateY(${y}vh) rotate(${r}deg) scale(${s})`;
 
         setTimeout(() => {
-            if (!astroRef.current) return;
-            astroRef.current.style.transition = "transform 1s ease-in";
-            astroRef.current.style.transform = "";
+            if (!containerRef.current) return;
+            containerRef.current.style.transition = "transform 1s ease-in";
+            containerRef.current.style.transform = "";
 
             setTimeout(() => {
                 setIsLaunching(false);
@@ -74,15 +74,16 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick} ref={wrapperRef}>
-            <Image
-                src="/worried-astronaut.png"
-                alt="Floating Astronaut"
-                width={220}
-                height={220}
-                ref={astroRef}
-            />
-            <div className="thruster-flame" />
+        <div className="astronaut-wrapper" onClick={handleClick}>
+            <div className="astronaut" ref={containerRef}>
+                <Image
+                    src="/worried-astronaut.png"
+                    alt="Floating Astronaut"
+                    width={220}
+                    height={220}
+                    ref={imgRef}
+                />
+            </div>
         </div>
 
     );
