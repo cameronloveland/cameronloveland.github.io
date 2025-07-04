@@ -94,6 +94,7 @@ export default function Background() {
   };
 
   return (
+
     <div onMouseMove={handleMouseMove}>
       <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
         <CometCanvas />
