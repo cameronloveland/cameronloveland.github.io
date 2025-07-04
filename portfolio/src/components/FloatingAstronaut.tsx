@@ -7,6 +7,7 @@ export default function FloatingAstronaut() {
     const containerRef = useRef<HTMLDivElement>(null);
     const puffContainerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
     const spawnParticles = () => {
@@ -23,22 +24,22 @@ export default function FloatingAstronaut() {
                 position: "absolute",
                 top: "50%",
                 left: "50%",
-                width: "8px",
-                height: "8px",
+                width: "22px",
+                height: "22px",
                 borderRadius: "50%",
                 background:
                     "radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(150,220,255,0.6) 60%, rgba(50,120,255,0.2) 100%)",
-                filter: "blur(2px) drop-shadow(0 0 6px rgba(150,220,255,0.6))",
+                filter: "blur(4px) drop-shadow(0 0 10px rgba(150,220,255,0.9))",
                 pointerEvents: "none",
                 transform: "translate(-50%, -50%)",
-                opacity: "0.8",
-                zIndex: "1",
+                opacity: "0.85",
+                zIndex: "-1",
                 transition: "transform 0.8s ease-out, opacity 0.8s ease-out",
             });
 
             const angle = Math.random() * Math.PI * 2;
-            const distance = 40 + Math.random() * 40;
-            const scale = 0.8 + Math.random() * 0.6;
+            const distance = 80 + Math.random() * 60;
+            const scale = 1.4 + Math.random() * 0.8;
             const rotation = Math.random() * 360;
 
             container.appendChild(puff);
@@ -87,6 +88,12 @@ export default function FloatingAstronaut() {
         setIsLaunching(true);
         spawnParticles();
 
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.volume = 0.3;
+            audioRef.current.play();
+        }
+
         containerRef.current.style.transition = "transform 0.6s ease-in-out";
         const y = -20 - Math.random() * 40; // -20vh to -60vh
         const r = (Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1);
@@ -107,14 +114,16 @@ export default function FloatingAstronaut() {
     return (
         <div className="astronaut-wrapper" onClick={handleClick}>
             <div className="astronaut relative" ref={containerRef}>
+                <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
                     src="/worried-astronaut.png"
                     alt="Floating Astronaut"
                     width={220}
                     height={220}
                     ref={imgRef}
+                    className="relative z-10"
                 />
-                <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none" />
+                <audio ref={audioRef} src="/sfx/steam-puff.mp3" preload="auto" />
             </div>
         </div>
     );
