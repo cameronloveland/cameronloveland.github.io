@@ -1,16 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import useMouseParallax from '@/hooks/useMouseParallax';
 
 function LeftARPanel() {
-  const offset = useMouseParallax(0.5);
-
   return (
     <div
-      className="pointer-events-none fixed left-4 top-24 bottom-8 w-[300px] h-[80vh] z-20 bg-transparent text-cyan-300 drop-shadow-[0_0_6px_#00ffff] flex flex-col"
-      style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
-    >
+      className="pointer-events-none fixed left-4 top-24 bottom-8 w-[300px] h-[80vh] z-20 bg-transparent text-cyan-300 drop-shadow-[0_0_3px_#00ffff] flex flex-col">
       <h2 className="p-3 text-center text-sm uppercase font-bold">
         Hackathon Projects
       </h2>
@@ -24,13 +19,9 @@ function LeftARPanel() {
 }
 
 function RightARPanel() {
-  const offset = useMouseParallax(0.5);
-
   return (
     <div
-      className="pointer-events-none fixed right-4 top-24 bottom-8 w-[300px] h-[80vh] z-20 bg-transparent text-cyan-300 drop-shadow-[0_0_6px_#00ffff] flex flex-col"
-      style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
-    >
+      className="pointer-events-none fixed right-4 top-24 bottom-8 w-[300px] h-[80vh] z-20 bg-transparent text-cyan-300 drop-shadow-[0_0_3px_#00ffff] flex flex-col">
       <h2 className="p-3 text-center text-sm uppercase font-bold">
         Captain’s Log Dev Blog
       </h2>

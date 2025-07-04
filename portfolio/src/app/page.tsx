@@ -4,6 +4,7 @@ import { EarthBackground } from '../components/background';
 import { CaptainsLogSidebar, Projects } from '../components/hud';
 import Terminal from '../components/hud/Terminal';
 import { getReposWithReadme } from '../lib/github';
+import ARPanels from '@/components/hud/ARPanels';
 
 
 export default async function Home() {
@@ -19,6 +20,7 @@ export default async function Home() {
 
           <FloatingAstronaut />
           <CockpitOverlay />
+          <ARPanels />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
 

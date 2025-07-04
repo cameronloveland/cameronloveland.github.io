@@ -7,7 +7,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Header from "../components/Header";
 import { Footer } from "../components/Footer";
 import ParallaxHandler from "../components/ParallaxHandler";
-import ARPanels from "../components/ARPanels";
+
 
 export const metadata: Metadata = {
   title: "Portfolio | Cameron Loveland",
@@ -29,7 +29,6 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <ARPanels />
         </ParallaxHandler>
       </body>
     </html>
