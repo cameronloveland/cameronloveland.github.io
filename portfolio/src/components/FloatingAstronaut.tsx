@@ -9,7 +9,7 @@ export default function FloatingAstronaut() {
     const imgRef = useRef<HTMLImageElement>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
-    const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted.png");
+    const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted-1.png");
 
     const spawnParticles = () => {
         const container = puffContainerRef.current;
@@ -20,7 +20,6 @@ export default function FloatingAstronaut() {
             const puff = document.createElement("div");
             puff.className = "steam-puff";
 
-            // starting position at the center of the astronaut
             Object.assign(puff.style, {
                 position: "absolute",
                 top: "50%",
@@ -45,7 +44,6 @@ export default function FloatingAstronaut() {
 
             container.appendChild(puff);
 
-            // trigger transition to final position on next frame
             requestAnimationFrame(() => {
                 const x = Math.cos(angle) * distance;
                 const y = Math.sin(angle) * distance;
@@ -89,20 +87,23 @@ export default function FloatingAstronaut() {
         setIsLaunching(true);
         spawnParticles();
 
-        // Randomly pick a thrust variant
-        const variant = Math.random() < 0.5 ? 1 : 2;
-        setThrustedImage(`/thrusted-astronaut-${variant}.png`);
+        // Alternate between astronaut images
+        const nextVariant = thrustedImage.includes("1") ? 2 : 1;
+        setThrustedImage(`/thrusted-astronaut-${nextVariant}.png`);
 
         if (audioRef.current) {
             audioRef.current.currentTime = 0;
             audioRef.current.volume = 0.3;
             audioRef.current.play();
+            setTimeout(() => {
+                if (audioRef.current) audioRef.current.pause();
+            }, Math.max(0, (audioRef.current?.duration || 2) * 1000 - 1000)); // stop 1s early // stop after 400ms
         }
 
         containerRef.current.style.transition = "transform 0.6s ease-in-out";
-        const y = -20 - Math.random() * 40; // -20vh to -60vh
+        const y = -20 - Math.random() * 40;
         const r = (Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1);
-        const s = 1.1 + Math.random() * 0.3; // scale between 1.1 and 1.4
+        const s = 1.1 + Math.random() * 0.3;
         containerRef.current.style.transform = `translateY(${y}vh) rotate(${r}deg) scale(${s})`;
 
         setTimeout(() => {
