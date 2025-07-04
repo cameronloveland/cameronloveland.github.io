@@ -239,3 +239,30 @@
   image-rendering: auto;
   backface-visibility: hidden;
 }
+
+@keyframes thrusterPuff {
+  0% {
+    opacity: 0.8;
+    transform: translate(-50%, 0) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -30px) scale(1.4);
+  }
+}
+
+.steam-puff {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 60%, transparent 80%);
+  filter: blur(2px) drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+  mix-blend-mode: screen;
+  z-index: 0;
+  transform: translateX(-50%);
+  animation: thrusterPuff 0.8s forwards;
+}
