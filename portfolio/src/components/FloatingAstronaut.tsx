@@ -5,41 +5,55 @@ import Image from "next/image";
 
 export default function FloatingAstronaut() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const puffContainerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
     const spawnParticles = () => {
-        const wrapper = containerRef.current;
-        if (!wrapper) return;
-        const count = Math.floor(Math.random() * 3) + 2;
+        const container = puffContainerRef.current;
+        if (!container) return;
+
+        const count = Math.floor(Math.random() * 3) + 3; // 3-5 puffs
+
         for (let i = 0; i < count; i++) {
             const puff = document.createElement("div");
             puff.className = "steam-puff";
 
-            const angle = Math.random() * 2 * Math.PI;
-            const distance = 40 + Math.random() * 40;
-            const x = Math.cos(angle) * distance;
-            const y = Math.sin(angle) * distance;
-            const scale = 0.9 + Math.random() * 0.5;
-            const rotation = Math.random() * 360;
-
             puff.style.position = "absolute";
             puff.style.top = "50%";
             puff.style.left = "50%";
-            puff.style.width = "6px";
-            puff.style.height = "40px";
-            puff.style.borderRadius = "50% 50% 20% 20%";
-            puff.style.background = "linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(100, 180, 255, 0.6), rgba(50, 120, 255, 0.1))";
-            puff.style.filter = "blur(1px) drop-shadow(0 0 6px rgba(150, 220, 255, 0.6))";
+            puff.style.transform = "translate(-50%, -50%)";
             puff.style.pointerEvents = "none";
-            puff.style.transform = `translate(${x}px, ${y}px) scale(${scale}) rotate(${rotation}deg)`;
-            puff.style.opacity = "0.7";
-            puff.style.animation = "jetPuff 0.4s ease-out forwards";
-            puff.style.zIndex = "-1";
-            puff.style.transformOrigin = "center center";
 
-            wrapper.appendChild(puff);
-            setTimeout(() => puff.remove(), 800);
+            container.appendChild(puff);
+
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = 30 + Math.random() * 40;
+            const scale = 0.8 + Math.random() * 0.6;
+            const rotation = Math.random() * 360;
+
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+
+            puff.animate(
+                [
+                    {
+                        transform: "translate(-50%, -50%) scale(1)",
+                        opacity: 0.8,
+                    },
+                    {
+                        transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale}) rotate(${rotation}deg)`,
+                        opacity: 0,
+                    },
+                ],
+                {
+                    duration: 800,
+                    easing: "ease-out",
+                    fill: "forwards",
+                }
+            );
+
+            setTimeout(() => puff.remove(), 1000);
         }
     };
 
@@ -95,6 +109,7 @@ export default function FloatingAstronaut() {
     return (
         <div className="astronaut-wrapper" onClick={handleClick}>
             <div className="astronaut" ref={containerRef}>
+                <div className="puff-container" ref={puffContainerRef} />
                 <Image
                     src="/worried-astronaut.png"
                     alt="Floating Astronaut"
