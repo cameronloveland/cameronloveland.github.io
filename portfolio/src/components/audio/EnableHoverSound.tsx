@@ -23,7 +23,7 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
         };
 
         const attachHoverListeners = () => {
-            document.querySelectorAll('a').forEach((a) => {
+            document.querySelectorAll('a, .hover-sound').forEach((a) => {
                 a.removeEventListener('mouseenter', handleHover); // just in case
                 a.addEventListener('mouseenter', handleHover);
             });
@@ -39,7 +39,7 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
 
         return () => {
             observer.disconnect();
-            document.querySelectorAll('a').forEach((a) => {
+            document.querySelectorAll('a, .hover-sound').forEach((a) => {
                 a.removeEventListener('mouseenter', handleHover);
             });
         };
