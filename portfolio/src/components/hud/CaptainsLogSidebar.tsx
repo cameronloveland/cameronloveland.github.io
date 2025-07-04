@@ -24,6 +24,73 @@ export default function CaptainsLogSidebar() {
     const listRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
+        const list = listRef.current;
+        if (!list) return;
+        list.scrollTop = 0;
+
+        let interval: NodeJS.Timeout | null = null;
+        let hovering = false;
+        let userScroll = false;
+        let resumeTimeout: NodeJS.Timeout | null = null;
+
+        const stop = () => {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+        };
+
+        const start = () => {
+            if (interval) return;
+            if (list.scrollTop + list.clientHeight >= list.scrollHeight) return;
+            interval = setInterval(() => {
+                if (list.scrollTop + list.clientHeight >= list.scrollHeight) {
+                    stop();
+                } else {
+                    list.scrollTop += 1;
+                }
+            }, 75);
+        };
+
+        const pauseForUser = () => {
+            userScroll = true;
+            stop();
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+            resumeTimeout = setTimeout(() => {
+                userScroll = false;
+                if (!hovering) start();
+            }, 1000);
+        };
+
+        const onMouseEnter = () => {
+            hovering = true;
+            stop();
+        };
+        const onMouseLeave = () => {
+            hovering = false;
+            if (!userScroll) start();
+        };
+
+        list.addEventListener('wheel', pauseForUser, { passive: true });
+        list.addEventListener('touchstart', pauseForUser, { passive: true });
+        list.addEventListener('scroll', pauseForUser);
+        list.addEventListener('mouseenter', onMouseEnter);
+        list.addEventListener('mouseleave', onMouseLeave);
+
+        start();
+
+        return () => {
+            stop();
+            if (resumeTimeout) clearTimeout(resumeTimeout);
+            list.removeEventListener('wheel', pauseForUser);
+            list.removeEventListener('touchstart', pauseForUser);
+            list.removeEventListener('scroll', pauseForUser);
+            list.removeEventListener('mouseenter', onMouseEnter);
+            list.removeEventListener('mouseleave', onMouseLeave);
+        };
+    }, [logType]);
+
+    useEffect(() => {
         async function fetchCommits() {
             try {
                 const recentCommits = await getRecentCommits();
@@ -87,8 +154,8 @@ export default function CaptainsLogSidebar() {
     };
 
     return (
-        <aside className="hud-aside-container">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
+        <aside className="hud-aside-container relative overflow-hidden">
+            <div className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
                 <span>
                     Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
                 </span>
@@ -110,7 +177,7 @@ export default function CaptainsLogSidebar() {
             </div>
             <ul
                 ref={listRef}
-                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
+                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-dark"
             >
                 <AnimatePresence initial={false}>
                     {entries.map((entry, i) => {
@@ -129,6 +196,7 @@ export default function CaptainsLogSidebar() {
                                 className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
                             >
                                 <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                    <span className="w-6 text-right text-neutral-500">#{String(i + 1).padStart(2, '0')}</span>
                                     <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
                                         {logType}
                                     </span>
