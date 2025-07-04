@@ -37,8 +37,12 @@ export default function FloatingAstronaut() {
     const handleClick = () => {
         if (!astroRef.current || isLaunching) return;
         setIsLaunching(true);
+
         astroRef.current.style.transition = "transform 0.6s ease-in-out";
-        astroRef.current.style.transform = "translateY(-30vh) rotate(-30deg) scale(1.2)";
+        const y = -20 - Math.random() * 40; // -20vh to -60vh
+        const r = (Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1);
+        const s = 1.1 + Math.random() * 0.3; // scale between 1.1 and 1.4
+        astroRef.current.style.transform = `translateY(${y}vh) rotate(${r}deg) scale(${s})`;
 
         setTimeout(() => {
             if (!astroRef.current) return;
