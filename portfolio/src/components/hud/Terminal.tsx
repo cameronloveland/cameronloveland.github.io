@@ -112,11 +112,10 @@ const Terminal: React.FC = () => {
         inactivityTimer.current = setTimeout(() => {
             setLog((prev) => [
                 ...prev,
-                "Are you still there?",
-                "For assistance, type 'help'."
+                "Are you still there? Type 'help' to see available commands."
             ]);
             setAwaitingResponse(true);
-        }, 20000);
+        }, 8000);
 
         // HELP command short-circuits progression logic
         if (cleaned === "help") {
@@ -132,8 +131,6 @@ const Terminal: React.FC = () => {
             if (currentCount === 1) {
                 setLog((prev) => [...prev, "Wait... is there still a guy floating outside the ship?"]);
                 setShowYesNo(true);
-            } else if (currentCount === 2) {
-                setLog((prev) => [...prev, "Hmm. That's weird. I thought we fixed that."]);
             } else {
                 const responses = respondToInput(newInput);
                 setLog((prev) => [...prev, ...responses]);
@@ -185,7 +182,7 @@ const Terminal: React.FC = () => {
                     <div className="flex gap-4 mt-2">
                         <button
                             onClick={() => {
-                                setLog((prev) => [...prev, "> yes", "...Why did it take you so long to bring it up?"]);
+                                setLog((prev) => [...prev, "> yes", "Hmm. That's weird. I thought we fixed that."]);
                                 setShowYesNo(false);
                             }}
                             className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
@@ -194,7 +191,7 @@ const Terminal: React.FC = () => {
                         </button>
                         <button
                             onClick={() => {
-                                setLog((prev) => [...prev, "> no", "...Why did it take you so long to bring it up?"]);
+                                setLog((prev) => [...prev, "> no", "My sensors suggest otherwise."]);
                                 setShowYesNo(false);
                             }}
                             className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
