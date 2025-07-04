@@ -14,7 +14,7 @@ export default function FloatingAstronaut() {
     const spawnParticles = () => {
         const container = puffContainerRef.current;
         if (!container) return;
-        const count = Math.floor(Math.random() * 3) + 3; // 3-5 puffs
+        const count = Math.floor(Math.random() * 3) + 3;
 
         for (let i = 0; i < count; i++) {
             const puff = document.createElement("div");
@@ -67,13 +67,14 @@ export default function FloatingAstronaut() {
             const moveY = offsetY * -20;
             const rotateX = offsetY * -10;
             const rotateY = offsetX * -10;
+            const scale = 1.05 + Math.sin(Date.now() / 300) * 0.03;
 
             containerRef.current.style.transform = `
-        translate(${moveX}px, ${moveY}px)
-        rotateX(${rotateX}deg)
-        rotateY(${rotateY}deg)
-        scale(1.05)
-      `;
+                translate(${moveX}px, ${moveY}px)
+                rotateX(${rotateX}deg)
+                rotateY(${rotateY}deg)
+                scale(${scale})
+            `;
         };
 
         if (!isLaunching) {
@@ -87,8 +88,7 @@ export default function FloatingAstronaut() {
         setIsLaunching(true);
         spawnParticles();
 
-        // Alternate between astronaut images
-        const nextVariant = thrustedImage.includes("1") ? 2 : 1;
+        const nextVariant = Math.random() > 0.5 ? 1 : 2;
         setThrustedImage(`/thrusted-astronaut-${nextVariant}.png`);
 
         if (audioRef.current) {
@@ -97,14 +97,15 @@ export default function FloatingAstronaut() {
             audioRef.current.play();
             setTimeout(() => {
                 if (audioRef.current) audioRef.current.pause();
-            }, Math.max(0, (audioRef.current?.duration || 2) * 1000 - 1000)); // stop 1s early // stop after 400ms
+            }, Math.max(0, (audioRef.current?.duration || 2) * 1000 - 1000));
         }
 
         containerRef.current.style.transition = "transform 0.6s ease-in-out";
-        const y = -20 - Math.random() * 40;
-        const r = (Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1);
-        const s = 1.1 + Math.random() * 0.3;
-        containerRef.current.style.transform = `translateY(${y}vh) rotate(${r}deg) scale(${s})`;
+        const x = (Math.random() * 100 - 50) + "vw";
+        const y = (Math.random() * 100 - 50) + "vh";
+        const r = (Math.random() * 540 - 360) + "deg";
+        const s = 1 + Math.random() * 1.5;
+        containerRef.current.style.transform = `translate(${x}, ${y}) rotate(${r}) scale(${s})`;
 
         setTimeout(() => {
             if (!containerRef.current) return;
@@ -127,7 +128,7 @@ export default function FloatingAstronaut() {
                     width={220}
                     height={220}
                     ref={imgRef}
-                    className="relative z-10 transition-transform duration-300"
+                    className="relative z-10 transition-transform duration-800"
                 />
                 <audio ref={audioRef} src="/sfx/steam-puff.mp3" preload="auto" />
             </div>
