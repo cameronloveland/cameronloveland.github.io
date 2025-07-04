@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { TopicIcon } from "./TopicIcon";
+import { useSlowScroll } from "../../hooks/useSlowScroll";
 
 type Repo = {
     id: number;
@@ -15,6 +16,8 @@ type ProjectsProps = {
 
 export default function Projects({ repos }: ProjectsProps) {
     const displayRepos = repos ?? [];
+    const listRef = useRef<HTMLUListElement>(null);
+    useSlowScroll(listRef);
 
     return (
         <aside className="hud-aside-container">
@@ -25,7 +28,7 @@ export default function Projects({ repos }: ProjectsProps) {
                 </span>
             </div>
             {/* Projects list */}
-            <ul className="divide-y divide-neutral-800">
+            <ul ref={listRef} className="divide-y divide-neutral-800 auto-scroll">
                 {displayRepos.slice(0, 6).map((repo) => (
                     <li key={repo.id} className="px-4 py-4 text-sm text-neutral-300">
                         <div className="flex flex-col gap-1">

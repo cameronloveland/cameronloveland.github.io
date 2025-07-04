@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getOpenPRs, getRecentCommits } from '../../lib/github';
+import { useSlowScroll } from '../../hooks/useSlowScroll';
 
 export type LogType = 'commits' | 'pulls';
 
@@ -22,6 +23,7 @@ export default function CaptainsLogSidebar() {
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
+    useSlowScroll(listRef);
 
     useEffect(() => {
         async function fetchCommits() {
@@ -110,7 +112,7 @@ export default function CaptainsLogSidebar() {
             </div>
             <ul
                 ref={listRef}
-                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
+                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-x-hidden auto-scroll"
             >
                 <AnimatePresence initial={false}>
                     {entries.map((entry, i) => {

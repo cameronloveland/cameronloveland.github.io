@@ -27,11 +27,18 @@ module.exports = {
           '0%, 100%': { opacity: '0.3' },
           '50%': { opacity: '0.5' },
         },
+        slowScroll: {
+          '0%': { transform: 'translateY(0)' },
+          '100%': {
+            transform: 'translateY(calc(-1 * var(--scroll-distance)))',
+          },
+        },
       },
       animation: {
         twinkle: 'twinkle 2s ease-in-out infinite',
         nebulaFloat: 'nebulaFloat 60s ease-in-out infinite',
         nebulaPulse: 'nebulaPulse 8s ease-in-out infinite',
+        slowScroll: 'slowScroll var(--scroll-duration) linear forwards',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'sans-serif'],
