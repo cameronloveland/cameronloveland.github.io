@@ -20,7 +20,7 @@
   height: 2px;
   background: radial-gradient(white, rgba(255, 255, 255, 0.5));
   border-radius: 50%;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 10;
   filter: drop-shadow(0 0 6px white) blur(0.5px);
   animation-name: shooting-star;
@@ -57,7 +57,7 @@
 
   100% {
     opacity: 0;
-    pointer-events: none;
+    pointer-events: auto;
   }
 }
 
@@ -229,7 +229,7 @@
   left: 42%;
   width: 220px;
 
-  pointer-events: none;
+  pointer-events: auto;
   animation:
     slideInFromTopFade 1.6s forwards,
     driftRotateZoom 120s ease-in-out 2s infinite;
