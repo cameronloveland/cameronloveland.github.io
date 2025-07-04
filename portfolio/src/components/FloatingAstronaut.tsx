@@ -5,6 +5,7 @@ import Image from "next/image";
 
 export default function FloatingAstronaut() {
     const astroRef = useRef<HTMLImageElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
     const [isLaunching, setIsLaunching] = useState(false);
 
     useEffect(() => {
@@ -34,8 +35,29 @@ export default function FloatingAstronaut() {
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, [isLaunching]);
 
+    const spawnParticles = () => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+
+        const count = Math.floor(Math.random() * 3) + 1;
+        for (let i = 0; i < count; i++) {
+            const puff = document.createElement("div");
+            puff.className = "steam-puff";
+
+            const offset = (Math.random() - 0.5) * 6; // -3px to +3px
+            Object.assign(puff.style, {
+                left: `calc(50% + ${offset}px)`
+            });
+
+            wrapper.appendChild(puff);
+
+            setTimeout(() => puff.remove(), 800);
+        }
+    };
+
     const handleClick = () => {
         if (!astroRef.current || isLaunching) return;
+        spawnParticles();
         setIsLaunching(true);
 
         astroRef.current.style.transition = "transform 0.6s ease-in-out";
@@ -56,7 +78,7 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick}>
+        <div className="astronaut-wrapper" onClick={handleClick} ref={wrapperRef}>
             <Image
                 src="/worried-astronaut.png"
                 alt="Floating Astronaut"
