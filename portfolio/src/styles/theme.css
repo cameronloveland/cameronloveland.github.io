@@ -34,6 +34,18 @@ body {
   scrollbar-width: none;
 }
 
+.scrollbar-dark {
+  scrollbar-color: #555 #222;
+}
+.scrollbar-dark::-webkit-scrollbar {
+  width: 8px;
+  background-color: #222;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
+
 .hud-aside-container {
   @apply w-full max-w-2xl bg-neutral-900/60 backdrop-blur-none text-white rounded-sm border border-neutral-800 shadow-lg overflow-hidden mb-12;
   max-height: 25vh;

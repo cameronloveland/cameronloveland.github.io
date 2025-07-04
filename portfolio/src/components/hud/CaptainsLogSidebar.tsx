@@ -22,6 +22,9 @@ export default function CaptainsLogSidebar() {
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
+    const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const pauseRef = useRef(false);
+    const resumeTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         async function fetchCommits() {
@@ -71,6 +74,63 @@ export default function CaptainsLogSidebar() {
         return () => cancelAnimationFrame(frameId); // Clean up on type change
     }, [logType]);
 
+    useEffect(() => {
+        const el = listRef.current;
+        if (!el) return;
+
+        const start = () => {
+            if (scrollIntervalRef.current) return;
+            scrollIntervalRef.current = setInterval(() => {
+                if (pauseRef.current) return;
+                if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+                    stop();
+                    return;
+                }
+                el.scrollTop += 1;
+            }, 60);
+        };
+
+        const stop = () => {
+            if (scrollIntervalRef.current) {
+                clearInterval(scrollIntervalRef.current);
+                scrollIntervalRef.current = null;
+            }
+        };
+
+        start();
+
+        const handleEnter = () => {
+            pauseRef.current = true;
+        };
+        const handleLeave = () => {
+            pauseRef.current = false;
+        };
+
+        const handleScroll = () => {
+            pauseRef.current = true;
+            if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+            resumeTimeout.current = setTimeout(() => {
+                pauseRef.current = false;
+            }, 1000);
+        };
+
+        el.addEventListener('mouseenter', handleEnter);
+        el.addEventListener('mouseleave', handleLeave);
+        el.addEventListener('wheel', handleScroll, { passive: true });
+        el.addEventListener('touchstart', handleScroll, { passive: true });
+        el.addEventListener('scroll', handleScroll);
+
+        return () => {
+            stop();
+            el.removeEventListener('mouseenter', handleEnter);
+            el.removeEventListener('mouseleave', handleLeave);
+            el.removeEventListener('wheel', handleScroll);
+            el.removeEventListener('touchstart', handleScroll);
+            el.removeEventListener('scroll', handleScroll);
+            if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+        };
+    }, [entries]);
+
     const entries: LogEntry[] = {
         commits,
         pulls,
@@ -88,7 +148,7 @@ export default function CaptainsLogSidebar() {
 
     return (
         <aside className="hud-aside-container">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
+            <div className="relative z-10 flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
                 <span>
                     Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
                 </span>
@@ -110,7 +170,7 @@ export default function CaptainsLogSidebar() {
             </div>
             <ul
                 ref={listRef}
-                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
+                className="relative z-0 divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-dark"
             >
                 <AnimatePresence initial={false}>
                     {entries.map((entry, i) => {
@@ -129,6 +189,9 @@ export default function CaptainsLogSidebar() {
                                 className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
                             >
                                 <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                    <span className="w-8 text-neutral-500 text-right pr-1">
+                                        {`#${String(i + 1).padStart(2, '0')}`}
+                                    </span>
                                     <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
                                         {logType}
                                     </span>
