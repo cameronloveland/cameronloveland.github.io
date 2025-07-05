@@ -240,6 +240,10 @@
   backface-visibility: hidden;
 }
 
+.astronaut-parallax {
+  will-change: transform;
+}
+
 @keyframes puff {
   0% {
     transform: translateX(-50%) translateY(0) scale(1);

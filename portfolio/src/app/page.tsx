@@ -15,12 +15,18 @@ export default async function Home() {
           <EarthBackground />
         </div>
 
-        <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
 
+        <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
           <FloatingAstronaut />
           <CockpitOverlay />
+          <img
+            src="/cockpit-hud.png"
+            alt="HUD Overlay"
+            className="absolute top-29 left-1/2 w-[120%] h-[120%] -translate-x-1/2 -translate-y-[17%] z-0 pointer-events-none"
+          />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
+
 
             <div className='lg:col-span-1 lg:col-start-2'>
               {/* Hero Section */}
