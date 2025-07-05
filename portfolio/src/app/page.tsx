@@ -1,7 +1,7 @@
 import CockpitOverlay from '@/components/background/CockpitOverlay';
 import FloatingAstronaut from '../components/FloatingAstronaut';
 import { EarthBackground } from '../components/background';
-import { CaptainsLogSidebar, Projects } from '../components/hud';
+import { CaptainsLogSidebar, Projects, RadioPlayer } from '../components/hud';
 import Terminal from '../components/hud/Terminal';
 import { getReposWithReadme } from '../lib/github';
 
@@ -26,11 +26,9 @@ export default async function Home() {
           />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
-
-
             <div className='lg:col-span-1 lg:col-start-2'>
               {/* Hero Section */}
-              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed">
+              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-6 fade-out-delayed">
                 <img
                   src="https://github.com/cameronloveland.png"
                   alt="Cameron Loveland"
@@ -46,6 +44,7 @@ export default async function Home() {
                   Welcome aboard — this is my interactive portfolio site.
                 </p> */}
               </section>
+              <RadioPlayer />
             </div>
           </section>
 
