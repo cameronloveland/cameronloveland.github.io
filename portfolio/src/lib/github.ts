@@ -109,3 +109,36 @@ export async function getReposWithReadme() {
 
     return reposWithReadme;
 }
+
+export async function getCommitContributionStats() {
+    const isConventional = /^(feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert)(\(.+\))?:/i;
+    let page = 1;
+    const perPage = 100;
+    let you = 0;
+    let codex = 0;
+
+    while (true) {
+        const res = await fetch(
+            `https://api.github.com/repos/cameronloveland/cameronloveland.github.io/commits?per_page=${perPage}&page=${page}`,
+            {
+                headers: { Accept: 'application/vnd.github.v3+json' },
+                next: { revalidate: 3600 },
+            }
+        );
+        if (!res.ok) throw new Error('Failed to fetch commits');
+        const commits = await res.json();
+        if (!Array.isArray(commits) || commits.length === 0) break;
+        for (const commit of commits) {
+            const msg: string = commit.commit?.message ?? '';
+            if (isConventional.test(msg)) {
+                you += 1;
+            } else {
+                codex += 1;
+            }
+        }
+        if (commits.length < perPage) break;
+        page += 1;
+    }
+
+    return { you, codex };
+}
