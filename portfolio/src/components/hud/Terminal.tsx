@@ -139,9 +139,10 @@ const Terminal: React.FC = () => {
     };
 
     return (
-        <div className="hud-aside-container bg-black text-blue-400 font-mono text-sm flex flex-col h-full">
+        <div className="hud-panel">
+        <div className="hud-aside-container font-mono text-sm flex flex-col h-full text-cyan-300">
             {/* Header */}
-            <div className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400">
+            <div className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
                 <span>Terminal</span>
             </div>
             {/* Body */}
@@ -172,7 +173,7 @@ const Terminal: React.FC = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleInput}
-                        className="bg-transparent outline-none flex-1 text-blue-400 placeholder-blue-500"
+                        className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500"
                         placeholder="Type a command..."
                         autoFocus
                     />
@@ -201,6 +202,7 @@ const Terminal: React.FC = () => {
                     </div>
                 )}
             </div>
+        </div>
         </div>
     );
 };
