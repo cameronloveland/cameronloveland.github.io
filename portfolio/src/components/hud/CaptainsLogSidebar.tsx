@@ -88,71 +88,71 @@ export default function CaptainsLogSidebar() {
 
     return (
         <div className="hud-panel">
-        <aside className="hud-aside-container">
-            <div className="flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden">
-                <span>
-                    Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
-                </span>
-                <div className="flex gap-2">
-                    <button onClick={prev} className="hover:text-white">←</button>
-                    <button onClick={next} className="hover:text-white">→</button>
+            <aside className="hud-aside-container">
+                <div className="flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden">
+                    <span>
+                        Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
+                    </span>
+                    <div className="flex gap-2">
+                        <button onClick={prev} className="hover:text-white hover-sound cursor-pointer">←</button>
+                        <button onClick={next} className="hover:text-white hover-sound cursor-pointer">→</button>
+                    </div>
                 </div>
-            </div>
-            <div className="h-[1px] w-full">
-                <motion.div
-                    className="h-full bg-cyan-400"
-                    animate={{ width: `${progress}%` }}
-                    transition={{ ease: 'linear', duration: 0.1 }} // Smooth and continuous
-                />
-            </div>
-            <ul
-                ref={listRef}
-                className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
-            >
-                <AnimatePresence initial={false}>
-                    {entries.map((entry, i) => {
-                        const levelClass = 'bg-cyan-800 text-cyan-300';
+                <div className="h-[1px] w-full">
+                    <motion.div
+                        className="h-full bg-cyan-400"
+                        animate={{ width: `${progress}%` }}
+                        transition={{ ease: 'linear', duration: 0.1 }} // Smooth and continuous
+                    />
+                </div>
+                <ul
+                    ref={listRef}
+                    className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
+                >
+                    <AnimatePresence initial={false}>
+                        {entries.map((entry, i) => {
+                            const levelClass = 'bg-cyan-800 text-cyan-300';
 
-                        return (
-                            <motion.li
-                                key={entry.message + i + logType}
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -5 }}
-                                transition={{ delay: i * 0.05 }}
-                                className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
-                            >
-                                <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
-                                    <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
-                                        {logType}
-                                    </span>
-                                    <span className="text-neutral-300 break-words whitespace-normal">
-                                        {entry.message}
-                                        <span className="ml-2 text-neutral-500 italic">
-                                            — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                            return (
+                                <motion.li
+                                    key={entry.message + i + logType}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -5 }}
+                                    transition={{ delay: i * 0.05 }}
+                                    className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
+                                >
+                                    <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                        <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
+                                            {logType}
                                         </span>
-                                    </span>
-                                </div>
+                                        <span className="text-neutral-300 break-words whitespace-normal">
+                                            {entry.message}
+                                            <span className="ml-2 text-neutral-500 italic">
+                                                — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                                            </span>
+                                        </span>
+                                    </div>
 
-                                {entry.url && (
-                                    <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                        <a
-                                            href={entry.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
+                                    {entry.url && (
+                                        <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                            <a
+                                                href={entry.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
                                             >
                                                 View →
                                             </a>
-                                    </div>
-                                )}
+                                        </div>
+                                    )}
 
-                            </motion.li>
-                        );
-                    })}
-                </AnimatePresence>
-            </ul>
-        </aside>
+                                </motion.li>
+                            );
+                        })}
+                    </AnimatePresence>
+                </ul>
+            </aside>
         </div>
     );
 }
