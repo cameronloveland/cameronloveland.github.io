@@ -87,8 +87,9 @@ export default function CaptainsLogSidebar() {
     };
 
     return (
+        <div className="hud-panel">
         <aside className="hud-aside-container">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-neutral-800 bg-neutral-950 text-sm font-semibold uppercase text-neutral-400 overflow-hidden">
+            <div className="flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden">
                 <span>
                     Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
                 </span>
@@ -99,11 +100,7 @@ export default function CaptainsLogSidebar() {
             </div>
             <div className="h-[1px] w-full">
                 <motion.div
-                    className={`h-full ${{
-                        commits: 'bg-sky-500',
-                        pulls: 'bg-purple-500',
-                    }[logType] ?? 'bg-blue-500'
-                        }`}
+                    className="h-full bg-cyan-400"
                     animate={{ width: `${progress}%` }}
                     transition={{ ease: 'linear', duration: 0.1 }} // Smooth and continuous
                 />
@@ -114,10 +111,7 @@ export default function CaptainsLogSidebar() {
             >
                 <AnimatePresence initial={false}>
                     {entries.map((entry, i) => {
-                        const levelClass = {
-                            commits: 'bg-sky-900 text-sky-300',
-                            pulls: 'bg-purple-900 text-purple-300',
-                        }[logType] || 'bg-neutral-800 text-neutral-400';
+                        const levelClass = 'bg-cyan-800 text-cyan-300';
 
                         return (
                             <motion.li
@@ -146,15 +140,10 @@ export default function CaptainsLogSidebar() {
                                             href={entry.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`text-xs font-semibold px-3 py-1 rounded-md shadow-md
-                                                ${{
-                                                    commits: 'bg-sky-600 text-white hover:bg-sky-500',
-                                                    pulls: 'bg-purple-600 text-white hover:bg-purple-500',
-                                                }[logType] || 'bg-neutral-600 text-white hover:bg-neutral-500'}
-                                            `}
-                                        >
-                                            View →
-                                        </a>
+                                            className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
+                                            >
+                                                View →
+                                            </a>
                                     </div>
                                 )}
 
@@ -164,5 +153,6 @@ export default function CaptainsLogSidebar() {
                 </AnimatePresence>
             </ul>
         </aside>
+        </div>
     );
 }
