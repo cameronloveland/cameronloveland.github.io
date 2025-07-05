@@ -67,14 +67,13 @@ export default function FloatingAstronaut() {
             const moveY = offsetY * -20;
             const rotateX = offsetY * -10;
             const rotateY = offsetX * -10;
-            const scale = 1.05 + Math.sin(Date.now() / 300) * 0.03;
 
             containerRef.current.style.transform = `
-                translate(${moveX}px, ${moveY}px)
-                rotateX(${rotateX}deg)
-                rotateY(${rotateY}deg)
-                scale(${scale})
-            `;
+            translate(${moveX}px, ${moveY}px)
+            rotateX(${rotateX}deg)
+            rotateY(${rotateY}deg)
+            scale(1.03)
+`;
         };
 
         if (!isLaunching) {
@@ -118,7 +117,7 @@ export default function FloatingAstronaut() {
 
     return (
         <div className="astronaut-wrapper" onClick={handleClick}>
-            <div className="astronaut relative" ref={containerRef}>
+            <div className="astronaut-parallax relative" ref={containerRef}>
                 <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
                     src={isLaunching ? thrustedImage : "/worried-astronaut.png"}
@@ -131,5 +130,6 @@ export default function FloatingAstronaut() {
                 <audio ref={audioRef} src="/sfx/steam-puff.mp3" preload="auto" />
             </div>
         </div>
+
     );
 }
