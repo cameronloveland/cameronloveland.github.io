@@ -11,7 +11,7 @@ export default async function Home() {
   const repos = await getReposWithReadme();
   return (
     <>
-      <div className="relative  min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
+      <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-[-2] ">
           <EarthBackground />
         </div>
@@ -23,7 +23,7 @@ export default async function Home() {
           <img
             src="/cockpit-hud.png"
             alt="HUD Overlay"
-            className="absolute top-29 left-1/2 w-[120%] h-[120%] -translate-x-1/2 -translate-y-[17%] z-0 pointer-events-none"
+            className="fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
           />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
@@ -50,7 +50,8 @@ export default async function Home() {
             </div>
           </section>
 
-          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-0 sm:g bottom-0  mt-auto">
+          <section className="w-full max-w-7xl grid grid-cols-3 gap-2 mt-32 px-4 h-[210px]">
+
             {/* Projects - 1/3 width on desktop */}
             <div className="lg:col-span-1  animate-slide-in-left">
               <section className="perspective-[1200px] ">
@@ -65,7 +66,7 @@ export default async function Home() {
               <section className="perspective-[1200px]">
                 <div>
                   <Terminal />
-                  <RadioPlayer />
+                  {/* <RadioPlayer /> */}
                 </div>
               </section>
             </div>
