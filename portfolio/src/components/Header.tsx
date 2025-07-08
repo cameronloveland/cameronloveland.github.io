@@ -12,7 +12,7 @@ export default function Header() {
                     href="https://github.com/cameronloveland"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className=" flex items-center gap-3 hover:text-cyan-300 transition"
+                    className="link-style flex items-center gap-3"
                     aria-label="GitHub Portfolio"
                 >
                     <img
@@ -23,7 +23,7 @@ export default function Header() {
                     <span className="font-bold text-lg tracking-tight">
                         <span className="text-accent">cameron</span>
                         <span className="text-secondary">.loveland</span>
-                        <span className="text-neutral-400">/ portfolio</span>
+                        <span className="text-neutral-400"> / portfolio</span>
                     </span>
                 </a>
 
@@ -33,7 +33,7 @@ export default function Header() {
                         href="https://github.com/cameronloveland"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
+                        className="button-style"
                         aria-label="GitHub"
                     >
                         <FaGithub className="text-lg" />
@@ -42,7 +42,7 @@ export default function Header() {
                         href="https://linkedin.com/in/your-linkedin"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-neutral-400 hover:text-cyan-300 transition"
+                        className="button-style"
                         aria-label="LinkedIn"
                     >
                         <FaLinkedin className="text-lg" />

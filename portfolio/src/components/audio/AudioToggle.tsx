@@ -27,7 +27,7 @@ export default function AudioToggle() {
       <button
         onClick={() => setEnabled((e) => !e)}
         title="Toggle audio"
-        className={`hover-sound text-neutral-500 hover:text-cyan-300 text-lg ${enabled ? "text-cyan-300" : ""} cursor-pointer`}
+        className={`hover-sound button-style cursor-pointer`}
       >
         {enabled ? <HiSpeakerWave /> : <HiSpeakerXMark />}
       </button>
