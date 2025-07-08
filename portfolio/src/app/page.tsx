@@ -4,7 +4,6 @@ import { EarthBackground } from '../components/background';
 import { CaptainsLogSidebar, Projects } from '../components/hud';
 import Terminal from '../components/hud/Terminal';
 import { getReposWithReadme } from '../lib/github';
-import RadioPlayer from '@/components/RadioPlayer';
 
 
 export default async function Home() {
