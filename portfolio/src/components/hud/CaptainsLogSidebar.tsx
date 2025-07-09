@@ -21,7 +21,9 @@ export default function CaptainsLogSidebar() {
     const [commits, setCommits] = useState<LogEntry[]>([]);
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const [paused, setPaused] = useState(false);
+    const [userInteracting, setUserInteracting] = useState(false);
+    const scrollRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
         async function fetchCommits() {
@@ -43,6 +45,62 @@ export default function CaptainsLogSidebar() {
             scrollRef.current.scrollTop = 0;
         }
     }, [index]);
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        let frameId: number;
+        let lastTime: number | null = null;
+        const speed = 0.15;
+
+        const scrollStep = (timestamp: number) => {
+            if (lastTime === null) lastTime = timestamp;
+            const delta = timestamp - lastTime;
+
+            if (!paused && !userInteracting && el.scrollHeight > el.clientHeight) {
+                el.scrollTop += delta * speed;
+
+                if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) {
+                    el.scrollTop = 0;
+                }
+            }
+
+            lastTime = timestamp;
+            frameId = requestAnimationFrame(scrollStep);
+        };
+
+        frameId = requestAnimationFrame(scrollStep);
+
+        return () => cancelAnimationFrame(frameId);
+    }, [paused, userInteracting, logType]);
+
+    const handleMouseEnter = () => {
+        setPaused(true);
+        setUserInteracting(true);
+    };
+    const handleMouseLeave = () => {
+        setPaused(false);
+        setUserInteracting(false);
+    };
+    const handleScroll = () => {
+        setUserInteracting(true);
+    };
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        el.addEventListener('mouseenter', handleMouseEnter);
+        el.addEventListener('mouseleave', handleMouseLeave);
+        el.addEventListener('scroll', handleScroll);
+
+        return () => {
+            el.removeEventListener('mouseenter', handleMouseEnter);
+            el.removeEventListener('mouseleave', handleMouseLeave);
+            el.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     useEffect(() => {
         let frameId: number;
@@ -105,55 +163,53 @@ export default function CaptainsLogSidebar() {
                         transition={{ ease: 'linear', duration: 0.1 }}
                     />
                 </div>
-                <div
-                    ref={scrollRef}
-                    className="relative h-[280px] overflow-y-auto group scrollbar-thin scrollbar-thumb-cyan-500/30"
-                >
-                    <ul className="space-y-2 [animation:scroll-loop_40s_linear_infinite] group-hover:[animation-play-state:paused]">
-                        <AnimatePresence initial={false}>
-                            {[...entries, ...entries].map((entry, i) => {
-                                const levelClass = 'bg-cyan-800 text-cyan-300';
-                                return (
-                                    <motion.li
-                                        key={entry.message + i + logType}
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -5 }}
-                                        transition={{ delay: i * 0.05 }}
-                                        className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
-                                    >
-                                        <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
-                                            <span className="text-cyan-400/80 font-mono text-xs mr-2">
-                                                #{String(i + 1).padStart(3, '0')}
-                                            </span>
-                                            <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
-                                                {logType}
-                                            </span>
-                                            <span className="text-neutral-300 break-words whitespace-normal">
-                                                {entry.message}
-                                                <span className="ml-2 text-neutral-500 italic">
-                                                    — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                <div className="relative h-[300px] overflow-hidden">
+                    <div className="overflow-y-auto h-full scrollbar-thin scrollbar-thumb-cyan-400/30">
+                        <ul ref={scrollRef} className="space-y-2 pr-2">
+                            <AnimatePresence initial={false}>
+                                {entries.map((entry, i) => {
+                                    const levelClass = 'bg-cyan-800 text-cyan-300';
+                                    return (
+                                        <motion.li
+                                            key={entry.message + i + logType}
+                                            initial={{ opacity: 0, y: 5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -5 }}
+                                            transition={{ delay: i * 0.05 }}
+                                            className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
+                                        >
+                                            <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                                <span className="text-cyan-400/80 font-mono text-xs mr-2">
+                                                    #{String(i + 1).padStart(3, '0')}
                                                 </span>
-                                            </span>
-                                        </div>
-
-                                        {entry.url && (
-                                            <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                                <a
-                                                    href={entry.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
-                                                >
-                                                    View →
-                                                </a>
+                                                <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
+                                                    {logType}
+                                                </span>
+                                                <span className="text-neutral-300 break-words whitespace-normal">
+                                                    {entry.message}
+                                                    <span className="ml-2 text-neutral-500 italic">
+                                                        — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                                                    </span>
+                                                </span>
                                             </div>
-                                        )}
-                                    </motion.li>
-                                );
-                            })}
-                        </AnimatePresence>
-                    </ul>
+                                            {entry.url && (
+                                                <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                    <a
+                                                        href={entry.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
+                                                    >
+                                                        View →
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </motion.li>
+                                    );
+                                })}
+                            </AnimatePresence>
+                        </ul>
+                    </div>
                 </div>
             </aside>
         </div>
