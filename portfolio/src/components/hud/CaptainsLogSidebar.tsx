@@ -21,7 +21,7 @@ export default function CaptainsLogSidebar() {
     const [commits, setCommits] = useState<LogEntry[]>([]);
     const [pulls, setPulls] = useState<LogEntry[]>([]);
     const [progress, setProgress] = useState(0);
-    const listRef = useRef<HTMLUListElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         async function fetchCommits() {
@@ -39,19 +39,20 @@ export default function CaptainsLogSidebar() {
 
     useEffect(() => {
         setLogType(logOrder[index]);
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = 0;
+        }
     }, [index]);
 
     useEffect(() => {
-
         let frameId: number;
         let startTime: number | null = null;
-        const duration = 15000; // 15 seconds
+        const duration = 15000;
         let lastUpdateTime = 0;
-        const throttleMs = 100; // update at most every 100ms
+        const throttleMs = 100;
 
         const animate = (timestamp: number) => {
             if (startTime === null) startTime = timestamp;
-
             const elapsed = timestamp - startTime;
 
             if (timestamp - lastUpdateTime >= throttleMs) {
@@ -68,14 +69,13 @@ export default function CaptainsLogSidebar() {
         };
 
         frameId = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(frameId); // Clean up on type change
+        return () => cancelAnimationFrame(frameId);
     }, [logType]);
 
     const entries: LogEntry[] = {
         commits,
         pulls,
     }[logType];
-
 
     const next = () => {
         setIndex((prev) => (prev + 1) % logOrder.length);
@@ -102,56 +102,59 @@ export default function CaptainsLogSidebar() {
                     <motion.div
                         className="h-full bg-cyan-400"
                         animate={{ width: `${progress}%` }}
-                        transition={{ ease: 'linear', duration: 0.1 }} // Smooth and continuous
+                        transition={{ ease: 'linear', duration: 0.1 }}
                     />
                 </div>
-                <ul
-                    ref={listRef}
-                    className="divide-y divide-neutral-800 flex flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden"
+                <div
+                    ref={scrollRef}
+                    className="relative h-[280px] overflow-y-auto group scrollbar-thin scrollbar-thumb-cyan-500/30"
                 >
-                    <AnimatePresence initial={false}>
-                        {entries.map((entry, i) => {
-                            const levelClass = 'bg-cyan-800 text-cyan-300';
-
-                            return (
-                                <motion.li
-                                    key={entry.message + i + logType}
-                                    initial={{ opacity: 0, y: 5 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -5 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
-                                >
-                                    <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
-                                        <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
-                                            {logType}
-                                        </span>
-                                        <span className="text-neutral-300 break-words whitespace-normal">
-                                            {entry.message}
-                                            <span className="ml-2 text-neutral-500 italic">
-                                                — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                    <ul className="space-y-2 [animation:scroll-loop_40s_linear_infinite] group-hover:[animation-play-state:paused]">
+                        <AnimatePresence initial={false}>
+                            {[...entries, ...entries].map((entry, i) => {
+                                const levelClass = 'bg-cyan-800 text-cyan-300';
+                                return (
+                                    <motion.li
+                                        key={entry.message + i + logType}
+                                        initial={{ opacity: 0, y: 5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -5 }}
+                                        transition={{ delay: i * 0.05 }}
+                                        className="relative group hover:bg-white/5 transition-colors duration-300 rounded-md px-4 py-2 text-sm flex flex-col gap-1"
+                                    >
+                                        <div className="flex items-center gap-2 font-mono text-xs text-neutral-300">
+                                            <span className="text-cyan-400/80 font-mono text-xs mr-2">
+                                                #{String(i + 1).padStart(3, '0')}
                                             </span>
-                                        </span>
-                                    </div>
-
-                                    {entry.url && (
-                                        <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                            <a
-                                                href={entry.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
-                                            >
-                                                View →
-                                            </a>
+                                            <span className={`px-2 py-1 rounded uppercase font-bold ${levelClass}`}>
+                                                {logType}
+                                            </span>
+                                            <span className="text-neutral-300 break-words whitespace-normal">
+                                                {entry.message}
+                                                <span className="ml-2 text-neutral-500 italic">
+                                                    — {entry.author || 'Unknown'} @ {new Date(entry.date).toLocaleDateString()}
+                                                </span>
+                                            </span>
                                         </div>
-                                    )}
 
-                                </motion.li>
-                            );
-                        })}
-                    </AnimatePresence>
-                </ul>
+                                        {entry.url && (
+                                            <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                <a
+                                                    href={entry.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-xs font-semibold px-3 py-1 rounded-md shadow-md bg-cyan-600 text-white hover:bg-cyan-400"
+                                                >
+                                                    View →
+                                                </a>
+                                            </div>
+                                        )}
+                                    </motion.li>
+                                );
+                            })}
+                        </AnimatePresence>
+                    </ul>
+                </div>
             </aside>
         </div>
     );
