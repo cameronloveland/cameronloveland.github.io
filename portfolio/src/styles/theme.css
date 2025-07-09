@@ -60,3 +60,26 @@ body {
 .button-style {
   @apply hover:animate-pulse hover:text-cyan-300 transition;
 }
+
+/* HUD Scrollbar Styling – shorter thumb */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.25);
+  border-radius: 8px;
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
+  max-height: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
