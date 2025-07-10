@@ -1,4 +1,6 @@
-import React from "react";
+'use client';
+
+import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "../Icons";
 
 type Repo = {
@@ -15,6 +17,64 @@ type ProjectsProps = {
 
 export default function Projects({ repos }: ProjectsProps) {
     const displayRepos = repos ?? [];
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [paused, setPaused] = useState(false);
+    const [userInteracting, setUserInteracting] = useState(false);
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        let frameId: number;
+        let lastTime: number | null = null;
+        const speed = 0.15;
+
+        const step = (timestamp: number) => {
+            if (lastTime === null) lastTime = timestamp;
+            const delta = timestamp - lastTime;
+
+            if (!paused && !userInteracting && el.scrollHeight > el.clientHeight) {
+                el.scrollTop += delta * speed;
+
+                if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) {
+                    el.scrollTop = 0;
+                }
+            }
+
+            lastTime = timestamp;
+            frameId = requestAnimationFrame(step);
+        };
+
+        frameId = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(frameId);
+    }, [paused, userInteracting, displayRepos]);
+
+    const handleMouseEnter = () => {
+        setPaused(true);
+        setUserInteracting(true);
+    };
+    const handleMouseLeave = () => {
+        setPaused(false);
+        setUserInteracting(false);
+    };
+    const handleScroll = () => {
+        setUserInteracting(true);
+    };
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        el.addEventListener('mouseenter', handleMouseEnter);
+        el.addEventListener('mouseleave', handleMouseLeave);
+        el.addEventListener('scroll', handleScroll);
+
+        return () => {
+            el.removeEventListener('mouseenter', handleMouseEnter);
+            el.removeEventListener('mouseleave', handleMouseLeave);
+            el.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     return (
         <div className="hud-panel">
@@ -26,6 +86,7 @@ export default function Projects({ repos }: ProjectsProps) {
                     </span>
                 </div>
                 {/* Projects list */}
+                <div ref={scrollRef} className="hud-scroll">
                 <ul className="divide-y divide-neutral-800">
                     {displayRepos.slice(0, 6).map((repo) => (
                         <li key={repo.id} className="px-4 py-4 text-sm text-neutral-300">
@@ -67,6 +128,7 @@ export default function Projects({ repos }: ProjectsProps) {
                         </li>
                     ))}
                 </ul>
+                </div>
             </aside>
         </div>
     );
