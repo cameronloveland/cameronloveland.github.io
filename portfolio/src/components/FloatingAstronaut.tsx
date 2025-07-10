@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useHoverSound } from "../lib/useHoverSound";
 
 export default function FloatingAstronaut() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -9,7 +10,22 @@ export default function FloatingAstronaut() {
     const imgRef = useRef<HTMLImageElement>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [lockedOn, setLockedOn] = useState(false);
+    const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
     const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted-1.png");
+    const { onMouseEnter: playLockSound } = useHoverSound();
+
+    const startLockTimer = () => {
+        hoverTimeout.current = setTimeout(() => {
+            setLockedOn(true);
+            playLockSound();
+        }, 2000);
+    };
+
+    const cancelLock = () => {
+        if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+        setLockedOn(false);
+    };
 
     const spawnParticles = () => {
         const container = puffContainerRef.current;
@@ -82,9 +98,16 @@ export default function FloatingAstronaut() {
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, [isLaunching]);
 
+    useEffect(() => {
+        return () => {
+            if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+        };
+    }, []);
+
     const handleClick = () => {
         if (!containerRef.current || isLaunching) return;
         setIsLaunching(true);
+        cancelLock();
         spawnParticles();
 
         const nextVariant = Math.random() > 0.5 ? 1 : 2;
@@ -116,7 +139,15 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick}>
+        <div
+            className="astronaut-wrapper"
+            onClick={handleClick}
+            onMouseEnter={startLockTimer}
+            onMouseLeave={cancelLock}
+            onFocus={startLockTimer}
+            onBlur={cancelLock}
+            tabIndex={0}
+        >
             <div className="astronaut-parallax relative" ref={containerRef}>
                 <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
@@ -127,6 +158,7 @@ export default function FloatingAstronaut() {
                     ref={imgRef}
                     className="relative z-10 transition-transform duration-800"
                 />
+                {lockedOn && <div className="target-lock"></div>}
                 <audio ref={audioRef} src="/sfx/steam-puff.mp3" preload="auto" />
             </div>
         </div>

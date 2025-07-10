@@ -84,3 +84,43 @@ body {
     0 0 16px rgba(0, 255, 255, 0.4),
     inset 0 0 6px rgba(0, 255, 255, 0.5);
 }
+
+@keyframes target-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes target-pulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  50% { opacity: 0.4; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+}
+
+.target-lock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  border: 2px dashed rgba(34, 255, 255, 0.7);
+  border-radius: 50%;
+  box-shadow:
+    0 0 8px rgba(34, 255, 255, 0.6),
+    0 0 16px rgba(34, 255, 255, 0.4);
+  animation: target-spin 1.5s linear infinite;
+}
+
+.target-lock::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  border: 2px solid rgba(34, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: target-pulse 2s ease-out infinite;
+}
