@@ -78,6 +78,23 @@
   animation: fadeOutDelayed 2s forwards;
 }
 
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 255, 0.7));
+  }
+
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 1));
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+  will-change: opacity, filter;
+}
+
 .fade-in-delayed {
   animation: fadeInDelayed 2s forwards;
 }
