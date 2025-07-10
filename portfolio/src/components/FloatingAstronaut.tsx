@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useHoverSound } from "../lib/useHoverSound";
 import Image from "next/image";
 
 export default function FloatingAstronaut() {
@@ -10,6 +11,30 @@ export default function FloatingAstronaut() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
     const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted-1.png");
+    const [lockedOn, setLockedOn] = useState(false);
+    const lockTimer = useRef<NodeJS.Timeout | null>(null);
+    const { onMouseEnter: playLockSound } = useHoverSound();
+
+    const startLock = () => {
+        lockTimer.current = setTimeout(() => {
+            setLockedOn(true);
+            playLockSound();
+        }, 2000);
+    };
+
+    const cancelLock = () => {
+        if (lockTimer.current) {
+            clearTimeout(lockTimer.current);
+            lockTimer.current = null;
+        }
+        setLockedOn(false);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (lockTimer.current) clearTimeout(lockTimer.current);
+        };
+    }, []);
 
     const spawnParticles = () => {
         const container = puffContainerRef.current;
@@ -116,8 +141,17 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick}>
+        <div
+            className="astronaut-wrapper"
+            onClick={handleClick}
+            tabIndex={0}
+            onMouseEnter={startLock}
+            onMouseLeave={cancelLock}
+            onFocus={startLock}
+            onBlur={cancelLock}
+        >
             <div className="astronaut-parallax relative" ref={containerRef}>
+                {lockedOn && <div className="target-lock" />}
                 <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
                     src={isLaunching ? thrustedImage : "/worried-astronaut.png"}
