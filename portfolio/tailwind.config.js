@@ -32,6 +32,7 @@ module.exports = {
         twinkle: 'twinkle 2s ease-in-out infinite',
         nebulaFloat: 'nebulaFloat 60s ease-in-out infinite',
         nebulaPulse: 'nebulaPulse 8s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s ease-in-out infinite',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'sans-serif'],
