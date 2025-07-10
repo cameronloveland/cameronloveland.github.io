@@ -44,7 +44,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                     />
                 </EffectComposer>
 
-                <ambientLight intensity={0.4} />
+                <ambientLight intensity={1.4} />
                 <directionalLight position={[0.8, 1.1, -0.7]} intensity={1} />
                 <Suspense fallback={null}>
                     <group
