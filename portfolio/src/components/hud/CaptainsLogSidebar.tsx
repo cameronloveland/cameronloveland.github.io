@@ -163,9 +163,10 @@ export default function CaptainsLogSidebar() {
                         transition={{ ease: 'linear', duration: 0.1 }}
                     />
                 </div>
-                <div className="relative h-[300px] overflow-hidden">
-                    <div className="overflow-y-auto h-full scrollbar-thin scrollbar-thumb-cyan-400/30">
+                <div className="relative h-[calc(25vh-3rem)]">
+                    <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-400/30 h-full">
                         <ul ref={scrollRef} className="space-y-2 pr-2">
+
                             <AnimatePresence initial={false}>
                                 {entries.map((entry, i) => {
                                     const levelClass = 'bg-cyan-800 text-cyan-300';

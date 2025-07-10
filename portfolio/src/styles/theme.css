@@ -25,17 +25,11 @@ body {
   color: var(--foreground);
 }
 
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
 
-.scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 
 .hud-aside-container {
-  @apply w-full max-w-2xl overflow-hidden mb-12;
+  @apply w-full max-w-2xl overflow-hidden;
   max-height: 25vh;
   min-height: 25vh;
 }
@@ -61,25 +55,32 @@ body {
   @apply hover:animate-pulse hover:text-cyan-300 transition;
 }
 
-/* HUD Scrollbar Styling – shorter thumb */
+/* HUD Scrollbar Styling – sci-fi cyan glow */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(12, 15, 28, 0.3);
+  /* dim HUD panel base */
   border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 255, 0.25);
+  background: linear-gradient(180deg, rgba(103, 232, 249, 0.4), rgba(0, 188, 212, 0.6));
   border-radius: 8px;
-  border: 2px solid rgba(0, 255, 255, 0.4);
-  box-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
-  max-height: 20px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow:
+    0 0 6px rgba(0, 255, 255, 0.3),
+    0 0 12px rgba(0, 255, 255, 0.2),
+    inset 0 0 4px rgba(0, 255, 255, 0.4);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 255, 0.6);
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+  background: linear-gradient(180deg, rgba(103, 232, 249, 0.6), rgba(0, 188, 212, 0.8));
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.6),
+    0 0 16px rgba(0, 255, 255, 0.4),
+    inset 0 0 6px rgba(0, 255, 255, 0.5);
 }
