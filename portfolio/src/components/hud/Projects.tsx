@@ -17,7 +17,7 @@ type ProjectsProps = {
 
 export default function Projects({ repos }: ProjectsProps) {
     const displayRepos = repos ?? [];
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLUListElement>(null);
     const [paused, setPaused] = useState(false);
     const [userInteracting, setUserInteracting] = useState(false);
 
@@ -86,50 +86,52 @@ export default function Projects({ repos }: ProjectsProps) {
                     </span>
                 </div>
                 {/* Projects list */}
-                <div ref={scrollRef} className="hud-scroll">
-                <ul className="divide-y divide-neutral-800">
-                    {displayRepos.slice(0, 6).map((repo) => (
-                        <li key={repo.id} className="px-4 py-4 text-sm text-neutral-300">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2">
-                                    <a
-                                        href={repo.html_url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="link-style"
+                <div className="relative h-[calc(25vh-3rem)]">
+                    <div className="hud-scroll h-full overflow-y-auto">
+                        <ul ref={scrollRef} className="space-y-2 pr-2">
+                            {displayRepos.slice(0, 6).map((repo) => (
+                                <li key={repo.id} className="px-4 py-4 text-sm text-neutral-300">
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2">
+                                            <a
+                                                href={repo.html_url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="link-style"
 
-                                    >
-                                        {repo.name}
-                                    </a>
-
-                                </div>
-
-                                <p className="text-neutral-400 text-xs mt-1">
-                                    {repo.readmeSummary || (
-                                        <span className="italic text-neutral-600">No description</span>
-                                    )}
-                                </p>
-                                {/* Subtle divider line between description and topics */}
-                                <div className="border-t border-neutral-800 my-2" />
-                                {(repo.topics?.length ?? 0) > 0 && (
-                                    <div className="flex flex-wrap gap-1 ml-2">
-                                        {repo.topics?.map((topic) => (
-                                            <span
-                                                key={topic}
-                                                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
                                             >
-                                                <Icon topic={topic} />
-                                                <span>{topic}</span>
-                                            </span>
-                                        ))}
+                                                {repo.name}
+                                            </a>
+
+                                        </div>
+
+                                        <p className="text-neutral-400 text-xs mt-1">
+                                            {repo.readmeSummary || (
+                                                <span className="italic text-neutral-600">No description</span>
+                                            )}
+                                        </p>
+                                        {/* Subtle divider line between description and topics */}
+                                        <div className="border-t border-neutral-800 my-2" />
+                                        {(repo.topics?.length ?? 0) > 0 && (
+                                            <div className="flex flex-wrap gap-1 ml-2">
+                                                {repo.topics?.map((topic) => (
+                                                    <span
+                                                        key={topic}
+                                                        className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded border border-neutral-700 bg-neutral-800 text-white"
+                                                    >
+                                                        <Icon topic={topic} />
+                                                        <span>{topic}</span>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-            </aside>
-        </div>
+            </aside >
+        </div >
     );
 }

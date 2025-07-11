@@ -164,7 +164,7 @@ export default function CaptainsLogSidebar() {
                     />
                 </div>
                 <div className="relative h-[calc(25vh-3rem)]">
-                    <div className="hud-scroll h-full">
+                    <div className="hud-scroll h-full overflow-y-auto">
                         <ul ref={scrollRef} className="space-y-2 pr-2">
 
                             <AnimatePresence initial={false}>
