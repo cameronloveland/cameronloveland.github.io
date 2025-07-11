@@ -173,10 +173,11 @@ const Terminal: React.FC = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleInput}
-                        className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500"
+                        className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500 caret-transparent"
                         placeholder="Type a command..."
                         autoFocus
                     />
+                    <span className="animate-cursorBlink font-bold text-cyan-300 ml-1">█</span>
                 </div>
                 <div ref={logEndRef} />
                 {showYesNo && (
