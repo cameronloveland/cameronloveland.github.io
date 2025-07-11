@@ -26,12 +26,9 @@ body {
 }
 
 
-
-
 .hud-aside-container {
   @apply w-full max-w-2xl overflow-hidden;
   max-height: 25vh;
-  min-height: 25vh;
 }
 
 .hud-panel {

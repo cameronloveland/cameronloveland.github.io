@@ -16,15 +16,15 @@ export default async function Home() {
           <EarthBackground />
         </div>
 
-
         <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
           <FloatingAstronaut />
-          <CockpitOverlay />
+
           <img
             src="/cockpit-hud.png"
             alt="HUD Overlay"
             className="fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
           />
+          <CockpitOverlay />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
 
@@ -64,10 +64,11 @@ export default async function Home() {
             {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
             <div className="lg:col-span-1 animate-slide-in-up">
               <section className="perspective-[1200px]">
-                <div>
+                <div className="flex flex-col gap-4">
                   <Terminal />
-
+                  <RadioPlayer />
                 </div>
+
               </section>
             </div>
             {/* Captain's Log - 1/3 width */}
@@ -80,8 +81,8 @@ export default async function Home() {
             </div>
 
           </section>
+
         </main>
-        <RadioPlayer />
       </div>
     </>
   );

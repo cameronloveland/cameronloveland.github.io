@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/theme.css";
 import "../styles/fonts.css";
+import "../styles/radioPlayer.css";
 import "../styles/animations.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 

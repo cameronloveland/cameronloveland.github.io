@@ -75,48 +75,49 @@ export default function RadioPlayer() {
         });
     };
 
-
     return (
-        <div className="radio-footer">
-            <div className="flex-1 hidden sm:block" />
-
-            <div className="flex flex-col items-center justify-center text-center flex-1">
-                <div
-                    className="station-title text-cyan-200 digital-glow"
-                    style={{ fontFamily: 'var(--font-digital)' }}
-                >
-                    {isPlaying ? currentStation.name : 'RADIO STANDBY'}
+        <div className="hud-panel">
+            <div className="hud-aside-container font-mono text-sm flex flex-col h-full text-cyan-300">
+                {/* Header */}
+                <div className="sticky top-0 z-10 items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
+                    <span>  {isPlaying ? currentStation.name : 'RADIO STANDBY'}</span>
                 </div>
-                <div className="equalizer mt-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <span key={i} className="bar" />
-                    ))}
+                <div className='flex justify-between height'>
+                    {/* Play / Pause Button */}
+                    <button
+                        onClick={togglePlay}
+                        className="w-[60px] h-[60px] rounded-full bg-cyan-500 text-black font-bold flex items-center justify-center text-xl shadow-md hover:bg-cyan-400 transition"
+                    >
+                        {isPlaying ? '❚❚' : '▶'}
+
+                    </button>
+                    {/* Tuner Buttons */}
+                    <div className="flex gap-2 flex-wrap justify-center height">
+                        {stations.map((station, idx) => {
+                            const isActive = idx === stationIndex;
+                            return (
+                                <button
+                                    key={station.name}
+                                    onClick={() => changeStation(idx)}
+                                    className={`px-2 py-0.5 text-[10px] leading-none rounded-full border transition ${isActive
+                                        ? 'bg-cyan-400 text-black border-cyan-400'
+                                        : 'bg-transparent text-cyan-300 border-cyan-500/30 hover:bg-cyan-700/20'
+                                        }`}
+                                >
+
+                                    {String(idx + 1).padStart(2, '0')}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 
-            <div className="controls flex items-center justify-end gap-2 flex-1 flex-wrap">
-                {stations.map((station, idx) => {
-                    const isActive = idx === stationIndex;
-                    return (
-                        <button
-                            key={station.name}
-                            onClick={() => changeStation(idx)}
-                            className={`px-3 py-1 text-xs rounded-full border transition ${
-                                isActive
-                                    ? 'bg-cyan-400 text-black border-cyan-400'
-                                    : 'bg-transparent text-cyan-300 border-cyan-500/30 hover:bg-cyan-700/20'
-                            }`}
-                        >
-                            {String(idx + 1).padStart(2, '0')}
-                        </button>
-                    );
-                })}
 
-                <button onClick={togglePlay} title="Play/Pause" className="w-10 h-10 rounded-full bg-cyan-500 text-black font-bold flex items-center justify-center text-lg shadow-md hover:bg-cyan-400 transition">
-                    {isPlaying ? '❚❚' : '▶'}
-                </button>
-                <audio ref={audioRef} src={currentStation.url} preload="none" />
-            </div>
+
+
+            <audio ref={audioRef} src={currentStation.url} preload="none" />
         </div>
+
     );
 }
