@@ -1,0 +1,110 @@
+.radio-footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1000px;
+    z-index: 50;
+
+    background: rgba(10, 15, 30, 0.7);
+    border-top: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 1rem 1rem 0 0;
+    box-shadow:
+        0 0 10px rgba(0, 255, 255, 0.2),
+        0 0 20px rgba(0, 255, 255, 0.1) inset;
+    backdrop-filter: blur(10px);
+
+    padding: 0.75rem 1.5rem;
+    color: #ccfaff;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    animation: slideUpHUD 0.6s ease-out;
+}
+
+@keyframes slideUpHUD {
+    from {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.radio-footer .station-title {
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    color: #00ffe0;
+    text-shadow:
+        0 0 4px #00ffe0,
+        0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+.radio-footer .controls button {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    color: #00ffe0;
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+}
+
+.radio-footer .controls button:hover {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.5);
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+.radio-footer .equalizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 1.2rem;
+}
+
+.radio-footer .equalizer .bar {
+    width: 3px;
+    height: 100%;
+    background-color: #00ffe0;
+    animation: barPulse 1.4s ease-in-out infinite;
+    transform-origin: bottom;
+}
+
+.radio-footer .equalizer .bar:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.radio-footer .equalizer .bar:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.radio-footer .equalizer .bar:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.radio-footer .equalizer .bar:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+@keyframes barPulse {
+
+    0%,
+    100% {
+        transform: scaleY(0.4);
+    }
+
+    50% {
+        transform: scaleY(1.2);
+    }
+}

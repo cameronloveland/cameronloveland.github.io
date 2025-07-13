@@ -23,7 +23,7 @@ export default function CockpitOverlay() {
 
             {/* Top center trapezoid window */}
             <div
-                className={`absolute top-0 w-full h-[49.75vh] bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "-translate-y-full" : ""}`}
+                className={`cockpit-panel-glow absolute top-0 w-full h-[49.75vh] bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "-translate-y-full" : ""}`}
                 style={{
                     clipPath: "polygon(20% 0, 80% 0, 62% 100%, 38% 100%)",
                 }}
@@ -31,7 +31,7 @@ export default function CockpitOverlay() {
 
             {/* Bottom center trapezoid window */}
             <div
-                className={`absolute bottom-0 w-full h-[49.75vh] bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "translate-y-full" : ""}`}
+                className={`cockpit-panel-glow absolute bottom-0 w-full h-[49.75vh] bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out  ${!isOpen ? "translate-y-full" : ""}`}
                 style={{
                     clipPath: "polygon(38% 0%, 62% 0%, 80% 100%, 20% 100%)",
                 }}
@@ -39,7 +39,7 @@ export default function CockpitOverlay() {
 
             {/* Left side faceted panel (half-octagon shape) */}
             <div
-                className={`absolute top-0 left-0 w-1/2 h-full bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "-translate-x-full" : ""}`}
+                className={`cockpit-panel-glow absolute top-0 left-0 w-1/2 h-full bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "-translate-x-full" : ""}`}
                 style={{
                     clipPath: `
             polygon(
@@ -58,7 +58,7 @@ export default function CockpitOverlay() {
 
             {/* Right side faceted panel (half-octagon shape, mirrored) */}
             <div
-                className={`absolute top-0 right-0 w-1/2 h-full bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "translate-x-full" : ""}`}
+                className={`cockpit-panel-glow absolute top-0 right-0 w-1/2 h-full bg-white/2 backdrop-blur-xs transition-transform duration-1000 ease-in-out ${!isOpen ? "translate-x-full" : ""}`}
                 style={{
                     clipPath: `
             polygon(

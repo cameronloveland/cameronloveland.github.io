@@ -105,3 +105,53 @@ body {
       inset 0 0 12px rgba(0, 255, 255, 0.8);
   }
 }
+
+
+
+
+/* Sweeping scan line */
+.cockpit-panel-glow::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(to bottom,
+      transparent 40%,
+      rgba(0, 255, 255, 0.1),
+      transparent 50%);
+  animation: sweep 5s linear;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+
+/* Outer circuit intensity pulse */
+@keyframes circuitPulse {
+
+  0%,
+  100% {
+    border-color: rgba(0, 255, 255, 0.2);
+    box-shadow:
+      0 0 8px rgba(0, 255, 255, 0.2),
+      inset 0 0 6px rgba(0, 255, 255, 0.1);
+  }
+
+  50% {
+    border-color: rgba(0, 255, 255, 0.4);
+    box-shadow:
+      0 0 12px rgba(0, 255, 255, 0.4),
+      inset 0 0 8px rgba(0, 255, 255, 0.15);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    top: -100%;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
