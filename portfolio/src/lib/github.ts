@@ -79,7 +79,6 @@ export async function getReposWithReadme() {
         },
         next: { revalidate: 3600 },
     });
-    console.log(res);
     if (!res.ok) { throw new Error('Failed to fetch repos'); }
     const repos = await res.json() as Repo[];
 
