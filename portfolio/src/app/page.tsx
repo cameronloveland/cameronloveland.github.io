@@ -21,7 +21,7 @@ export default async function Home() {
 
           {/* Glass Texture/Effect */}
           <div className="absolute inset-0 pointer-events-none z-0">
-            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/7 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/9 to-transparent" />
             <img
               src="/glass-texture.png"
               alt="glass texture"
