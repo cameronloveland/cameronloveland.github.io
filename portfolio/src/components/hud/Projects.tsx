@@ -79,7 +79,7 @@ export default function Projects({ repos }: ProjectsProps) {
     return (
         <div className="hud-panel">
             <aside className="hud-aside-container">
-                <div className="flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
+                <div className="flex justify-between items-center px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
                     <span>Featured Projects</span>
                     <span className="text-xs font-normal text-neutral-500">
                         {displayRepos.length} total

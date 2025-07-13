@@ -147,7 +147,7 @@ export default function CaptainsLogSidebar() {
     return (
         <div className="hud-panel">
             <aside className="hud-aside-container">
-                <div className="flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden">
+                <div className="flex justify-between items-center px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden">
                     <span>
                         Recent – {logType === "pulls" ? "Pull Requests" : logType.charAt(0).toUpperCase() + logType.slice(1)}
                     </span>

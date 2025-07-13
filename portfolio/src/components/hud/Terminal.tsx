@@ -142,11 +142,9 @@ const Terminal: React.FC = () => {
         <div className="hud-panel">
             <div className="hud-aside-container font-mono text-sm flex flex-col h-full text-cyan-300">
                 {/* Header */}
-                <div className="sticky top-0 z-10 flex .cockpit-panel-glow::before justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
-                    <span>Terminal</span>
-                </div>
+                {/* This component has no header because it's a terminal */}
                 {/* Body */}
-                <div className="p-4 space-y-1 relative overflow-y-auto flex-1 min-h-0 max-h-25 hud-scroll">
+                <div className="p-1 space-y-1 relative overflow-y-auto flex-1 min-h-10 max-h-25 hud-scroll">
                     {log.map((line, idx) => (
                         <div key={idx}>
                             {line.startsWith("Available commands:") ? (

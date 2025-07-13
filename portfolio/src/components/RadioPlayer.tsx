@@ -82,14 +82,14 @@ export default function RadioPlayer() {
         <div className="hud-panel text-cyan-300 font-mono text-sm h-full w-full">
             <div className="hud-aside-container flex flex-col h-full">
                 {/* Header */}
-                <div className="sticky top-0 z-10 px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-sm font-semibold uppercase">
+                <div className="sticky top-0 z-10 px-4 pt-1 pb-2 border-b border-cyan-400/10 text-sm font-semibold uppercase">
                     <span>{isPlaying ? currentStation.name : 'RADIO STANDBY'}</span>
                 </div>
 
                 {/* Two-column content */}
-                <div className="flex flex-row gap-4 px-4 py-3 w-full">
+                <div className="flex flex-row gap-4 px-4 py-2 w-full">
                     {/* Left: Controls */}
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-1">
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handlePrev}
@@ -115,14 +115,14 @@ export default function RadioPlayer() {
                     </div>
 
                     {/* Right: Station List */}
-                    <ul className="flex flex-col gap-1 text-xs overflow-y-auto max-h-[8vh] w-full hud-scroll">
+                    <ul className="flex flex-col gap-0.5 text-xs overflow-y-auto max-h-[6vh] w-full hud-scroll">
                         {stations.map((station, idx) => {
                             const isActive = idx === stationIndex;
                             return (
                                 <li
                                     key={idx}
                                     onClick={() => changeStation(idx)}
-                                    className={`flex items-center gap-2 w-full px-2 py-1 cursor-pointer rounded-md transition 
+                                    className={`flex items-center gap-2 w-full px-2 py-0.5 cursor-pointer rounded-md transition 
                                         ${isActive
                                             ? 'bg-cyan-500/10 text-cyan-100 font-bold'
                                             : 'hover:bg-cyan-500/5 hover:text-cyan-100'

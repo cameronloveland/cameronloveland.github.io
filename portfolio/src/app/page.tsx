@@ -75,7 +75,7 @@ export default async function Home() {
             {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
             <div className="lg:col-span-1 animate-slide-in-up">
               <section className="perspective-[1200px]">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                   <Terminal />
                   <RadioPlayer />
                 </div>
