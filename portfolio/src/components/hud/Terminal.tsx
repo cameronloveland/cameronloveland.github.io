@@ -140,69 +140,69 @@ const Terminal: React.FC = () => {
 
     return (
         <div className="hud-panel">
-        <div className="hud-aside-container font-mono text-sm flex flex-col h-full text-cyan-300">
-            {/* Header */}
-            <div className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
-                <span>Terminal</span>
-            </div>
-            {/* Body */}
-            <div className="p-4 space-y-1 max-h-64 overflow-y-auto relative scrollbar-hidden">
-                {log.map((line, idx) => (
-                    <div key={idx}>
-                        {line.startsWith("Available commands:") ? (
-                            <>
-                                Available commands:{' '}
-                                {line
-                                    .replace("Available commands:", "")
-                                    .split(',')
-                                    .map((cmd, i, arr) => (
-                                        <span key={i} className="text-blue-400">
-                                            {cmd.trim()}{i < arr.length - 1 ? ', ' : ''}
-                                        </span>
-                                    ))}
-                            </>
-                        ) : (
-                            line
-                        )}
-                    </div>
-                ))}
-                <div className="flex items-center">
-                    <span className="mr-2">&gt;</span>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleInput}
-                        className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500"
-                        placeholder="Type a command..."
-                        autoFocus
-                    />
+            <div className="hud-aside-container font-mono text-sm flex flex-col h-full text-cyan-300">
+                {/* Header */}
+                <div className="sticky top-0 z-10 flex .cockpit-panel-glow::before justify-between items-center px-4 py-2 bg-[#0c0f1c]/80 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
+                    <span>Terminal</span>
                 </div>
-                <div ref={logEndRef} />
-                {showYesNo && (
-                    <div className="flex gap-4 mt-2">
-                        <button
-                            onClick={() => {
-                                setLog((prev) => [...prev, "> yes", "Hmm. That's weird. I thought we fixed that."]);
-                                setShowYesNo(false);
-                            }}
-                            className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
-                        >
-                            Yes
-                        </button>
-                        <button
-                            onClick={() => {
-                                setLog((prev) => [...prev, "> no", "My sensors suggest otherwise."]);
-                                setShowYesNo(false);
-                            }}
-                            className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
-                        >
-                            No
-                        </button>
+                {/* Body */}
+                <div className="p-4 space-y-1 relative overflow-y-auto flex-1 min-h-0 max-h-25 hud-scroll">
+                    {log.map((line, idx) => (
+                        <div key={idx}>
+                            {line.startsWith("Available commands:") ? (
+                                <>
+                                    Available commands:{' '}
+                                    {line
+                                        .replace("Available commands:", "")
+                                        .split(',')
+                                        .map((cmd, i, arr) => (
+                                            <span key={i} className="text-blue-400">
+                                                {cmd.trim()}{i < arr.length - 1 ? ', ' : ''}
+                                            </span>
+                                        ))}
+                                </>
+                            ) : (
+                                line
+                            )}
+                        </div>
+                    ))}
+                    <div className="flex items-center">
+                        <span className="mr-2">&gt;</span>
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleInput}
+                            className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500"
+                            placeholder="Type a command..."
+                            autoFocus
+                        />
                     </div>
-                )}
+                    <div ref={logEndRef} />
+                    {showYesNo && (
+                        <div className="flex gap-4 mt-2">
+                            <button
+                                onClick={() => {
+                                    setLog((prev) => [...prev, "> yes", "Hmm. That's weird. I thought we fixed that."]);
+                                    setShowYesNo(false);
+                                }}
+                                className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
+                            >
+                                Yes
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setLog((prev) => [...prev, "> no", "My sensors suggest otherwise."]);
+                                    setShowYesNo(false);
+                                }}
+                                className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-400"
+                            >
+                                No
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
         </div>
     );
 };
