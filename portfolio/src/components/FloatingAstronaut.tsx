@@ -12,6 +12,7 @@ export default function FloatingAstronaut() {
     const [isLaunching, setIsLaunching] = useState(false);
     const [isFlying, setIsFlying] = useState(false);
     const [direction, setDirection] = useState({ x: 0, y: 0 });
+    const directionRef = useRef({ x: 0, y: 0 });
     const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted-1.png");
 
     const positionRef = useRef({ x: 0, y: 0 });
@@ -92,6 +93,7 @@ export default function FloatingAstronaut() {
         const updateDirection = () => {
             const x = (keysRef.current.right ? 1 : 0) - (keysRef.current.left ? 1 : 0);
             const y = (keysRef.current.down ? 1 : 0) - (keysRef.current.up ? 1 : 0);
+            directionRef.current = { x, y };
             setDirection({ x, y });
             setIsFlying(x !== 0 || y !== 0);
         };
@@ -182,8 +184,8 @@ export default function FloatingAstronaut() {
             const dt = time - last;
             last = time;
 
-            positionRef.current.x += direction.x * speed * dt;
-            positionRef.current.y += direction.y * speed * dt;
+            positionRef.current.x += directionRef.current.x * speed * dt;
+            positionRef.current.y += directionRef.current.y * speed * dt;
 
             const maxX = window.innerWidth - rect.width;
             const maxY = window.innerHeight - rect.height;
@@ -196,7 +198,7 @@ export default function FloatingAstronaut() {
 
             if (containerRef.current) {
                 const tilt = 5;
-                containerRef.current.style.transform = `rotateZ(${direction.x * -tilt}deg) rotateX(${direction.y * tilt}deg)`;
+                containerRef.current.style.transform = `rotateZ(${directionRef.current.x * -tilt}deg) rotateX(${directionRef.current.y * tilt}deg)`;
             }
 
             particleTimer += dt;
@@ -218,7 +220,7 @@ export default function FloatingAstronaut() {
                 containerRef.current.style.transform = '';
             }
         };
-    }, [isFlying, isLaunching, direction]);
+    }, [isFlying, isLaunching]);
 
     const handleClick = () => {
         if (!containerRef.current || isLaunching) return;
