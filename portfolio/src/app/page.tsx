@@ -19,11 +19,22 @@ export default async function Home() {
         <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
           <FloatingAstronaut />
 
+          {/* Glass Texture/Effect */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/7 to-transparent" />
+            <img
+              src="/glass-texture.png"
+              alt="glass texture"
+              className="w-full h-full object-cover opacity-10 mix-blend-screen fixed"
+            />
+          </div>
+
           <img
             src="/cockpit-hud.png"
             alt="HUD Overlay"
             className="fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
           />
+
           <CockpitOverlay />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
