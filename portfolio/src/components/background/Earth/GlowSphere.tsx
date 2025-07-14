@@ -8,34 +8,35 @@ export default function GlowSphere() {
         return new THREE.ShaderMaterial({
             uniforms: {
                 glowColor: { value: new THREE.Color("#4fc3f7") },
+                rimPower: { value: 1.5 }, // Lower for wider, more visible glow
             },
             vertexShader: `
-        varying vec3 vNormal;
-        void main() {
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
+                varying float vRim;
+                void main() {
+                    vec3 vNormalView = normalize(normalMatrix * normal);
+                    vRim = 1.0 - abs(vNormalView.z);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
             fragmentShader: `
-        uniform vec3 glowColor;
-        varying vec3 vNormal;
-        void main() {
-          float intensity = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 4.0);
-          gl_FragColor = vec4(glowColor, intensity * 0.4); // softer ring
-        }
-      `,
-
-            blending: THREE.AdditiveBlending,
+                uniform vec3 glowColor;
+                uniform float rimPower;
+                varying float vRim;
+                void main() {
+                    float rim = pow(vRim, rimPower);
+                    gl_FragColor = vec4(glowColor, rim * 1.2); // Increased opacity
+                }
+            `,
             transparent: true,
             depthWrite: false,
-            toneMapped: false,
+            blending: THREE.AdditiveBlending,
+            side: THREE.FrontSide,
         });
     }, []);
 
     return (
         <mesh layers={1}>
-            {/* Slightly larger radius than clouds */}
-            <sphereGeometry args={[1.06, 64, 64]} />
+            <sphereGeometry args={[1.08, 128, 128]} />
             <primitive object={glowMaterial} attach="material" />
         </mesh>
     );
