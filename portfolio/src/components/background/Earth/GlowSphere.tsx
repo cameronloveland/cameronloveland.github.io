@@ -19,6 +19,7 @@ export default function GlowSphere() {
                 }
             `,
             fragmentShader: `
+                // Usage: This fragment shader creates a glowing rim effect around the sphere.
                 uniform vec3 glowColor;
                 uniform float rimPower;
                 varying float vRim;

@@ -3,17 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 
 const stations = [
+    { name: 'Deep Space One', url: 'https://ice1.somafm.com/deepspaceone-128-mp3' },
     { name: 'Radio Paradise', url: 'https://stream.radioparadise.com/aac-320' },
     { name: 'KEXP Seattle', url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3' },
     { name: 'WNYC News', url: 'https://fm939.wnyc.org/wnycfm.aac' },
     { name: 'Groove Salad (SomaFM)', url: 'https://ice3.somafm.com/groovesalad-128-mp3' },
     { name: 'Nightride FM', url: 'https://stream.nightride.fm/nightride.mp3' },
-    { name: 'Deep Space One', url: 'https://ice1.somafm.com/deepspaceone-128-mp3' },
 ];
 
 export default function RadioPlayer() {
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [stationIndex, setStationIndex] = useState(1);
+    const [stationIndex, setStationIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(true);
     const currentStation = stations[stationIndex];
 
@@ -93,7 +93,8 @@ export default function RadioPlayer() {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handlePrev}
-                                className="text-xs text-cyan-300 hover:text-cyan-100 px-1 transition"
+                                className="radio-nav-btn"
+                                aria-label="Previous station"
                             >
                                 ‹
                             </button>
@@ -107,7 +108,8 @@ export default function RadioPlayer() {
 
                             <button
                                 onClick={handleNext}
-                                className="text-xs text-cyan-300 hover:text-cyan-100 px-1 transition"
+                                className="radio-nav-btn"
+                                aria-label="Next station"
                             >
                                 ›
                             </button>
