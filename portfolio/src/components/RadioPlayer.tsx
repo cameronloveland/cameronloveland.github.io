@@ -78,6 +78,14 @@ export default function RadioPlayer() {
     const handleNext = () => changeStation((stationIndex + 1) % stations.length);
     const handlePrev = () => changeStation((stationIndex - 1 + stations.length) % stations.length);
 
+    // Calculate visible stations (window of 3: prev, current, next)
+    const getVisibleStations = () => {
+        const prev = (stationIndex - 1 + stations.length) % stations.length;
+        const next = (stationIndex + 1) % stations.length;
+        return [stations[prev], stations[stationIndex], stations[next]];
+    };
+    const visibleStations = getVisibleStations();
+
     return (
         <div className="hud-panel text-cyan-300 font-mono text-sm h-full w-full">
             <div className="hud-aside-container flex flex-col h-full">
@@ -117,8 +125,10 @@ export default function RadioPlayer() {
                     </div>
 
                     {/* Right: Station List */}
-                    <ul className="flex flex-col gap-0.5 text-xs overflow-y-auto max-h-[6vh] w-full hud-scroll">
-                        {stations.map((station, idx) => {
+                    <ul className="flex flex-col gap-0.5 text-xs w-full">
+                        {visibleStations.map((station, i) => {
+                            // Map window index to real index
+                            let idx = (stationIndex - 1 + i + stations.length) % stations.length;
                             const isActive = idx === stationIndex;
                             return (
                                 <li
