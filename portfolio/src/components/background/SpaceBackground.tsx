@@ -2,7 +2,8 @@
 
 import React, { JSX, useEffect, useRef, useState } from 'react';
 import { SpinningEarth } from './Earth';
-import CometCanvas from './CometCanvas';
+import CometCanvas from './Comets';
+import ShootingStars from './ShootingStars';
 
 interface Star {
   id: number;
@@ -17,7 +18,6 @@ export default function Background() {
   const [stars, setStars] = useState<Star[]>([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const earthRef = useRef<HTMLImageElement>(null);
-  const [shootingStars, setShootingStars] = useState<JSX.Element[]>([]);
 
   // Generate stars on mount
   useEffect(() => {
@@ -42,31 +42,6 @@ export default function Background() {
     setStars(generated);
   }, []);
 
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const left = Math.random() * window.innerWidth;
-      const top = Math.random() * window.innerHeight;
-
-      const duration = 1 + Math.random() * 0.5;
-
-      const star = (
-        <div
-          key={Math.random()}
-          className="shooting-star"
-          style={{
-            left: `${left}px`,
-            top: `${top}px`,
-            animationDuration: `${duration}s`,
-          }}
-        />
-      );
-
-      setShootingStars((prev) => [...prev.slice(-1), star]); // limit to last 4 stars
-    }, 10000 + Math.random() * 10000); // new shooting star every 10-20s
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const handle = (e: CustomEvent) => {
@@ -141,7 +116,7 @@ export default function Background() {
 
         </div>
         <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
-        {shootingStars}
+        <ShootingStars maxActive={10}/>
       </div >
     </div >
   );

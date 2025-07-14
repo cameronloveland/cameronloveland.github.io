@@ -1,3 +1,3 @@
-export { default as EarthBackground } from './Background';
-export { default as CometCanvas } from './CometCanvas';
+export { default as EarthBackground } from './SpaceBackground';
+export { default as CometCanvas } from './Comets';
 export * from './Earth';
