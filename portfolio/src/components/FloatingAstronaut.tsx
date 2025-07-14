@@ -105,21 +105,25 @@ export default function FloatingAstronaut() {
                 case 'W':
                 case 'ArrowUp':
                     keysRef.current.up = true;
+                    e.preventDefault();
                     break;
                 case 's':
                 case 'S':
                 case 'ArrowDown':
                     keysRef.current.down = true;
+                    e.preventDefault();
                     break;
                 case 'a':
                 case 'A':
                 case 'ArrowLeft':
                     keysRef.current.left = true;
+                    e.preventDefault();
                     break;
                 case 'd':
                 case 'D':
                 case 'ArrowRight':
                     keysRef.current.right = true;
+                    e.preventDefault();
                     break;
                 default:
                     return;
@@ -133,21 +137,25 @@ export default function FloatingAstronaut() {
                 case 'W':
                 case 'ArrowUp':
                     keysRef.current.up = false;
+                    e.preventDefault();
                     break;
                 case 's':
                 case 'S':
                 case 'ArrowDown':
                     keysRef.current.down = false;
+                    e.preventDefault();
                     break;
                 case 'a':
                 case 'A':
                 case 'ArrowLeft':
                     keysRef.current.left = false;
+                    e.preventDefault();
                     break;
                 case 'd':
                 case 'D':
                 case 'ArrowRight':
                     keysRef.current.right = false;
+                    e.preventDefault();
                     break;
                 default:
                     return;
@@ -167,12 +175,17 @@ export default function FloatingAstronaut() {
         if (!isFlying || isLaunching || !wrapperRef.current) return;
 
         const wrapper = wrapperRef.current;
+        const parent = wrapper.offsetParent as HTMLElement;
         const rect = wrapper.getBoundingClientRect();
-        positionRef.current = { x: rect.left, y: rect.top };
+        const parentRect = parent.getBoundingClientRect();
+        positionRef.current = {
+            x: rect.left - parentRect.left,
+            y: rect.top - parentRect.top,
+        };
 
         wrapper.style.animationPlayState = 'paused';
-        wrapper.style.top = `${rect.top}px`;
-        wrapper.style.left = `${rect.left}px`;
+        wrapper.style.top = `${positionRef.current.y}px`;
+        wrapper.style.left = `${positionRef.current.x}px`;
 
         let last = performance.now();
         let particleTimer = 0;
@@ -187,8 +200,8 @@ export default function FloatingAstronaut() {
             positionRef.current.x += directionRef.current.x * speed * dt;
             positionRef.current.y += directionRef.current.y * speed * dt;
 
-            const maxX = window.innerWidth - rect.width;
-            const maxY = window.innerHeight - rect.height;
+            const maxX = parent.clientWidth - rect.width;
+            const maxY = parent.clientHeight - rect.height;
 
             positionRef.current.x = Math.min(maxX, Math.max(0, positionRef.current.x));
             positionRef.current.y = Math.min(maxY, Math.max(0, positionRef.current.y));
