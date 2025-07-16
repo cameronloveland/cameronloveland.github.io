@@ -1,9 +1,10 @@
 'use client';
 
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SpinningEarth } from './Earth';
 import CometCanvas from './Comets';
 import ShootingStars from './ShootingStars';
+import { useCosmicControl } from '@/lib/useCosmicControl';
 
 interface Star {
   id: number;
@@ -15,14 +16,15 @@ interface Star {
 }
 
 export default function Background() {
+  const { starLayerCount } = useCosmicControl();
   const [stars, setStars] = useState<Star[]>([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const earthRef = useRef<HTMLImageElement>(null);
 
-  // Generate stars on mount
+  // Generate stars on mount and when layer count changes
   useEffect(() => {
     const generated: Star[] = [];
-    const layers = 3;
+    const layers = starLayerCount;
     const starsPerLayer = 70;
     const colors = ["#ffffff", "#aaddff", "#ffd1a4", "#c9b3ff", "#99e0ff", "#ffeedd"];
 
@@ -40,7 +42,7 @@ export default function Background() {
       }
     }
     setStars(generated);
-  }, []);
+  }, [starLayerCount]);
 
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function Background() {
             transition: 'transform 0.05s linear',
           }}
         >
-          {[1, 2, 3].map((layer) => (
+          {Array.from({ length: starLayerCount }, (_, i) => i + 1).map((layer) => (
             <div
               key={layer}
               className="absolute inset-0"

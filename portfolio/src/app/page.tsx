@@ -2,6 +2,7 @@ import CockpitOverlay from '@/components/background/CockpitOverlay';
 import FloatingAstronaut from '../components/FloatingAstronaut';
 import { EarthBackground } from '../components/background';
 import { CaptainsLogSidebar, Projects } from '../components/hud';
+import ControlPanel from '../components/hud/ControlPanel';
 import Terminal from '../components/hud/Terminal';
 import RadioPlayer from '../components/RadioPlayer';
 import { getReposWithReadme } from '../lib/github';
@@ -36,6 +37,7 @@ export default async function Home() {
           />
 
           <CockpitOverlay />
+          <ControlPanel />
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
 
