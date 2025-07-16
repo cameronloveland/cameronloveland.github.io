@@ -96,24 +96,16 @@ tailwind.config.js      # Extended sci-fi color/animation palette
 
 ### 🌌 UI Highlights
 
-- 🌍 Spinning Earth with atmospheric cloud layer
-- 🌠 Animated nebulae using layered twinkle effects
-- 📜 Captain’s Log: real-time log of commits, PRs, and features
-- 🖱 Mouse-responsive parallax scroll layers
-- 🎬 Entry sequence with swing/fade transitions
-
----
-
-### 🧩 Next Features
-
-- [ ] Cockpit frame overlay
-- [ ] Scanline & glow HUD panels
-- [ ] Ambient scan sweeps, flickers, starspeed
-- [ ] Comets and astronaut float layers
-- [ ] Astronaut jetpack animation and idle float logic
-- [ ] Interactive ship controls (possibly via terminal or key commands)
-- [ ] Earth Day/Night mapping
-- [ ] Other planets, sun?
+- 🌍 Realistic spinning Earth with atmospheric glow and layered cloud rendering
+- 🌠 Multi-layered starfield with animated nebulae and twinkling effects
+- 📜 Captain’s Log with real-time GitHub commits, PRs, and user-triggered events
+- 🖱 Immersive mouse-responsive parallax for cockpit, Earth, and space layers
+- 🎬 Cinematic entry sequence with fading hero content and animated panel transitions
+- 🛸 Floating astronaut with jetpack animation and randomized particle thrusters
+- 🧪 Interactive control panel to adjust stars, comets, and HUD effects in real time
+- 🧠 Terminal-style command input with animated typing and themed easter eggs
+- 🎧 Integrated Radio HUD with station switching, equalizer display, and key shortcuts
+- 🪟 Glowing HUD panels and cockpit overlay styled like a spaceship command interface
 
 ---
 
