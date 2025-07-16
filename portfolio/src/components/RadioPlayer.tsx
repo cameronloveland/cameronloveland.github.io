@@ -128,7 +128,7 @@ export default function RadioPlayer() {
                     <ul className="flex flex-col gap-0.5 text-xs w-full">
                         {visibleStations.map((station, i) => {
                             // Map window index to real index
-                            let idx = (stationIndex - 1 + i + stations.length) % stations.length;
+                            const idx = (stationIndex - 1 + i + stations.length) % stations.length;
                             const isActive = idx === stationIndex;
                             return (
                                 <li

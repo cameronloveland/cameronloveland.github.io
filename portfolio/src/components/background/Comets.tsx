@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useRef } from 'react';
+import { useCosmicControl } from '@/lib/useCosmicControl';
 
 interface Comet {
   x: number;
@@ -12,10 +13,12 @@ interface Comet {
 }
 
 export default function CometCanvas() {
+  const { cometsEnabled } = useCosmicControl();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cometsRef = useRef<Comet[]>([]);
 
   useEffect(() => {
+    if (!cometsEnabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -94,7 +97,9 @@ export default function CometCanvas() {
       clearInterval(interval);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [cometsEnabled]);
+
+  if (!cometsEnabled) return null;
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-[-1]" />;
 }
