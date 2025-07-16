@@ -174,6 +174,7 @@ const Terminal: React.FC = () => {
                             className="bg-transparent outline-none flex-1 text-cyan-300 placeholder-cyan-500"
                             placeholder="Type a command..."
                             autoFocus
+                            aria-label="Terminal command input"                          
                         />
                     </div>
                     <div ref={logEndRef} />

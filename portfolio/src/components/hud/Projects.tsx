@@ -96,7 +96,7 @@ export default function Projects({ repos }: ProjectsProps) {
                                             <a
                                                 href={repo.html_url}
                                                 target="_blank"
-                                                rel="noreferrer"
+                                                rel="noopener noreferrer"
                                                 className="link-style"
 
                                             >

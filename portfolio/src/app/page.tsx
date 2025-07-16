@@ -16,7 +16,7 @@ export default async function Home() {
           <EarthBackground />
         </div>
 
-        <main className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
+        <main id="main-content" className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
           <FloatingAstronaut />
 
           {/* Glass Texture/Effect */}
