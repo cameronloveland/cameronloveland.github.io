@@ -1,13 +1,16 @@
 import React, { useEffect, useState, JSX } from 'react';
+import { useCosmicControl } from '@/lib/useCosmicControl';
 
 /**
  * ShootingStars component
  * @param maxActive - Maximum number of shooting stars visible at once (default: 6)
  */
 export default function ShootingStars({ maxActive = 4 }: { maxActive?: number }) {
+  const { shootingStarsEnabled } = useCosmicControl();
   const [shootingStars, setShootingStars] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
+    if (!shootingStarsEnabled) return;
     let timeoutId: number;
     function spawnStar() {
       const left = Math.random() * window.innerWidth;
@@ -30,7 +33,9 @@ export default function ShootingStars({ maxActive = 4 }: { maxActive?: number })
     }
     spawnStar();
     return () => clearTimeout(timeoutId);
-  }, [maxActive]);
+  }, [maxActive, shootingStarsEnabled]);
+
+  if (!shootingStarsEnabled) return null;
 
   return <>{shootingStars}</>;
 } 
