@@ -38,7 +38,7 @@ export default function Header() {
                     >
                         <FaGithub className="text-lg" />
                     </a>
-                    <a
+                     {/* <a
                         href="https://linkedin.com/in/your-linkedin"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -46,7 +46,7 @@ export default function Header() {
                         aria-label="LinkedIn"
                     >
                         <FaLinkedin className="text-lg" />
-                    </a>
+                    </a> */}
                 </nav>
 
                 {/* Audio toggle */}
