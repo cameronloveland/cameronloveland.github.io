@@ -5,11 +5,18 @@ import Image from "next/image";
 
 export default function FloatingAstronaut() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
     const puffContainerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [isFlying, setIsFlying] = useState(false);
+    const [direction, setDirection] = useState({ x: 0, y: 0 });
+    const directionRef = useRef({ x: 0, y: 0 });
     const [thrustedImage, setThrustedImage] = useState("/astronaut-thrusted-1.png");
+
+    const positionRef = useRef({ x: 0, y: 0 });
+    const keysRef = useRef({ up: false, down: false, left: false, right: false });
 
     const spawnParticles = () => {
         const container = puffContainerRef.current;
@@ -57,7 +64,7 @@ export default function FloatingAstronaut() {
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            if (!containerRef.current || isLaunching) return;
+            if (!containerRef.current || isLaunching || isFlying) return;
 
             const { innerWidth, innerHeight } = window;
             const offsetX = (e.clientX - innerWidth / 2) / innerWidth;
@@ -76,11 +83,157 @@ export default function FloatingAstronaut() {
 `;
         };
 
-        if (!isLaunching) {
+        if (!isLaunching && !isFlying) {
             window.addEventListener("mousemove", handleMouseMove);
         }
         return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, [isLaunching, isFlying]);
+
+    useEffect(() => {
+        const updateDirection = () => {
+            const x = (keysRef.current.right ? 1 : 0) - (keysRef.current.left ? 1 : 0);
+            const y = (keysRef.current.down ? 1 : 0) - (keysRef.current.up ? 1 : 0);
+            directionRef.current = { x, y };
+            setDirection({ x, y });
+            setIsFlying(x !== 0 || y !== 0);
+        };
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (isLaunching) return;
+            switch (e.key) {
+                case 'w':
+                case 'W':
+                case 'ArrowUp':
+                    keysRef.current.up = true;
+                    e.preventDefault();
+                    break;
+                case 's':
+                case 'S':
+                case 'ArrowDown':
+                    keysRef.current.down = true;
+                    e.preventDefault();
+                    break;
+                case 'a':
+                case 'A':
+                case 'ArrowLeft':
+                    keysRef.current.left = true;
+                    e.preventDefault();
+                    break;
+                case 'd':
+                case 'D':
+                case 'ArrowRight':
+                    keysRef.current.right = true;
+                    e.preventDefault();
+                    break;
+                default:
+                    return;
+            }
+            updateDirection();
+        };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'w':
+                case 'W':
+                case 'ArrowUp':
+                    keysRef.current.up = false;
+                    e.preventDefault();
+                    break;
+                case 's':
+                case 'S':
+                case 'ArrowDown':
+                    keysRef.current.down = false;
+                    e.preventDefault();
+                    break;
+                case 'a':
+                case 'A':
+                case 'ArrowLeft':
+                    keysRef.current.left = false;
+                    e.preventDefault();
+                    break;
+                case 'd':
+                case 'D':
+                case 'ArrowRight':
+                    keysRef.current.right = false;
+                    e.preventDefault();
+                    break;
+                default:
+                    return;
+            }
+            updateDirection();
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
     }, [isLaunching]);
+
+    useEffect(() => {
+        if (!isFlying || isLaunching || !wrapperRef.current) return;
+
+        const wrapper = wrapperRef.current;
+        const parent = wrapper.offsetParent as HTMLElement;
+        const rect = wrapper.getBoundingClientRect();
+        const parentRect = parent.getBoundingClientRect();
+        positionRef.current = {
+            x: rect.left - parentRect.left,
+            y: rect.top - parentRect.top,
+        };
+
+        wrapper.style.animationPlayState = 'paused';
+        wrapper.style.top = `${positionRef.current.y}px`;
+        wrapper.style.left = `${positionRef.current.x}px`;
+
+        let last = performance.now();
+        let particleTimer = 0;
+
+        const speed = 0.3; // px per ms
+
+        let animationRef: number;
+        const step = (time: number) => {
+            const dt = time - last;
+            last = time;
+
+            positionRef.current.x += directionRef.current.x * speed * dt;
+            positionRef.current.y += directionRef.current.y * speed * dt;
+
+            const maxX = parent.clientWidth - rect.width;
+            const maxY = parent.clientHeight - rect.height;
+
+            positionRef.current.x = Math.min(maxX, Math.max(0, positionRef.current.x));
+            positionRef.current.y = Math.min(maxY, Math.max(0, positionRef.current.y));
+
+            wrapper.style.top = `${positionRef.current.y}px`;
+            wrapper.style.left = `${positionRef.current.x}px`;
+
+            if (containerRef.current) {
+                const tilt = 5;
+                containerRef.current.style.transform = `rotateZ(${directionRef.current.x * -tilt}deg) rotateX(${directionRef.current.y * tilt}deg)`;
+            }
+
+            particleTimer += dt;
+            if (particleTimer > 100) {
+                spawnParticles();
+                particleTimer = 0;
+            }
+
+            animationRef = requestAnimationFrame(step);
+        };
+
+        animationRef = requestAnimationFrame(step);
+        return () => {
+            cancelAnimationFrame(animationRef);
+            wrapper.style.animationPlayState = 'running';
+            wrapper.style.top = '';
+            wrapper.style.left = '';
+            if (containerRef.current) {
+                containerRef.current.style.transform = '';
+            }
+        };
+    }, [isFlying, isLaunching]);
 
     const handleClick = () => {
         if (!containerRef.current || isLaunching) return;
@@ -116,11 +269,15 @@ export default function FloatingAstronaut() {
     };
 
     return (
-        <div className="astronaut-wrapper" onClick={handleClick}>
+        <div className="astronaut-wrapper" onClick={handleClick} ref={wrapperRef}>
             <div className="astronaut-parallax relative" ref={containerRef}>
                 <div ref={puffContainerRef} className="absolute inset-0 pointer-events-none z-0" />
                 <Image
-                    src={isLaunching ? thrustedImage : "/worried-astronaut.png"}
+                    src={
+                        isLaunching || isFlying
+                            ? thrustedImage
+                            : "/worried-astronaut.png"
+                    }
                     alt="Floating Astronaut"
                     width={220}
                     height={220}
