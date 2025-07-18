@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getOpenPRs, getRecentCommits } from '../../lib/github';
+import { getOpenPRs, getRecentCommits } from '../../api/github';
 
 export type LogType = 'commits' | 'pulls';
 

@@ -11,7 +11,7 @@ interface Comet {
   opacity: number;
 }
 
-export default function CometCanvas() {
+export default function Comets() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cometsRef = useRef<Comet[]>([]);
 

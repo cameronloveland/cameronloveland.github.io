@@ -1,10 +1,11 @@
-import CockpitOverlay from '@/components/background/CockpitOverlay';
-import FloatingAstronaut from '../components/FloatingAstronaut';
+import { CockpitOverlay } from '../components/background/';
+import { FloatingAstronaut } from '../components/background/';
 import { EarthBackground } from '../components/background';
 import { CaptainsLogSidebar, Projects } from '../components/hud';
-import Terminal from '../components/hud/Terminal';
-import RadioPlayer from '../components/RadioPlayer';
-import { getReposWithReadme } from '../lib/github';
+import { Terminal } from '../components/hud';
+import {RadioPlayer } from '../components/hud';
+import { getReposWithReadme } from '../api/github';
+
 
 
 export default async function Home() {
