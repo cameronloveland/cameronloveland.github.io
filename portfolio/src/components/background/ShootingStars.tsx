@@ -6,7 +6,7 @@ import React, { useEffect, useState, JSX } from 'react';
  * ShootingStars component
  * @param maxActive - Maximum number of shooting stars visible at once (default: 4)
  */
-export default function ShootingStars({ maxActive = 4 }: { maxActive?: number }) {
+export default function ShootingStars({ count: maxActive = 4 }: { count?: number }) {
   const [shootingStars, setShootingStars] = useState<JSX.Element[]>([]);
 
   useEffect(() => {

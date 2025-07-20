@@ -92,42 +92,45 @@ export function SpaceBackgroundController({ visible = false }: { visible: boolea
     ];
 
     return (
-        <>{visible ? (
-            <div
-                className={`hud-panel-clear fixed left-1/2 top-0 z-50 max-w-xs w-full -translate-x-1/2 transition-transform duration-500 ${open ? 'translate-y-0' : '-translate-y-full'} shadow-lg`}
-                style={{ borderRadius: '0 0 1rem 1rem' }
-                }
-            >
-                <div className="flex items-center justify-between px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden mb-4">
-                    <span className="tracking-widest font-mono text-cyan-300 text-base">Space Elements</span>
-                    <div className="flex gap-2">
-                        <span className="w-1 h-1 rounded-full bg-cyan-300 animate-pulse shadow-lg" title="Active"></span>
+        <>
+            {visible ? (
+                <div
+                    className={`hud-panel-clear fixed left-1/2 top-0 z-50 max-w-xs w-full -translate-x-1/2 transition-transform duration-500 ${visible ? 'translate-y-0' : '-translate-y-full'} shadow-lg`}
+                    style={{ borderRadius: '0 0 1rem 1rem' }
+                    }
+                >
+                    <div className="flex items-center justify-between px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden mb-4">
+                        <span className="tracking-widest font-mono text-cyan-300 text-base">Space Elements</span>
+                        <div className="flex gap-2">
+                            <span className="w-1 h-1 rounded-full bg-cyan-300 animate-pulse shadow-lg" title="Active"></span>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    {sliders.map(slider => (
-                        <SliderControl
-                            key={slider.id}
-                            label={slider.label}
-                            id={slider.id}
-                            min={slider.min}
-                            max={slider.max}
-                            step={slider.step}
-                            value={slider.value}
-                            onChange={slider.onChange}
+                    <div>
+                        {sliders.map(slider => (
+                            <SliderControl
+                                key={slider.id}
+                                label={slider.label}
+                                id={slider.id}
+                                min={slider.min}
+                                max={slider.max}
+                                step={slider.step}
+                                value={slider.value}
+                                onChange={slider.onChange}
+                            />
+                        ))}
+                    </div>
+                    <div style={{ display: "none" }}>
+                        <SpaceBackground
+                            comets={comets}
+                            starLayers={starLayers}
+                            starsPerLayer={starsPerLayer}
+                            shootingStars={shootingStars}
                         />
-                    ))}
-                </div>
-                <div style={{ display: "none" }}>
-                    <SpaceBackground
-                        comets={comets}
-                        starLayers={starLayers}
-                        starsPerLayer={starsPerLayer}
-                        shootingStars={shootingStars}
-                    />
-                </div>
-            </div >
-        ) : null}
+                    </div>
+                </div >
+            ) : null}
         </>
     );
 }
+
+export default SpaceBackgroundController;

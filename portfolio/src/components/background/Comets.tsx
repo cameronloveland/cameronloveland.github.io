@@ -12,10 +12,10 @@ interface Comet {
 }
 
 interface CometsProps {
-  maxComets?: number;
+  count?: number;
 }
 
-export default function Comets({ maxComets = 1 }: CometsProps) {
+export default function Comets({ count: maxComets = 1 }: CometsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cometsRef = useRef<Comet[]>([]);
 
@@ -98,7 +98,7 @@ export default function Comets({ maxComets = 1 }: CometsProps) {
       clearInterval(interval);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [maxComets]);
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-[-1]" />;
 }

@@ -26,6 +26,7 @@ portfolio/.pnp
 portfolio/.pnp.*
 portfolio/.next/
 portfolio/build
+portfolio/out
 portfolio/coverage
 
 # Yarn v2+

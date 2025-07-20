@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Comets from './Comets';
 import ShootingStars from './ShootingStars';
 import { SpinningEarth } from './Earth';
@@ -47,7 +47,7 @@ export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerL
       }
     }
     setStars(generated);
-  }, []);
+  }, [starLayers, starsPerLayer]);
 
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerL
 
     <div onMouseMove={handleMouseMove}>
       <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
-        <Comets maxComets={10} />
+        <Comets count={comets} />
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
@@ -123,7 +123,7 @@ export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerL
 
         </div>
         <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
-        <ShootingStars maxActive={shootingStars} />
+        <ShootingStars count={shootingStars} />
       </div >
     </div >
   );
