@@ -37,9 +37,6 @@ export default async function Home() {
 
           <CockpitOverlay />
 
-          <div className='lg:col-span-1 lg:col-start-2 flex justify-center '>
-            <SpaceBackgroundController visible={false} />
-          </div>
 
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative">

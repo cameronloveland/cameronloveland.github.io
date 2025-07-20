@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from "react";
-import { SpaceBackground } from "../background";
 
 // Dynamic slider component
 function SliderControl({
@@ -119,14 +118,7 @@ export function SpaceBackgroundController({ visible = false }: { visible: boolea
                             />
                         ))}
                     </div>
-                    <div style={{ display: "none" }}>
-                        <SpaceBackground
-                            comets={comets}
-                            starLayers={starLayers}
-                            starsPerLayer={starsPerLayer}
-                            shootingStars={shootingStars}
-                        />
-                    </div>
+
                 </div >
             ) : null}
         </>
