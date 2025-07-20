@@ -6,10 +6,19 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
     const lastPlayRef = useRef(0);
 
     useEffect(() => {
-        if (!enabled) return;
+        if (!enabled) {
+            // Clean up audio when disabled
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+            return;
+        }
 
+        // Create audio element with proper attributes
         audioRef.current = new Audio('/sfx/ui-click-menu-modern-interface-select-small-01-230473.mp3');
         audioRef.current.volume = 0.1;
+        audioRef.current.preload = 'auto';
 
         const handleHover = () => {
             const now = Date.now();
@@ -18,19 +27,23 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
 
             if (audioRef.current) {
                 audioRef.current.currentTime = 0;
-                audioRef.current.play().catch(() => { });
+                audioRef.current.play().catch((error) => {
+                    console.log('Hover sound failed to play:', error.message);
+                });
             }
         };
 
         const attachHoverListeners = () => {
-            document.querySelectorAll('a, .hover-sound').forEach((a) => {
-                a.removeEventListener('mouseenter', handleHover); // just in case
-                a.addEventListener('mouseenter', handleHover);
+            document.querySelectorAll('a, .hover-sound').forEach((element) => {
+                element.removeEventListener('mouseenter', handleHover); // Clean up existing listeners
+                element.addEventListener('mouseenter', handleHover);
             });
         };
 
+        // Initial attachment
         attachHoverListeners();
 
+        // Watch for DOM changes to attach listeners to new elements
         const observer = new MutationObserver(() => {
             attachHoverListeners();
         });
@@ -39,9 +52,15 @@ export default function HoverSoundGlobal({ enabled }: { enabled: boolean }) {
 
         return () => {
             observer.disconnect();
-            document.querySelectorAll('a, .hover-sound').forEach((a) => {
-                a.removeEventListener('mouseenter', handleHover);
+            // Clean up all event listeners
+            document.querySelectorAll('a, .hover-sound').forEach((element) => {
+                element.removeEventListener('mouseenter', handleHover);
             });
+            // Clean up audio
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
         };
     }, [enabled]);
 
