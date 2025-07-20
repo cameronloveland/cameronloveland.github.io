@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 
 const stations = [
-    { name: 'Deep Space One', url: 'https://ice1.somafm.com/deepspaceone-128-mp3' },
+    // { name: 'Deep Space One', url: 'https://ice1.somafm.com/deepspaceone-128-mp3' },
+    // { name: 'Mission Control Apollo (SomaFM)', url: 'https://ice2.somafm.com/apollo-128-mp3' },
+    //{ name: 'Groove Salad (SomaFM)', url: 'https://ice3.somafm.com/groovesalad-128-mp3' },
     { name: 'Radio Paradise', url: 'https://stream.radioparadise.com/aac-320' },
     { name: 'KEXP Seattle', url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3' },
     { name: 'WNYC News', url: 'https://fm939.wnyc.org/wnycfm.aac' },
-    { name: 'Groove Salad (SomaFM)', url: 'https://ice3.somafm.com/groovesalad-128-mp3' },
     { name: 'Nightride FM', url: 'https://stream.nightride.fm/nightride.mp3' },
 ];
 
