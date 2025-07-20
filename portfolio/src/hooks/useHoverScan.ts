@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
+type PositionEvent = { clientX: number; clientY: number };
+
 interface HoverState {
   eventHandlers: {
     onPointerOver: () => void;
     onPointerOut: () => void;
-    onPointerMove: (e: PointerEvent) => void;
+    onPointerMove: (e: PositionEvent) => void;
   };
   progress: number;
   position: { x: number; y: number };
@@ -41,7 +43,7 @@ export default function useHoverScan(duration = 2000): HoverState {
 
   const onPointerOver = () => setHovering(true);
   const onPointerOut = () => setHovering(false);
-  const onPointerMove = (e: PointerEvent) => {
+  const onPointerMove = (e: PositionEvent) => {
     setPosition({ x: e.clientX + 16, y: e.clientY + 16 });
   };
 
