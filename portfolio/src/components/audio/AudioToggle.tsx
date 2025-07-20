@@ -32,7 +32,6 @@ export default function AudioToggle() {
         {enabled ? <HiSpeakerWave /> : <HiSpeakerXMark />}
       </button>
       <audio ref={ambientRef} src="/sfx/spaceship-ambience.mp3" />
-      <audio ref={voiceRef} src="/sfx/voice-welcome.mp3" />
       <HoverSoundGlobal enabled={enabled} />
     </>
   );
