@@ -15,7 +15,7 @@ export type LogEntry = {
 
 const logOrder: LogType[] = ['commits', 'pulls'];
 
-export default function CaptainsLogSidebar() {
+export default function Logs() {
     const [index, setIndex] = useState(0);
     const [logType, setLogType] = useState<LogType>(logOrder[0]);
     const [commits, setCommits] = useState<LogEntry[]>([]);

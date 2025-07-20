@@ -1,5 +1,5 @@
 import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
-import { CaptainsLogSidebar, Projects, SpaceBackgroundController } from '../components/hud';
+import { Logs, Projects, SpaceBackgroundController } from '../components/hud';
 import { Terminal } from '../components/hud';
 import { RadioPlayer } from '../components/hud';
 import { getReposWithReadme } from '../api/github';
@@ -93,7 +93,7 @@ export default async function Home() {
             <div className="hidden md:block md:col-span-1 animate-slide-in-right">
               <section className="perspective-[1200px]">
                 <div className="md:tilt-right">
-                  <CaptainsLogSidebar />
+                  <Logs />
                 </div>
               </section>
             </div>
