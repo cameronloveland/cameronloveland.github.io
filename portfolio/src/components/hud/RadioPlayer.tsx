@@ -15,7 +15,7 @@ const stations = [
 export default function RadioPlayer() {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [stationIndex, setStationIndex] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(false);
     const currentStation = stations[stationIndex];
 
     useEffect(() => {
@@ -23,13 +23,13 @@ export default function RadioPlayer() {
         if (!audio) return;
         audio.volume = 0.1;
         audio.load();
-        audio
-            .play()
-            .then(() => setIsPlaying(true))
-            .catch((err) => {
-                console.warn('Auto-play blocked or failed:', err);
-                setIsPlaying(false);
-            });
+        // audio
+        //     .play()
+        //     .then(() => setIsPlaying(true))
+        //     .catch((err) => {
+        //         console.warn('Auto-play blocked or failed:', err);
+        //         setIsPlaying(false);
+        //     });
     }, []);
 
     const togglePlay = () => {
