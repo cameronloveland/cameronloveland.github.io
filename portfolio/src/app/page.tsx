@@ -39,7 +39,7 @@ export default async function Home() {
 
 
           {/* Main Content Grid */}
-          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative">
+          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative pointer-events-none z-index-[-1]">
             {/* On small screens, absolutely center the hero section */}
             <div className="hidden lg:block lg:col-span-1" />
             <div className="lg:col-span-1 lg:col-start-2">
@@ -70,7 +70,7 @@ export default async function Home() {
           {/* HUD ROW */}
           <section className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-2 px-2 md:px-4 fixed bottom-0 md:bottom-8 z-20">
             {/* Projects - 1/3 width on desktop */}
-            <div className="md:col-span-1 animate-slide-in-left">
+            <div className="md:col-span-1 animate-slide-in-left pointer-events-auto">
               <section className="perspective-[1200px]">
                 <div className="md:tilt-left">
                   <Projects repos={repos} />
@@ -78,7 +78,7 @@ export default async function Home() {
               </section>
             </div>
             {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-up">
+            <div className="hidden md:block md:col-span-1 animate-slide-in-up pointer-events-auto">
               <section className="perspective-[1200px]">
                 <div className="flex flex-col gap-2">
                   <Terminal />
@@ -87,7 +87,7 @@ export default async function Home() {
               </section>
             </div>
             {/* Captain's Log - 1/3 width */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-right">
+            <div className="hidden md:block md:col-span-1 animate-slide-in-right pointer-events-auto">
               <section className="perspective-[1200px]">
                 <div className="md:tilt-right">
                   <Logs />
