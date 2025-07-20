@@ -77,7 +77,7 @@ export default function Projects({ repos }: ProjectsProps) {
     }, []);
 
     return (
-        <div className="hud-panel">
+        <div className="hud-panel mb-[10vh] sm:mb-0">
             <aside className="hud-aside-container">
                 <div className="flex justify-between items-center px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase">
                     <span>Featured Projects</span>
