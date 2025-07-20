@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, ThreeEvent } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import GlowSphere from "./GlowSphere";
+import ScanSweep from "./ScanSweep";
 
-export default function EarthWithLayers() {
+interface Props {
+  onPointerOver?: (e: ThreeEvent<PointerEvent>) => void;
+  onPointerOut?: (e: ThreeEvent<PointerEvent>) => void;
+  onPointerMove?: (e: ThreeEvent<PointerEvent>) => void;
+  scanning?: boolean;
+}
+export default function EarthWithLayers({ onPointerOver, onPointerOut, onPointerMove, scanning }: Props) {
     const earthRef = useRef<THREE.Mesh>(null);
     const cloudsRef = useRef<THREE.Mesh>(null);
 
@@ -23,9 +30,10 @@ export default function EarthWithLayers() {
     });
 
     return (
-        <group rotation={[0.41, 0, 0]}>
+        <group rotation={[0.41, 0, 0]} onPointerOver={onPointerOver} onPointerOut={onPointerOut} onPointerMove={onPointerMove}>
             {/* Glow effect around the Earth */}
             <GlowSphere />
+            <ScanSweep active={!!scanning} />
 
             {/* Cloud layer */}
             <mesh ref={cloudsRef}>
