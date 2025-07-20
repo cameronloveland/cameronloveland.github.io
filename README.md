@@ -109,4 +109,14 @@ tailwind.config.js      # Extended sci-fi color/animation palette
 
 ---
 
+### Audio Stream Attribution
+
+This site uses embedded live streams from:
+
+- [SomaFM](https://somafm.com) — used with attribution for non-commercial personal use.
+- [Radio Paradise](https://radioparadise.com) — embedding permitted for non-commercial use.
+- [KEXP](https://kexp.org), [WNYC](https://www.wnyc.org/), [Nightride FM](https://nightride.fm) — used under the assumption of publicly available streaming rights; no rebroadcasting.
+
+---
+
 Welcome aboard, and thanks for visiting! 👨‍🚀
