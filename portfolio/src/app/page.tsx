@@ -5,7 +5,6 @@ import { RadioPlayer } from '../components/hud';
 import { getReposWithReadme } from '../api/github';
 
 
-
 export default async function Home() {
   const repos = await getReposWithReadme();
   return (
@@ -37,11 +36,11 @@ export default async function Home() {
           />
 
           <CockpitOverlay />
-          <section className="perspective-[-1200px] top-36 left-24 fixed w-full max-w-7xl">
-            <div className="tilt-left">
-              <SpaceBackgroundController />
-            </div>
-          </section>
+
+          <div className='lg:col-span-1 lg:col-start-2 flex justify-center '>
+            <SpaceBackgroundController visible={false} />
+          </div>
+
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
             <div className='lg:col-span-1 lg:col-start-2'>
@@ -79,6 +78,7 @@ export default async function Home() {
             <div className="lg:col-span-1 animate-slide-in-up">
               <section className="perspective-[1200px]">
                 <div className="flex flex-col gap-2">
+
                   <Terminal />
                   <RadioPlayer />
                 </div>

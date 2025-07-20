@@ -47,7 +47,7 @@ function SliderControl({
     );
 }
 
-export default function SpaceBackgroundController() {
+export function SpaceBackgroundController({ visible = false }: { visible: boolean }) {
     // Default values match SpaceBackground defaults
     const [comets, setComets] = useState(10);
     const [starLayers, setStarLayers] = useState(3);
@@ -92,104 +92,42 @@ export default function SpaceBackgroundController() {
     ];
 
     return (
-        <div
-            className="absolute top-8 z-50 w-full max-w-xs mx-auto scale-85"
-            style={{
-                background: "transparent",
-                borderRadius: 0,
-                boxShadow: "none",
-                backdropFilter: "none",
-                WebkitBackdropFilter: "none",
-                padding: 0,
-            }}
-        >
-            {/* Styled header like radioplayer */}
-            <div className="flex items-center justify-between px-2 pt-0 pb-1 border-b border-cyan-400/10 text-cyan-300 text-xs font-semibold uppercase overflow-hidden mb-2">
-                <span className="tracking-widest font-mono text-cyan-300 text-sm">Space Elements</span>
-                <div className="flex gap-2">
-                    <span className="w-1 h-1 rounded-full bg-cyan-300 animate-pulse shadow-lg" title="Active"></span>
+        <>{visible ? (
+            <div
+                className={`hud-panel-clear fixed left-1/2 top-0 z-50 max-w-xs w-full -translate-x-1/2 transition-transform duration-500 ${open ? 'translate-y-0' : '-translate-y-full'} shadow-lg`}
+                style={{ borderRadius: '0 0 1rem 1rem' }
+                }
+            >
+                <div className="flex items-center justify-between px-4 pt-1 pb-2 border-b border-cyan-400/10 text-cyan-300 text-sm font-semibold uppercase overflow-hidden mb-4">
+                    <span className="tracking-widest font-mono text-cyan-300 text-base">Space Elements</span>
+                    <div className="flex gap-2">
+                        <span className="w-1 h-1 rounded-full bg-cyan-300 animate-pulse shadow-lg" title="Active"></span>
+                    </div>
                 </div>
-            </div>
-            <div>
-                {sliders.map(slider => (
-                    <SliderControl
-                        key={slider.id}
-                        label={slider.label}
-                        id={slider.id}
-                        min={slider.min}
-                        max={slider.max}
-                        step={slider.step}
-                        value={slider.value}
-                        onChange={slider.onChange}
-                        className="py-1"
+                <div>
+                    {sliders.map(slider => (
+                        <SliderControl
+                            key={slider.id}
+                            label={slider.label}
+                            id={slider.id}
+                            min={slider.min}
+                            max={slider.max}
+                            step={slider.step}
+                            value={slider.value}
+                            onChange={slider.onChange}
+                        />
+                    ))}
+                </div>
+                <div style={{ display: "none" }}>
+                    <SpaceBackground
+                        comets={comets}
+                        starLayers={starLayers}
+                        starsPerLayer={starsPerLayer}
+                        shootingStars={shootingStars}
                     />
-                ))}
-            </div>
-            {/* Render the background with current settings, but hidden (for effect) */}
-            <div style={{ display: "none" }}>
-                <SpaceBackground
-                    comets={comets}
-                    starLayers={starLayers}
-                    starsPerLayer={starsPerLayer}
-                    shootingStars={shootingStars}
-                />
-            </div>
-            <style jsx global>{`
-                /* Custom slider styles for this controller */
-                #comets,
-                #starLayers,
-                #starsPerLayer,
-                #shootingStars {
-                    height: 2px !important;
-                    min-height: 2px !important;
-                    background: #164e63 !important;
-                    border-radius: 0 !important;
-                }
-                #comets::-webkit-slider-thumb,
-                #starLayers::-webkit-slider-thumb,
-                #starsPerLayer::-webkit-slider-thumb,
-                #shootingStars::-webkit-slider-thumb {
-                    width: 10px !important;
-                    height: 10px !important;
-                    border-radius: 50%;
-                    background: #22d3ee;
-                    border: none;
-                    box-shadow: 0 0 2px #22d3ee80;
-                    cursor: pointer;
-                    appearance: none;
-                }
-                #comets::-moz-range-thumb,
-                #starLayers::-moz-range-thumb,
-                #starsPerLayer::-moz-range-thumb,
-                #shootingStars::-moz-range-thumb {
-                    width: 10px !important;
-                    height: 10px !important;
-                    border-radius: 50%;
-                    background: #22d3ee;
-                    border: none;
-                    box-shadow: 0 0 2px #22d3ee80;
-                    cursor: pointer;
-                }
-                #comets::-ms-thumb,
-                #starLayers::-ms-thumb,
-                #starsPerLayer::-ms-thumb,
-                #shootingStars::-ms-thumb {
-                    width: 10px !important;
-                    height: 10px !important;
-                    border-radius: 50%;
-                    background: #22d3ee;
-                    border: none;
-                    box-shadow: 0 0 2px #22d3ee80;
-                    cursor: pointer;
-                }
-                /* Remove default focus outline for slider thumbs */
-                #comets:focus,
-                #starLayers:focus,
-                #starsPerLayer:focus,
-                #shootingStars:focus {
-                    outline: none;
-                }
-            `}</style>
-        </div>
+                </div>
+            </div >
+        ) : null}
+        </>
     );
 }
