@@ -11,7 +11,11 @@ interface Comet {
   opacity: number;
 }
 
-export default function Comets() {
+interface CometsProps {
+  maxComets?: number;
+}
+
+export default function Comets({ maxComets = 1 }: CometsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cometsRef = useRef<Comet[]>([]);
 

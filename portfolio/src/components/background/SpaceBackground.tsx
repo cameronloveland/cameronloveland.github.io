@@ -14,7 +14,15 @@ interface Star {
   color: string;
 }
 
-export default function Background() {
+interface SpaceBackgroundProps {
+  comets?: number;
+  starLayers?: number;
+  starsPerLayer?: number;
+  shootingStars?: number;
+}
+
+export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerLayer = 100,
+  shootingStars = 10 }: SpaceBackgroundProps) {
   const [stars, setStars] = useState<Star[]>([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const earthRef = useRef<HTMLImageElement>(null);
@@ -22,11 +30,10 @@ export default function Background() {
   // Generate stars on mount
   useEffect(() => {
     const generated: Star[] = [];
-    const layers = 3;
-    const starsPerLayer = 70;
+
     const colors = ["#ffffff", "#aaddff", "#ffd1a4", "#c9b3ff", "#99e0ff", "#ffeedd"];
 
-    for (let layer = 1; layer <= layers; layer++) {
+    for (let layer = 1; layer <= starLayers; layer++) {
       for (let i = 0; i < starsPerLayer; i++) {
         const color = colors[Math.floor(Math.random() * colors.length)];
         generated.push({
@@ -72,7 +79,7 @@ export default function Background() {
 
     <div onMouseMove={handleMouseMove}>
       <div className="fixed inset-0 overflow-hidden z-0 animate-fade-slide-up">
-        <Comets />
+        <Comets maxComets={10} />
         <div
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
@@ -81,7 +88,7 @@ export default function Background() {
             transition: 'transform 0.05s linear',
           }}
         >
-          {[1, 2, 3].map((layer) => (
+          {[...Array(starLayers)].map((_, layer) => (
             <div
               key={layer}
               className="absolute inset-0"
@@ -116,7 +123,7 @@ export default function Background() {
 
         </div>
         <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
-        <ShootingStars maxActive={10}/>
+        <ShootingStars maxActive={shootingStars} />
       </div >
     </div >
   );

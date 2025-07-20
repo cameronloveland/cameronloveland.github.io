@@ -1,9 +1,7 @@
-import { CockpitOverlay } from '../components/background/';
-import { FloatingAstronaut } from '../components/background/';
-import { EarthBackground } from '../components/background';
-import { CaptainsLogSidebar, Projects } from '../components/hud';
+import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
+import { CaptainsLogSidebar, Projects, SpaceBackgroundController } from '../components/hud';
 import { Terminal } from '../components/hud';
-import {RadioPlayer } from '../components/hud';
+import { RadioPlayer } from '../components/hud';
 import { getReposWithReadme } from '../api/github';
 
 
@@ -13,11 +11,13 @@ export default async function Home() {
   return (
     <>
       <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
-        <div className="absolute inset-0 z-[-2] ">
-          <EarthBackground />
+        <div className="absolute">
+          <SpaceBackground comets={10} starLayers={3} starsPerLayer={100} shootingStars={10} />
         </div>
-
-        <main id="main-content" className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative">
+        <main
+          id="main-content"
+          className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative pb-[220px]"
+        >
           <FloatingAstronaut />
 
           {/* Glass Texture/Effect */}
@@ -37,10 +37,13 @@ export default async function Home() {
           />
 
           <CockpitOverlay />
+          <section className="perspective-[-1200px] top-36 left-24 fixed w-full max-w-7xl">
+            <div className="tilt-left">
+              <SpaceBackgroundController />
+            </div>
+          </section>
           {/* Main Content Grid */}
           <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
-
-
             <div className='lg:col-span-1 lg:col-start-2'>
               {/* Hero Section */}
               <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed">
@@ -62,14 +65,13 @@ export default async function Home() {
             </div>
           </section>
 
-          <section className="w-full max-w-7xl grid grid-cols-3 gap-2 mt-32 px-4 h-[210px]">
 
+          <section className="w-full max-w-7xl grid grid-cols-3 gap-2 px-4 fixed bottom-8">
             {/* Projects - 1/3 width on desktop */}
             <div className="lg:col-span-1  animate-slide-in-left">
-              <section className="perspective-[1200px] ">
+              <section className="perspective-[1200px]">
                 <div className="tilt-left">
                   <Projects repos={repos} />
-
                 </div>
               </section>
             </div>
