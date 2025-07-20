@@ -109,12 +109,26 @@ tailwind.config.js      # Extended sci-fi color/animation palette
 
 ---
 
-### Audio Stream Attribution
+## 📡 Credits & Attribution
 
-This site uses embedded live streams from:
+### 🌍 Earth Textures
 
-- [Radio Paradise](https://radioparadise.com) — embedding permitted for non-commercial use.
-- [KEXP](https://kexp.org), [WNYC](https://www.wnyc.org/), [Nightride FM](https://nightride.fm) — used under the assumption of publicly available streaming rights; no rebroadcasting.
+This project uses high-resolution Earth textures (day, night, and cloud overlays) provided by the excellent open-source repository:
+
+- [`matteason/live-cloud-maps`](https://github.com/matteason/live-cloud-maps)  
+  > Includes near-real-time cloud updates, Blue Marble base imagery, and NASA night light overlays.
+
+Textures are sourced from NASA’s Blue Marble dataset and EUMETSAT cloud observations.  
+Used under the repository’s permissive license.
+
+---
+
+### 🎧 Audio Streams
+
+This site streams audio from publicly available radio stations:
+
+- [Radio Paradise](https://radioparadise.com) — non-commercial embedding permitted.
+- [KEXP Seattle](https://kexp.org), [WNYC News](https://www.wnyc.org/), [Nightride FM](https://nightride.fm) — publicly accessible streams assumed under fair-use display with no rebroadcasting or redistribution.
 
 ---
 
