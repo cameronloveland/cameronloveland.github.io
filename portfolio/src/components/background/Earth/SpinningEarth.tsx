@@ -4,6 +4,9 @@ import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, OrbitControls } from "@react-three/drei";
 import EarthWithLayers from "./EarthWithLayers";
+import useHoverScan from "../../../hooks/useHoverScan";
+import ScanOverlay from "../../hud/ScanOverlay";
+import RingOverlay from "../../hud/RingOverlay";
 
 
 type Offset = {
@@ -16,6 +19,7 @@ interface SpinningEarthProps {
 }
 
 export default function SpinningEarth({ offset }: SpinningEarthProps) {
+    const scan = useHoverScan();
     return (
         <div
             className="fixed inset-0 pointer-events-none z-0"
@@ -26,7 +30,7 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                 top: "-25vh",         // Center vertically
             }}
         >
-            <Canvas camera={{ position: [0, -0.2, 2.2], fov: 45 }}
+            <Canvas className="pointer-events-auto" camera={{ position: [0, -0.2, 2.2], fov: 45 }}
 
                 onCreated={({ camera }) => {
                     camera.layers.enable(0); // default
@@ -45,13 +49,18 @@ export default function SpinningEarth({ offset }: SpinningEarthProps) {
                             0,
                         ]}
                     >
-                        <EarthWithLayers />
+                        <EarthWithLayers
+                            {...scan.eventHandlers}
+                            scanning={scan.isHovering && !scan.completed}
+                        />
                     </group>
 
                     <Stars radius={100} depth={500} count={1000} factor={6} />
                 </Suspense>
                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.03} />
             </Canvas>
+            <ScanOverlay progress={scan.progress} position={scan.position} visible={scan.isHovering && !scan.completed} />
+            <RingOverlay visible={scan.completed} />
         </div>
     );
 }
