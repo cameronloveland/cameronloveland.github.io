@@ -1,6 +1,6 @@
 'use client';
 
-import { FaGithub, FaLinkedin } from 'react-icons/fa6';
+import { FaGithub } from 'react-icons/fa6';
 import { AudioToggle } from './audio';
 
 export default function Header() {

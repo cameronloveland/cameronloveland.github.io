@@ -38,7 +38,7 @@ export default function Comets({ maxComets = 1 }: CometsProps) {
     window.addEventListener('resize', resize);
 
     const spawnComet = () => {
-      if (cometsRef.current.length === 0) {
+      if (cometsRef.current.length < maxComets) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.6 + Math.random() * 0.3;
         cometsRef.current.push({

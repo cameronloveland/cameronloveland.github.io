@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Icon } from "../Icons";
 
 type Repo = {
@@ -16,7 +16,7 @@ type ProjectsProps = {
 };
 
 export default function Projects({ repos }: ProjectsProps) {
-    const displayRepos = repos ?? [];
+    const displayRepos = useMemo(() => repos ?? [], [repos]);
     const scrollRef = useRef<HTMLUListElement>(null);
     const [paused, setPaused] = useState(false);
     const [userInteracting, setUserInteracting] = useState(false);
