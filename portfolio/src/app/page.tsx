@@ -32,7 +32,7 @@ export default async function Home() {
           <img
             src="/cockpit-hud.png"
             alt="HUD Overlay"
-            className="fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
+            className="hidden md:block fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
           />
 
           <CockpitOverlay />
@@ -42,10 +42,15 @@ export default async function Home() {
           </div>
 
           {/* Main Content Grid */}
-          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center">
-            <div className='lg:col-span-1 lg:col-start-2'>
+          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative">
+            {/* On small screens, absolutely center the hero section */}
+            <div className="hidden lg:block lg:col-span-1" />
+            <div className="lg:col-span-1 lg:col-start-2">
               {/* Hero Section */}
-              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed">
+              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed
+                absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                lg:static lg:translate-x-0 lg:translate-y-0
+                ">
                 <img
                   src="https://github.com/cameronloveland.png"
                   alt="Cameron Loveland"
@@ -62,38 +67,36 @@ export default async function Home() {
                 </p> */}
               </section>
             </div>
+            <div className="hidden lg:block lg:col-span-1" />
           </section>
 
-
-          <section className="w-full max-w-7xl grid grid-cols-3 gap-2 px-4 fixed bottom-8">
+          {/* HUD ROW */}
+          <section className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-2 px-2 md:px-4 fixed bottom-0 md:bottom-8 z-20">
             {/* Projects - 1/3 width on desktop */}
-            <div className="lg:col-span-1  animate-slide-in-left">
+            <div className="md:col-span-1 animate-slide-in-left">
               <section className="perspective-[1200px]">
-                <div className="tilt-left">
+                <div className="md:tilt-left">
                   <Projects repos={repos} />
                 </div>
               </section>
             </div>
             {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
-            <div className="lg:col-span-1 animate-slide-in-up">
+            <div className="hidden md:block md:col-span-1 animate-slide-in-up">
               <section className="perspective-[1200px]">
                 <div className="flex flex-col gap-2">
-
                   <Terminal />
                   <RadioPlayer />
                 </div>
-
               </section>
             </div>
             {/* Captain's Log - 1/3 width */}
-            <div className="lg:col-span-1 animate-slide-in-right">
+            <div className="hidden md:block md:col-span-1 animate-slide-in-right">
               <section className="perspective-[1200px]">
-                <div className="tilt-right">
+                <div className="md:tilt-right">
                   <CaptainsLogSidebar />
                 </div>
               </section>
             </div>
-
           </section>
 
         </main>

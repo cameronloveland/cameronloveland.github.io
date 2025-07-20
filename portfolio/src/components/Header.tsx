@@ -7,7 +7,8 @@ export default function Header() {
     return (
         <header className=" z-50 fixed top-0 left-0 w-full bg-neutral-950/80 backdrop-blur border-neutral-900 fade-in-delayed transition-colors duration-300 opacity-0">
 
-            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 " >
+            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 relative" >
+                {/* Left: Logo */}
                 <a
                     href="https://github.com/cameronloveland"
                     target="_blank"
@@ -27,8 +28,8 @@ export default function Header() {
                     </span>
                 </a>
 
-                {/* Social icons centered */}
-                <nav className="absolute left-1/2 transform -translate-x-1/2 flex gap-6">
+                {/* Center: Social icons */}
+                <div className="hidden sm:flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                     <a
                         href="https://github.com/cameronloveland"
                         target="_blank"
@@ -38,18 +39,18 @@ export default function Header() {
                     >
                         <FaGithub className="text-lg" />
                     </a>
-                     {/* <a
-                        href="https://linkedin.com/in/your-linkedin"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="button-style"
-                        aria-label="LinkedIn"
-                    >
-                        <FaLinkedin className="text-lg" />
-                    </a> */}
-                </nav>
+                    {/* <a
+                      href="https://linkedin.com/in/your-linkedin"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="button-style"
+                      aria-label="LinkedIn"
+                  >
+                      <FaLinkedin className="text-lg" />
+                  </a> */}
+                </div>
 
-                {/* Audio toggle */}
+                {/* Right: Audio toggle */}
                 <AudioToggle />
             </div>
         </header>
