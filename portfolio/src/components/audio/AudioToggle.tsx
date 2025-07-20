@@ -6,7 +6,7 @@ import HoverSoundGlobal from "./EnableHoverSound";
 export default function AudioToggle() {
   const [enabled, setEnabled] = useState(true);
   const ambientRef = useRef<HTMLAudioElement>(null);
-  const voiceRef = useRef<HTMLAudioElement>(null);
+
 
   useEffect(() => {
     if (!ambientRef.current) return;

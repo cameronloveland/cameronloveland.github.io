@@ -1,5 +1,5 @@
 import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
-import { Logs, Projects, SpaceBackgroundController } from '../components/hud';
+import { Logs, Projects } from '../components/hud';
 import { Terminal } from '../components/hud';
 import { RadioPlayer } from '../components/hud';
 import { getReposWithReadme } from '../api/github';
