@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --scrollP: 0;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 @theme inline {
@@ -150,3 +156,7 @@ body {
     top: 100%;
   }
 }
+
+/* optional: hide scrollbar on webkit */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
