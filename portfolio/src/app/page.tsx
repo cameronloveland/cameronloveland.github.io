@@ -1,5 +1,6 @@
 import ParallaxSpace from "@/components/ParallaxSpace";
 import SnapScroller from "@/components/SnapScroller";
+import HomeLanding from "@/components/HomeLanding";
 
 export default function Page() {
   return (
@@ -7,7 +8,11 @@ export default function Page() {
       {/* fixed background layers */}
       <ParallaxSpace />
       {/* foreground UI */}
-      <SnapScroller />
+      <SnapScroller>
+        <HomeLanding />
+        <div>{/* second page content */}</div>
+        <div>{/* third page content */}</div>
+      </SnapScroller>
     </>
   );
 }

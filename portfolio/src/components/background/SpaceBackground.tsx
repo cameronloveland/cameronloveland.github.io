@@ -19,10 +19,16 @@ interface SpaceBackgroundProps {
   starLayers?: number;
   starsPerLayer?: number;
   shootingStars?: number;
+  showEarth?: boolean;
 }
 
-export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerLayer = 100,
-  shootingStars = 10 }: SpaceBackgroundProps) {
+export default function SpaceBackground({
+  comets = 10,
+  starLayers = 3,
+  starsPerLayer = 100,
+  shootingStars = 10,
+  showEarth = true,
+}: SpaceBackgroundProps) {
   const [stars, setStars] = useState<Star[]>([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const earthRef = useRef<HTMLImageElement>(null);
@@ -122,7 +128,9 @@ export default function SpaceBackground({ comets = 10, starLayers = 3, starsPerL
           ))}
 
         </div>
-        <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
+        {showEarth && (
+          <SpinningEarth offset={{ x: offset.x * 0.05, y: offset.y * 0.05 }} />
+        )}
         <ShootingStars count={shootingStars} />
       </div >
     </div >

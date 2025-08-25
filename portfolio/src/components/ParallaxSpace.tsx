@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect } from "react";
+import { SpaceBackground } from "./background";
 
 export default function ParallaxSpace() {
   // Ensure CSS var exists on mount
@@ -10,9 +11,9 @@ export default function ParallaxSpace() {
 
   return (
     <>
-      {/* Stars layer (replace with existing starfield if you have one) */}
-      <div className="fixed inset-0 -z-50 pointer-events-none bg-black">
-        {/* TODO: mount your Starfield component here instead of this div */}
+      {/* Stars layer */}
+      <div className="fixed inset-0 -z-50 pointer-events-none">
+        <SpaceBackground showEarth={false} />
       </div>
 
       {/* Earth layer */}
@@ -27,7 +28,7 @@ export default function ParallaxSpace() {
         }}
       >
         <Image
-          src="/images/earth.png"  // update to your asset
+          src="/textures/earth.png"
           alt=""
           width={1400}
           height={1400}
