@@ -1,104 +1,158 @@
-import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
-import { Logs, Projects } from '../components/hud';
-import { Terminal } from '../components/hud';
-import { RadioPlayer } from '../components/hud';
-import { getReposWithReadme } from '../api/github';
+import { getReposWithReadme } from "../api/github";
 
+const writingHighlights = [
+  {
+    title: "Rebooting my portfolio",
+    description:
+      "Kicking off a simpler space for my work — what I'm building next and how I make it approachable.",
+    dateLabel: "Coming soon",
+    href: "https://github.com/cameronloveland",
+  },
+  {
+    title: "Build logs & notes",
+    description:
+      "A running journal of experiments, prototypes, and lessons learned while shipping new ideas.",
+    dateLabel: "Coming soon",
+    href: "https://github.com/cameronloveland?tab=repositories",
+  },
+];
+
+function formatRepoName(name: string) {
+  return name.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
 export default async function Home() {
   const repos = await getReposWithReadme();
-  return (
-    <>
-      <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
-        <div className="absolute">
-          <SpaceBackground comets={10} starLayers={3} starsPerLayer={100} shootingStars={10} />
-        </div>
-        <main
-          id="main-content"
-          className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative pb-[220px]"
-        >
-          <FloatingAstronaut />
 
-          {/* Glass Texture/Effect */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/9 to-transparent" />
-            <img
-              src="/glass-texture.png"
-              alt="glass texture"
-              className="w-full h-full object-cover opacity-10 mix-blend-screen fixed"
-            />
+  const curatedProjects = repos
+    .filter((repo) => !repo.fork)
+    .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
+    .slice(0, 6);
+
+  return (
+    <div className="page">
+      <header className="hero">
+        <div className="wrapper">
+          <nav className="hero__nav" aria-label="Primary">
+            <a href="#projects">Projects</a>
+            <a href="#writing">Writing</a>
+            <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          </nav>
+
+          <p className="hero__eyebrow">Cameron Loveland · Software Engineer</p>
+          <h1 className="hero__title">Building thoughtful, easy-to-use experiences.</h1>
+          <p className="hero__summary">
+            I focus on crafting intuitive interfaces and resilient systems. This space keeps everything in one
+            place — recent projects, experiments, and long-form updates as I keep building.
+          </p>
+
+          <div className="hero__actions">
+            <a className="button button--primary" href="#projects">
+              Explore projects
+            </a>
+            <a
+              className="button button--ghost"
+              href="mailto:hello@cameronloveland.com"
+              aria-label="Email Cameron"
+            >
+              Say hello
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section id="projects" className="section">
+        <div className="wrapper">
+          <div className="section-header">
+            <h2 className="section-title">Featured projects</h2>
+            <p className="section-description">
+              A rotating selection of work from GitHub. Each project includes a short summary so you can get a feel
+              for the idea before diving in.
+            </p>
           </div>
 
-          <img
-            src="/cockpit-hud.png"
-            alt="HUD Overlay"
-            className="hidden md:block fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
-          />
+          {curatedProjects.length > 0 ? (
+            <div className="card-grid">
+              {curatedProjects.map((repo) => {
+                const projectLink = repo.homepage || repo.html_url;
+                return (
+                  <article key={repo.id} className="card">
+                    <h3>{formatRepoName(repo.name)}</h3>
+                    <p>{repo.readmeSummary || "Project details coming soon."}</p>
 
-          <CockpitOverlay />
+                    <div className="tag-list" aria-label="Project metadata">
+                      {repo.language ? <span className="tag">{repo.language}</span> : null}
+                      {repo.stargazers_count > 0 ? (
+                        <span className="tag">★ {repo.stargazers_count}</span>
+                      ) : null}
+                      {Array.isArray(repo.topics)
+                        ? repo.topics.slice(0, 3).map((topic) => (
+                            <span key={topic} className="tag">
+                              {topic}
+                            </span>
+                          ))
+                        : null}
+                    </div>
 
-
-          {/* Main Content Grid */}
-          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative pointer-events-none z-index-[-1]">
-            {/* On small screens, absolutely center the hero section */}
-            <div className="hidden lg:block lg:col-span-1" />
-            <div className="lg:col-span-1 lg:col-start-2">
-              {/* Hero Section */}
-              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed
-                absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                lg:static lg:translate-x-0 lg:translate-y-0
-                ">
-                <img
-                  src="https://github.com/cameronloveland.png"
-                  alt="Cameron Loveland"
-                  className="w-20 h-20 rounded-full border-4 border-neutral-800 shadow mb-4 opacity-0 animate-fade-in delay-[100ms]"
-                />
-                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight opacity-0 animate-fade-in delay-[300ms]">
-                  Cameron Loveland
-                </h1>
-                <p className="text-neutral-300 text-2xl opacity-0 animate-fade-in delay-[500ms]">
-                  Software Engineer
-                </p>
-                {/* <p className="text-neutral-400 italic text-xl mt-1 opacity-0 animate-fade-in delay-[700ms]">
-                  Welcome aboard — this is my interactive portfolio site.
-                </p> */}
-              </section>
+                    <div className="card-footer">
+                      <a className="button button--primary" href={projectLink} target="_blank" rel="noopener noreferrer">
+                        View project
+                      </a>
+                      <a className="button button--ghost" href={repo.html_url} target="_blank" rel="noopener noreferrer">
+                        Source
+                      </a>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-            <div className="hidden lg:block lg:col-span-1" />
-          </section>
+          ) : (
+            <p className="section-description">
+              Project highlights will appear here once GitHub repositories are ready to showcase.
+            </p>
+          )}
+        </div>
+      </section>
 
-          {/* HUD ROW */}
-          <section className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-2 px-2 md:px-4 fixed bottom-0 md:bottom-8 z-20">
-            {/* Projects - 1/3 width on desktop */}
-            <div className="md:col-span-1 animate-slide-in-left pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="md:tilt-left">
-                  <Projects repos={repos} />
-                </div>
-              </section>
-            </div>
-            {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-up pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="flex flex-col gap-2">
-                  <Terminal />
-                  <RadioPlayer />
-                </div>
-              </section>
-            </div>
-            {/* Captain's Log - 1/3 width */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-right pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="md:tilt-right">
-                  <Logs />
-                </div>
-              </section>
-            </div>
-          </section>
+      <section id="writing" className="section">
+        <div className="wrapper">
+          <div className="section-header">
+            <h2 className="section-title">Writing & updates</h2>
+            <p className="section-description">
+              Long-form notes, behind-the-scenes breakdowns, and a running changelog of what I&apos;m exploring. First
+              entries are on the way — check back soon.
+            </p>
+          </div>
 
-        </main>
-      </div>
-    </>
+          <div className="writing-list">
+            {writingHighlights.map((entry) => (
+              <article key={entry.title} className="writing-item">
+                <time aria-label="Publishing status">{entry.dateLabel}</time>
+                <h3>
+                  <a href={entry.href} target="_blank" rel="noopener noreferrer">
+                    {entry.title}
+                  </a>
+                </h3>
+                <p>{entry.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div className="wrapper footer-inner">
+          <span>© {new Date().getFullYear()} Cameron Loveland. Built with intention and plenty of coffee.</span>
+          <div className="footer-links" aria-label="Secondary links">
+            <a href="mailto:hello@cameronloveland.com">Email</a>
+            <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
-
 }
