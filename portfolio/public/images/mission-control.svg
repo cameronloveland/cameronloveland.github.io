@@ -1,0 +1,30 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" rx="48" fill="url(#paint0_radial_1_1)"/>
+  <g opacity="0.4" filter="url(#filter0_f_1_1)">
+    <circle cx="280" cy="180" r="220" fill="#38bdf8"/>
+    <circle cx="1040" cy="160" r="240" fill="#818cf8"/>
+    <circle cx="780" cy="520" r="260" fill="#22d3ee"/>
+  </g>
+  <rect x="200" y="200" width="880" height="320" rx="32" fill="#0f172a" opacity="0.9"/>
+  <rect x="240" y="240" width="280" height="40" rx="12" fill="#1e293b"/>
+  <rect x="240" y="300" width="520" height="16" rx="8" fill="#38bdf8" opacity="0.8"/>
+  <rect x="240" y="336" width="440" height="16" rx="8" fill="#38bdf8" opacity="0.5"/>
+  <rect x="560" y="240" width="320" height="200" rx="24" fill="#1e293b"/>
+  <circle cx="720" cy="340" r="72" fill="#38bdf8" opacity="0.4"/>
+  <circle cx="720" cy="340" r="40" fill="#0ea5e9"/>
+  <rect x="240" y="368" width="240" height="120" rx="24" fill="#1e293b"/>
+  <rect x="264" y="392" width="96" height="16" rx="8" fill="#38bdf8"/>
+  <rect x="264" y="424" width="160" height="12" rx="6" fill="#38bdf8" opacity="0.6"/>
+  <rect x="264" y="444" width="120" height="12" rx="6" fill="#38bdf8" opacity="0.4"/>
+  <defs>
+    <filter id="filter0_f_1_1" x="-60" y="-180" width="1400" height="1120" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_1_1"/>
+    </filter>
+    <radialGradient id="paint0_radial_1_1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(340 120) rotate(25) scale(1080 760)">
+      <stop offset="0.05" stop-color="#ecfeff"/>
+      <stop offset="1" stop-color="#e0f2fe"/>
+    </radialGradient>
+  </defs>
+</svg>

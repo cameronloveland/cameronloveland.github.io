@@ -1,0 +1,28 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" rx="48" fill="url(#paint0_linear_3_1)"/>
+  <g opacity="0.4" filter="url(#filter0_f_3_1)">
+    <circle cx="320" cy="200" r="220" fill="#67e8f9"/>
+    <circle cx="960" cy="500" r="260" fill="#818cf8"/>
+  </g>
+  <rect x="220" y="180" width="840" height="360" rx="36" fill="#0f172a" opacity="0.92"/>
+  <rect x="260" y="220" width="360" height="120" rx="24" fill="#1e293b"/>
+  <rect x="260" y="360" width="360" height="120" rx="24" fill="#1e293b"/>
+  <rect x="640" y="220" width="360" height="260" rx="28" fill="#1e293b"/>
+  <path d="M700 440C700 376.249 751.249 325 815 325C878.751 325 930 376.249 930 440" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="815" cy="336" r="36" fill="#38bdf8"/>
+  <rect x="292" y="252" width="140" height="12" rx="6" fill="#38bdf8" opacity="0.7"/>
+  <rect x="292" y="392" width="180" height="12" rx="6" fill="#38bdf8" opacity="0.7"/>
+  <rect x="640" y="508" width="220" height="20" rx="10" fill="#38bdf8" opacity="0.7"/>
+  <rect x="880" y="508" width="80" height="20" rx="10" fill="#bae6fd"/>
+  <defs>
+    <filter id="filter0_f_3_1" x="-100" y="-140" width="1500" height="1080" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="120" result="effect1_foregroundBlur_3_1"/>
+    </filter>
+    <linearGradient id="paint0_linear_3_1" x1="200" y1="60" x2="1040" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#c7d2fe"/>
+    </linearGradient>
+  </defs>
+</svg>

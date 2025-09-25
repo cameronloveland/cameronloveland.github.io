@@ -1,104 +1,128 @@
-import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
-import { Logs, Projects } from '../components/hud';
-import { Terminal } from '../components/hud';
-import { RadioPlayer } from '../components/hud';
-import { getReposWithReadme } from '../api/github';
+import Link from "next/link";
 
+import Card from "@/components/Card";
+import { projects } from "@/data/projects";
 
-export default async function Home() {
-  const repos = await getReposWithReadme();
+export default function HomePage() {
   return (
-    <>
-      <div className="relative min-h-screen bg-neutral-950/60 backdrop-blur-md flex flex-col overflow-hidden">
-        <div className="absolute">
-          <SpaceBackground comets={10} starLayers={3} starsPerLayer={100} shootingStars={10} />
-        </div>
-        <main
-          id="main-content"
-          className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative pb-[220px]"
-        >
-          <FloatingAstronaut />
-
-          {/* Glass Texture/Effect */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/9 to-transparent" />
-            <img
-              src="/glass-texture.png"
-              alt="glass texture"
-              className="w-full h-full object-cover opacity-10 mix-blend-screen fixed"
-            />
+    <div className="overflow-hidden">
+      <section
+        id="hero"
+        className="relative isolate bg-white px-4 pb-16 pt-24 sm:px-6 lg:px-8 lg:pb-24 lg:pt-32"
+      >
+        <div className="absolute inset-y-0 right-0 -z-10 hidden w-1/2 rounded-l-[200px] bg-gradient-to-br from-cyan-100 via-white to-indigo-100 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.45)] sm:block" />
+        <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center">
+          <div className="flex-1">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-600">Software Engineer</p>
+            <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              I build reliable products that feel effortless to use.
+            </h1>
+            <p className="mt-6 max-w-xl text-lg text-slate-600">
+              I partner with product teams to craft performant, accessible web experiences—from resilient design systems to
+              immersive data visualizations that help people make better decisions.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="#projects"
+                className="inline-flex items-center justify-center rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
+              >
+                View My Work
+              </Link>
+              <Link
+                href="#contact"
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-cyan-300 hover:text-cyan-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
+              >
+                Let&apos;s Talk
+              </Link>
+            </div>
           </div>
-
-          <img
-            src="/cockpit-hud.png"
-            alt="HUD Overlay"
-            className="hidden md:block fixed top-0 left-1/2 w-screen h-screen -translate-x-1/2 z-0 pointer-events-none"
-          />
-
-          <CockpitOverlay />
-
-
-          {/* Main Content Grid */}
-          <section className="w-full max-w-7xl grid grid-cols-3 lg:grid-cols-3 gap-8 sm:g bg-center relative pointer-events-none z-index-[-1]">
-            {/* On small screens, absolutely center the hero section */}
-            <div className="hidden lg:block lg:col-span-1" />
-            <div className="lg:col-span-1 lg:col-start-2">
-              {/* Hero Section */}
-              <section className="w-full max-w-2xl flex flex-col items-center text-center mb-12 fade-out-delayed
-                absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                lg:static lg:translate-x-0 lg:translate-y-0
-                ">
-                <img
-                  src="https://github.com/cameronloveland.png"
-                  alt="Cameron Loveland"
-                  className="w-20 h-20 rounded-full border-4 border-neutral-800 shadow mb-4 opacity-0 animate-fade-in delay-[100ms]"
-                />
-                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight opacity-0 animate-fade-in delay-[300ms]">
-                  Cameron Loveland
-                </h1>
-                <p className="text-neutral-300 text-2xl opacity-0 animate-fade-in delay-[500ms]">
-                  Software Engineer
-                </p>
-                {/* <p className="text-neutral-400 italic text-xl mt-1 opacity-0 animate-fade-in delay-[700ms]">
-                  Welcome aboard — this is my interactive portfolio site.
-                </p> */}
-              </section>
-            </div>
-            <div className="hidden lg:block lg:col-span-1" />
-          </section>
-
-          {/* HUD ROW */}
-          <section className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-2 px-2 md:px-4 fixed bottom-0 md:bottom-8 z-20">
-            {/* Projects - 1/3 width on desktop */}
-            <div className="md:col-span-1 animate-slide-in-left pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="md:tilt-left">
-                  <Projects repos={repos} />
+          <div className="flex flex-1 justify-center lg:justify-end">
+            <div className="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-card">
+              <div className="flex flex-col gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-600">Recent wins</p>
+                  <h2 className="mt-2 font-display text-2xl font-semibold text-slate-900">
+                    Shipping beautiful experiences, on-time and on-spec.
+                  </h2>
                 </div>
-              </section>
+                <ul className="space-y-3 text-sm text-slate-600">
+                  <li>✨ Led rebuild of analytics dashboard adopted by 4 global teams.</li>
+                  <li>⚙️ Built reusable component kit reducing QA defects by 35%.</li>
+                  <li>🚀 Partnered with research to launch AI prototype in 6 weeks.</li>
+                </ul>
+              </div>
             </div>
-            {/* Middle Section - 1/3 width, animates from bottom, no tilt */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-up pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="flex flex-col gap-2">
-                  <Terminal />
-                  <RadioPlayer />
-                </div>
-              </section>
-            </div>
-            {/* Captain's Log - 1/3 width */}
-            <div className="hidden md:block md:col-span-1 animate-slide-in-right pointer-events-auto">
-              <section className="perspective-[1200px]">
-                <div className="md:tilt-right">
-                  <Logs />
-                </div>
-              </section>
-            </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
-        </main>
-      </div>
-    </>
+      <section id="about" className="bg-slate-50 px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-semibold text-slate-900 sm:text-4xl">About</h2>
+          <p className="mt-6 text-lg text-slate-600">
+            I specialize in translating complex requirements into clear, maintainable software. From rapid prototypes to
+            large-scale launches, I care deeply about craftsmanship, accessibility, and collaborating with multidisciplinary teams
+            to deliver outcomes that matter.
+          </p>
+        </div>
+      </section>
+
+      <section id="projects" className="bg-white px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-col gap-4 text-center sm:text-left">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-600">Projects</p>
+            <h2 className="font-display text-3xl font-semibold text-slate-900 sm:text-4xl">
+              Selected work that highlights craft and impact
+            </h2>
+            <p className="text-lg text-slate-600">
+              Interfaces engineered for clarity, performance, and measurable business outcomes.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project) => (
+              <Card key={project.slug} project={project} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="bg-slate-900 px-4 py-16 text-slate-100 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-200">Contact</p>
+            <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+              Ready to create something exceptional?
+            </h2>
+            <p className="text-lg text-slate-200">
+              Drop me a line and let&apos;s explore how I can support your next initiative.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="mailto:hello@cameronloveland.dev"
+              className="inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+            >
+              Email Me
+            </Link>
+            <Link
+              href="https://www.linkedin.com/in/cameronloveland"
+              className="inline-flex items-center justify-center rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-white transition hover:border-cyan-300 hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Connect on LinkedIn
+            </Link>
+            <Link
+              href="https://github.com/cameronloveland"
+              className="inline-flex items-center justify-center rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-white transition hover:border-cyan-300 hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+              target="_blank"
+              rel="noreferrer"
+            >
+              View GitHub
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
   );
-
 }

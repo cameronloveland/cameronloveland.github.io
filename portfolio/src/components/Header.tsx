@@ -1,58 +1,36 @@
-'use client';
+import Link from "next/link";
 
-import { FaGithub } from 'react-icons/fa6';
-import { AudioToggle } from './audio';
+const navigation = [
+  { name: "Home", href: "#hero" },
+  { name: "Projects", href: "#projects" },
+  { name: "Contact", href: "#contact" },
+];
 
 export default function Header() {
-    return (
-        <header className="z-50 fixed top-0 left-0 w-full bg-neutral-950/80 backdrop-blur border-neutral-900 transition-colors duration-300">
-
-            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 relative" >
-                {/* Left: Logo */}
-                <a
-                    href="https://github.com/cameronloveland"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-style flex items-center gap-3"
-                    aria-label="GitHub Portfolio"
+  return (
+    <header className="sticky top-0 z-50 bg-slate-50/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="font-display text-xl font-semibold tracking-tight text-slate-900 transition hover:text-cyan-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
+        >
+          Cameron Loveland
+        </Link>
+        <nav>
+          <ul className="flex items-center gap-2 text-sm font-medium text-slate-600 sm:gap-6">
+            {navigation.map((item) => (
+              <li key={item.name}>
+                <Link
+                  href={item.href}
+                  className="rounded-full px-3 py-2 transition hover:bg-cyan-100 hover:text-cyan-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
                 >
-                    <img
-                        src="https://github.com/cameronloveland.png"
-                        alt="Cameron Loveland"
-                        className="w-8 h-8 rounded-full border-2 border-neutral-700 shadow-sm"
-                    />
-                    <span className="font-bold text-lg tracking-tight">
-                        <span className="text-accent">cameron</span>
-                        <span className="text-secondary">.loveland</span>
-                        <span className="text-neutral-400"> / portfolio</span>
-                    </span>
-                </a>
-
-                {/* Center: Social icons */}
-                <div className="hidden sm:flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <a
-                        href="https://github.com/cameronloveland"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="button-style"
-                        aria-label="GitHub"
-                    >
-                        <FaGithub className="text-lg" />
-                    </a>
-                    {/* <a
-                      href="https://linkedin.com/in/your-linkedin"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="button-style"
-                      aria-label="LinkedIn"
-                  >
-                      <FaLinkedin className="text-lg" />
-                  </a> */}
-                </div>
-
-                {/* Right: Audio toggle */}
-                <AudioToggle />
-            </div>
-        </header>
-    );
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+  );
 }

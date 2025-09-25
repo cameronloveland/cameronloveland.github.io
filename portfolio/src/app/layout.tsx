@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import "../styles/theme.css";
-import "../styles/fonts.css";
-import "../styles/radioPlayer.css";
-import "../styles/animations.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Inter, Playfair_Display } from "next/font/google";
+import "./globals.css";
 
-import Header from "../components/Header";
-import { Footer } from "../components/Footer";
-import ParallaxHandler from "../components/ParallaxHandler";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
-  title: "Portfolio | Cameron Loveland",
-  description: "Beefed up GitHub Pages portfolio with interactive elements and animations.",
+  title: "Cameron Loveland | Software Engineer",
+  description:
+    "Software engineer crafting dependable web experiences and interactive products.",
 };
 
 export default function RootLayout({
@@ -20,19 +20,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="icon" href="https://github.com/cameronloveland.png" />
-      </head>
-      <body className="antialiased">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-cyan-500 text-black px-4 py-2 rounded z-50">
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${inter.variable} ${playfair.variable} min-h-screen bg-slate-50 text-slate-900 antialiased`}
+      >
+        <a
+          href="#main-content"
+          className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[999] focus-visible:rounded-full focus-visible:bg-cyan-500 focus-visible:px-4 focus-visible:py-2 focus-visible:text-slate-900"
+        >
           Skip to main content
         </a>
-        <ParallaxHandler>
+        <div className="flex min-h-screen flex-col">
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
           <Footer />
-        </ParallaxHandler>
+        </div>
       </body>
     </html>
   );
