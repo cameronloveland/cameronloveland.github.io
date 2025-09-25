@@ -21,17 +21,17 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold text-slate-900 transition hover:text-brand-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          className="flex items-center gap-2 text-lg font-semibold text-brand-midnight transition hover:text-brand-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           onClick={closeMenu}
         >
           Cameron Loveland
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 sm:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-8 text-sm font-semibold text-brand-midnight sm:flex" aria-label="Primary">
           {navigation.map((item) => (
             <a
               key={item.name}
               href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              className="rounded-full px-3 py-2 transition hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
               {item.name}
             </a>
@@ -39,7 +39,7 @@ export default function Header() {
         </nav>
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 transition hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:hidden"
+          className="inline-flex items-center justify-center rounded-full p-2 text-brand-midnight transition hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:hidden"
           aria-label={isOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={isOpen}
           onClick={toggleMenu}
@@ -54,7 +54,7 @@ export default function Header() {
               <a
                 key={item.name}
                 href={item.href}
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-brand-midnight transition hover:bg-slate-100 hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 onClick={closeMenu}
               >
                 {item.name}

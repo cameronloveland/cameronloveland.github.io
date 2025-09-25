@@ -7,8 +7,9 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          cyan: '#0ea5e9',
-          indigo: '#4c1d95',
+          cyan: '#0d9488',
+          indigo: '#3730a3',
+          midnight: '#0f172a',
         },
       },
       fontFamily: {
@@ -16,7 +17,7 @@ module.exports = {
         heading: ['var(--font-heading)', ...defaultTheme.fontFamily.sans],
       },
       boxShadow: {
-        soft: '0 24px 60px -30px rgba(15, 23, 42, 0.3)',
+        soft: '0 30px 80px -40px rgba(15, 23, 42, 0.35)',
       },
     },
   },

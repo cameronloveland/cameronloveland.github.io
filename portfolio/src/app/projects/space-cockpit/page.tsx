@@ -11,19 +11,19 @@ const cockpitDemoUrl = "/docs/index.html";
 
 export default function SpaceCockpitPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-white text-brand-midnight">
       <section className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pb-16 pt-24 sm:px-6 sm:pt-32">
         <div className="space-y-6 text-left">
           <Link
             href="/"
-            className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-brand-cyan hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-brand-midnight transition hover:border-brand-cyan hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             ← Back to portfolio
           </Link>
           <div className="space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-indigo/80">Project</p>
-            <h1 className="font-heading text-4xl font-semibold text-slate-900 sm:text-5xl">Space Cockpit Demo</h1>
-            <p className="max-w-3xl text-base leading-relaxed text-slate-600">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-indigo">Project</p>
+            <h1 className="font-heading text-4xl font-semibold text-brand-midnight sm:text-5xl">Space Cockpit Demo</h1>
+            <p className="max-w-3xl text-base leading-relaxed text-slate-700">
               This concept explores how cinematic UI patterns translate to the browser. The 3D cockpit layers real-time lighting,
               post-processing, and spatial audio to create a focused command center experience for spaceflight simulation.
             </p>
@@ -33,13 +33,13 @@ export default function SpaceCockpitPage() {
               href={cockpitDemoUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              className="inline-flex items-center justify-center rounded-full bg-brand-midnight px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
               Launch demo
             </Link>
             <Link
               href="https://github.com/cameronloveland"
-              className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-brand-cyan hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-brand-midnight transition hover:border-brand-cyan hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
               View more work
             </Link>
@@ -51,9 +51,10 @@ export default function SpaceCockpitPage() {
             title="Space cockpit interactive demo"
             className="aspect-video w-full"
             loading="lazy"
+            allowFullScreen
           />
         </div>
-        <div className="space-y-4 text-base leading-relaxed text-slate-600">
+        <div className="space-y-4 text-base leading-relaxed text-slate-700">
           <p>
             Built with Three.js, React Three Fiber, and a layer of post-processing effects, the cockpit demonstrates how advanced
             visual experiences can remain performant and accessible on the web. Every element—from depth-of-field to parallaxed UI
