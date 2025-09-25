@@ -1,152 +1,43 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-body);
-  --font-mono: var(--font-heading);
+  --foreground: #0f172a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-
+    color-scheme: dark;
+    --background: #0f172a;
+    --foreground: #f8fafc;
   }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html:focus-within {
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
+  min-height: 100%;
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-
-.hud-aside-container {
-  @apply w-full max-w-2xl overflow-hidden;
-  max-height: 25vh;
+a {
+  color: inherit;
 }
 
-@media (max-width: 768px) {
-  .hud-aside-container {
-    min-height: 33vh;
-  }
+a:hover {
+  color: inherit;
 }
 
-.hud-panel {
-  background-color: rgba(12, 15, 28, 0.6);
-  border: 1px solid rgba(34, 255, 255, 0.2);
-  border-radius: 1rem;
-  box-shadow: 0 0 10px 1px rgba(34, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  padding: 1rem;
-}
-
-.hud-panel-clear {
-  background-color: transparent;
-  border: none;
-  border-radius: 1rem;
-  box-shadow: none;
-  backdrop-filter: blur(12px);
-  padding: 1rem;
-}
-
-.digital-glow {
-  text-shadow: 0 0 4px rgba(0, 255, 255, 0.6), 0 0 8px rgba(0, 255, 255, 0.3);
-}
-
-.link-style {
-  @apply hover:animate-pulse hover:text-cyan-300 transition;
-}
-
-.button-style {
-  @apply hover:animate-pulse hover:text-cyan-300 transition;
-}
-
-.hud-scroll::-webkit-scrollbar {
-  width: 14px;
-}
-
-.hud-scroll::-webkit-scrollbar-track {
-  background: rgba(12, 15, 28, 0.3);
-  border-radius: 8px;
-}
-
-.hud-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(103, 232, 249, 0.4), rgba(0, 188, 212, 0.6));
-  border-radius: 8px;
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  box-shadow:
-    0 0 6px rgba(0, 255, 255, 0.3),
-    0 0 12px rgba(0, 255, 255, 0.2),
-    inset 0 0 4px rgba(0, 255, 255, 0.4);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-  animation: hudScrollPulse 2.5s ease-in-out infinite;
-}
-
-.hud-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(103, 232, 249, 0.8), rgba(0, 188, 212, 1));
-  box-shadow:
-    0 0 12px rgba(0, 255, 255, 0.8),
-    0 0 24px rgba(0, 255, 255, 0.6),
-    inset 0 0 10px rgba(0, 255, 255, 0.6);
-  animation: hudScrollPulseHover 1.2s ease-in-out infinite;
-}
-
-
-.hud-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: #00ffff20 transparent;
-}
-
-@keyframes hudScrollPulseHover {
-
-  0%,
-  100% {
-    box-shadow:
-      0 0 10px rgba(0, 255, 255, 0.8),
-      0 0 20px rgba(0, 255, 255, 0.5),
-      inset 0 0 8px rgba(0, 255, 255, 0.5);
-  }
-
-  50% {
-    box-shadow:
-      0 0 16px rgba(0, 255, 255, 1),
-      0 0 32px rgba(0, 255, 255, 0.8),
-      inset 0 0 12px rgba(0, 255, 255, 0.8);
-  }
-}
-
-
-/* Outer circuit intensity pulse */
-@keyframes circuitPulse {
-
-  0%,
-  100% {
-    border-color: rgba(0, 255, 255, 0.2);
-    box-shadow:
-      0 0 8px rgba(0, 255, 255, 0.2),
-      inset 0 0 6px rgba(0, 255, 255, 0.1);
-  }
-
-  50% {
-    border-color: rgba(0, 255, 255, 0.4);
-    box-shadow:
-      0 0 12px rgba(0, 255, 255, 0.4),
-      inset 0 0 8px rgba(0, 255, 255, 0.15);
-  }
-}
-
-@keyframes sweep {
-  0% {
-    top: -100%;
-  }
-
-  100% {
-    top: 100%;
-  }
+::selection {
+  background-color: rgba(14, 165, 233, 0.15);
 }

@@ -1,58 +1,68 @@
-'use client';
+"use client";
 
-import { FaGithub } from 'react-icons/fa6';
-import { AudioToggle } from './audio';
+import Link from "next/link";
+import { useState } from "react";
+import { FiMenu, FiX } from "react-icons/fi";
+
+const navigation = [
+  { name: "Home", href: "#top" },
+  { name: "Projects", href: "#projects" },
+  { name: "Contact", href: "#contact" },
+];
 
 export default function Header() {
-    return (
-        <header className="z-50 fixed top-0 left-0 w-full bg-neutral-950/80 backdrop-blur border-neutral-900 transition-colors duration-300">
+  const [isOpen, setIsOpen] = useState(false);
 
-            <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 relative" >
-                {/* Left: Logo */}
-                <a
-                    href="https://github.com/cameronloveland"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-style flex items-center gap-3"
-                    aria-label="GitHub Portfolio"
-                >
-                    <img
-                        src="https://github.com/cameronloveland.png"
-                        alt="Cameron Loveland"
-                        className="w-8 h-8 rounded-full border-2 border-neutral-700 shadow-sm"
-                    />
-                    <span className="font-bold text-lg tracking-tight">
-                        <span className="text-accent">cameron</span>
-                        <span className="text-secondary">.loveland</span>
-                        <span className="text-neutral-400"> / portfolio</span>
-                    </span>
-                </a>
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+  const closeMenu = () => setIsOpen(false);
 
-                {/* Center: Social icons */}
-                <div className="hidden sm:flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <a
-                        href="https://github.com/cameronloveland"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="button-style"
-                        aria-label="GitHub"
-                    >
-                        <FaGithub className="text-lg" />
-                    </a>
-                    {/* <a
-                      href="https://linkedin.com/in/your-linkedin"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="button-style"
-                      aria-label="LinkedIn"
-                  >
-                      <FaLinkedin className="text-lg" />
-                  </a> */}
-                </div>
-
-                {/* Right: Audio toggle */}
-                <AudioToggle />
-            </div>
-        </header>
-    );
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-semibold text-brand-midnight transition hover:text-brand-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          onClick={closeMenu}
+        >
+          Cameron Loveland
+        </Link>
+        <nav className="hidden items-center gap-8 text-sm font-semibold text-brand-midnight sm:flex" aria-label="Primary">
+          {navigation.map((item) => (
+            <a
+              key={item.name}
+              href={item.href}
+              className="rounded-full px-3 py-2 transition hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            >
+              {item.name}
+            </a>
+          ))}
+        </nav>
+        <button
+          type="button"
+          className="inline-flex items-center justify-center rounded-full p-2 text-brand-midnight transition hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:hidden"
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={isOpen}
+          onClick={toggleMenu}
+        >
+          {isOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
+        </button>
+      </div>
+      {isOpen ? (
+        <div className="border-t border-slate-200 bg-white sm:hidden">
+          <nav className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4" aria-label="Mobile navigation">
+            {navigation.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-brand-midnight transition hover:bg-slate-100 hover:text-brand-indigo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                onClick={closeMenu}
+              >
+                {item.name}
+              </a>
+            ))}
+          </nav>
+        </div>
+      ) : null}
+    </header>
+  );
 }
