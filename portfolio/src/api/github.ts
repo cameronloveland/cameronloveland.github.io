@@ -63,48 +63,98 @@ export async function getOpenPRs() {
     }));
 }
 
-export type Repo = {
+type GitHubRepo = {
     id: number;
     name: string;
     description: string | null;
     html_url: string;
-    readmeSummary: string | null;
+    homepage: string | null;
     topics?: string[];
+    stargazers_count: number;
+    fork: boolean;
+    language: string | null;
+    pushed_at: string;
+    default_branch?: string;
 };
 
-export async function getReposWithReadme() {
-    const res = await fetch('https://api.github.com/users/cameronloveland/repos', {
-        headers: {
-            Accept: 'application/vnd.github.v3+json'
-        },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) { throw new Error('Failed to fetch repos'); }
-    const repos = await res.json() as Repo[];
+export type Repo = GitHubRepo & {
+    readmeSummary: string;
+    previewImage?: string | null;
+};
 
-    const reposWithReadme = await Promise.all(
-        repos.map(async (repo) => {
-            try {
+function toPlainText(markdown: string) {
+    return markdown
+        .replace(/```[\s\S]*?```/g, "")
+        .replace(/`([^`]+)`/g, "$1")
+        .replace(/!\[[^\]]*\]\([^\)]+\)/g, "")
+        .replace(/\[[^\]]+\]\(([^\)]+)\)/g, "$1")
+        .replace(/#+\s*/g, "")
+        .replace(/\r?\n/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
 
-                const readmeRes = await fetch(
-                    `https://api.github.com/repos/cameronloveland/${repo.name}/readme`,
-                    {
-                        headers: { Accept: 'application/vnd.github.v3.raw' },
-                    },
+export async function getReposWithReadme(): Promise<Repo[]> {
+    try {
+        const res = await fetch('https://api.github.com/users/cameronloveland/repos', {
+            headers: {
+                Accept: 'application/vnd.github.v3+json'
+            },
+            next: { revalidate: 3600 },
+        });
+        if (!res.ok) { throw new Error('Failed to fetch repos'); }
+        const repos = await res.json() as GitHubRepo[];
 
-                );
-                if (!readmeRes.ok) return { ...repo, readmeSummary: repo.description || "" };
-                const readme = await readmeRes.text();
-                const summary = readme
-                    .split(/\r?\n\r?\n/)
-                    .map((s) => s.trim())
-                    .find((s) => s && !s.startsWith('#')) || repo.description || "";
-                return { ...repo, readmeSummary: summary };
-            } catch {
-                return { ...repo, readmeSummary: repo.description || "" };
-            }
-        })
-    );
+        const reposWithReadme: Repo[] = await Promise.all(
+            repos.map(async (repo): Promise<Repo> => {
+                try {
 
-    return reposWithReadme;
+                    const readmeRes = await fetch(
+                        `https://api.github.com/repos/cameronloveland/${repo.name}/readme`,
+                        {
+                            headers: { Accept: 'application/vnd.github.v3.raw' },
+                        },
+
+                    );
+                    if (!readmeRes.ok) {
+                        const fallback = toPlainText(repo.description ?? "");
+                        return { ...repo, readmeSummary: fallback };
+                    }
+                    const readme = await readmeRes.text();
+
+                    // find first markdown image ![alt](url) or HTML <img src="...">
+                    let previewImage: string | null = null;
+                    const mdImg = readme.match(/!\[[^\]]*\]\(([^)]+)\)/);
+                    const htmlImg = readme.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+                    const imgUrlRaw = mdImg ? mdImg[1] : htmlImg ? htmlImg[1] : null;
+                    if (imgUrlRaw) {
+                        let imgUrl = imgUrlRaw.trim();
+                        // protocol-relative
+                        if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl;
+                        // relative paths (./screenshot.png or images/snap.png)
+                        if (!/^https?:\/\//i.test(imgUrl)) {
+                            const branch = repo.default_branch || 'HEAD';
+                            // strip leading ./ or /
+                            const cleanPath = imgUrl.replace(/^\.\/?/, '').replace(/^\//, '');
+                            imgUrl = `https://raw.githubusercontent.com/cameronloveland/${repo.name}/${branch}/${cleanPath}`;
+                        }
+                        previewImage = imgUrl;
+                    }
+
+                    const summary = readme
+                        .split(/\r?\n\r?\n/)
+                        .map((s) => s.trim())
+                        .find((s) => s && !s.startsWith('#')) || repo.description || "";
+                    return { ...repo, readmeSummary: toPlainText(summary), previewImage };
+                } catch {
+                    const fallback = toPlainText(repo.description ?? "");
+                    return { ...repo, readmeSummary: fallback };
+                }
+            })
+        );
+
+        return reposWithReadme;
+    } catch {
+        return [];
+    }
 }
