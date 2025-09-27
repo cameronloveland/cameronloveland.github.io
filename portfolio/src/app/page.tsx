@@ -1,4 +1,6 @@
 import { getReposWithReadme } from "../api/github";
+import Image from "next/image";
+import Link from "next/link";
 
 const writingHighlights = [
   {
@@ -15,6 +17,12 @@ const writingHighlights = [
     dateLabel: "Coming soon",
     href: "https://github.com/cameronloveland?tab=repositories",
   },
+  {
+    title: "Bolt.new hackathon — Tavernborn",
+    description: "Built a small prototype for the Bolt.new dev hackathon. I put together a short demo and submission on Devpost.",
+    dateLabel: "June",
+    href: "https://devpost.com/software/tavernborn",
+  },
 ];
 
 function formatRepoName(name: string) {
@@ -29,37 +37,71 @@ export default async function Home() {
     .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
     .slice(0, 6);
 
+  // augment curated projects with manual entries/fallbacks
+  const extraProjects = [
+    {
+      id: -1,
+      name: 'tavernborn-devpost',
+      description: 'Tavernborn — dev hackathon entry on Bolt.new',
+      html_url: 'https://devpost.com/software/tavernborn',
+      homepage: 'https://devpost.com/software/tavernborn',
+      topics: ['hackathon'],
+      stargazers_count: 0,
+      fork: false,
+      language: null,
+      pushed_at: new Date().toISOString(),
+      readmeSummary: 'Devpost submission for the Tavernborn hackathon build.',
+      previewImage: null,
+      default_branch: 'main',
+    },
+    {
+      id: -2,
+      name: 'tavernborn-live',
+      description: 'Tavernborn — live site (stub)',
+      html_url: '#',
+      homepage: '#',
+      topics: ['games'],
+      stargazers_count: 0,
+      fork: false,
+      language: null,
+      pushed_at: new Date().toISOString(),
+      readmeSummary: 'Placeholder for the full Tavernborn live release (coming soon).',
+      previewImage: null,
+      default_branch: 'main',
+    },
+  ];
+
+  const allProjects = [...extraProjects, ...curatedProjects];
+
   return (
     <div className="page">
       <header className="hero">
         <div className="wrapper">
           <nav className="hero__nav" aria-label="Primary">
+            <Link href="/" className="nav-pill">Home</Link>
             <a href="#projects">Projects</a>
-            <a href="#writing">Writing</a>
-            <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">
+            <a href="#blog">Blog</a>
+            <a className="nav-pill" href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
           </nav>
 
-          <p className="hero__eyebrow">Cameron Loveland · Software Engineer</p>
-          <h1 className="hero__title">Building thoughtful, easy-to-use experiences.</h1>
+          {/* Title above name */}
+          <p className="hero__eyebrow">Software Engineer</p>
+          {/* Name larger */}
+          <h2 className="hero__name">Cameron Loveland</h2>
+          <h1 className="hero__subtitle">Personal Portfolio</h1>
           <p className="hero__summary">
-            I focus on crafting intuitive interfaces and resilient systems. This space keeps everything in one
-            place — recent projects, experiments, and long-form updates as I keep building.
+            What I&apos;m doing lately
           </p>
 
           <div className="hero__actions">
             <a className="button button--primary" href="#projects">
               Explore projects
             </a>
-            <a
-              className="button button--ghost"
-              href="mailto:hello@cameronloveland.com"
-              aria-label="Email Cameron"
-            >
-              Say hello
-            </a>
           </div>
+
+          {/* hero project preview removed per request */}
         </div>
       </header>
 
@@ -73,12 +115,42 @@ export default async function Home() {
             </p>
           </div>
 
-          {curatedProjects.length > 0 ? (
+          {allProjects.length > 0 ? (
             <div className="card-grid">
-              {curatedProjects.map((repo) => {
+              {allProjects.map((repo) => {
                 const projectLink = repo.homepage || repo.html_url;
+                // determine project type slug and label (prefer topics)
+                const topicCandidate = Array.isArray(repo.topics) && repo.topics.length > 0 ? repo.topics[0].toString().toLowerCase().replace(/\s+/g, '-') : null;
+                let projectTypeSlug = topicCandidate || 'project';
+                // if this is the portfolio repo, treat it as web-design
+                if (repo.name === 'cameronloveland.github.io' || repo.name === 'cameronloveland.github.io'.toLowerCase()) {
+                  projectTypeSlug = 'web-design';
+                }
+                // derive a display label for the banner
+                const projectTypeLabelMap: Record<string, string> = {
+                  'hackathon': 'Hackathon',
+                  'games': 'Game',
+                  'web-design': 'Web design',
+                  'website': 'Website',
+                  'project': 'Project',
+                };
+                const projectTypeLabel = projectTypeLabelMap[projectTypeSlug] || projectTypeSlug.replace(/-/g, ' ');
+
                 return (
                   <article key={repo.id} className="card">
+                    <div className="card-image-wrap">
+                      <Image
+                        src={repo.previewImage || '/file.svg'}
+                        alt={`${repo.name} preview`}
+                        className="card-image"
+                        width={800}
+                        height={420}
+                        unoptimized
+                      />
+
+                      {/* colorful banner for project type */}
+                      <div className={`project-type-banner project-type-${projectTypeSlug}`}>{projectTypeLabel}</div>
+                    </div>
                     <h3>{formatRepoName(repo.name)}</h3>
                     <p>{repo.readmeSummary || "Project details coming soon."}</p>
 
@@ -89,10 +161,10 @@ export default async function Home() {
                       ) : null}
                       {Array.isArray(repo.topics)
                         ? repo.topics.slice(0, 3).map((topic) => (
-                            <span key={topic} className="tag">
-                              {topic}
-                            </span>
-                          ))
+                          <span key={topic} className="tag">
+                            {topic}
+                          </span>
+                        ))
                         : null}
                     </div>
 
@@ -101,7 +173,7 @@ export default async function Home() {
                         View project
                       </a>
                       <a className="button button--ghost" href={repo.html_url} target="_blank" rel="noopener noreferrer">
-                        Source
+                        Code
                       </a>
                     </div>
                   </article>

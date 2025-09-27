@@ -74,10 +74,12 @@ type GitHubRepo = {
     fork: boolean;
     language: string | null;
     pushed_at: string;
+    default_branch?: string;
 };
 
 export type Repo = GitHubRepo & {
     readmeSummary: string;
+    previewImage?: string | null;
 };
 
 function toPlainText(markdown: string) {
@@ -119,11 +121,31 @@ export async function getReposWithReadme(): Promise<Repo[]> {
                         return { ...repo, readmeSummary: fallback };
                     }
                     const readme = await readmeRes.text();
+
+                    // find first markdown image ![alt](url) or HTML <img src="...">
+                    let previewImage: string | null = null;
+                    const mdImg = readme.match(/!\[[^\]]*\]\(([^)]+)\)/);
+                    const htmlImg = readme.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+                    const imgUrlRaw = mdImg ? mdImg[1] : htmlImg ? htmlImg[1] : null;
+                    if (imgUrlRaw) {
+                        let imgUrl = imgUrlRaw.trim();
+                        // protocol-relative
+                        if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl;
+                        // relative paths (./screenshot.png or images/snap.png)
+                        if (!/^https?:\/\//i.test(imgUrl)) {
+                            const branch = repo.default_branch || 'HEAD';
+                            // strip leading ./ or /
+                            const cleanPath = imgUrl.replace(/^\.\/?/, '').replace(/^\//, '');
+                            imgUrl = `https://raw.githubusercontent.com/cameronloveland/${repo.name}/${branch}/${cleanPath}`;
+                        }
+                        previewImage = imgUrl;
+                    }
+
                     const summary = readme
                         .split(/\r?\n\r?\n/)
                         .map((s) => s.trim())
                         .find((s) => s && !s.startsWith('#')) || repo.description || "";
-                    return { ...repo, readmeSummary: toPlainText(summary) };
+                    return { ...repo, readmeSummary: toPlainText(summary), previewImage };
                 } catch {
                     const fallback = toPlainText(repo.description ?? "");
                     return { ...repo, readmeSummary: fallback };

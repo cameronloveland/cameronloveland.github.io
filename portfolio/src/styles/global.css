@@ -106,6 +106,17 @@ a:focus-visible {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  border: 2px solid rgba(125,211,252,0.15);
+  background: linear-gradient(180deg, rgba(9,30,38,0.18), rgba(9,30,38,0.06));
+  color: var(--text-primary);
+}
+
 .hero__nav a:hover,
 .hero__nav a:focus-visible {
   color: var(--text-primary);
@@ -121,10 +132,23 @@ a:focus-visible {
   margin-bottom: 1rem;
 }
 
+.hero__name {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
 .hero__title {
   font-size: clamp(2rem, 8vw, 3.5rem);
   line-height: 1.1;
   margin: 0 0 1.5rem;
+}
+
+.hero__subtitle {
+  font-size: clamp(1.25rem, 2.8vw, 1.6rem);
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  font-weight: 600;
 }
 
 .hero__summary {
@@ -199,6 +223,94 @@ a:focus-visible {
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
+
+/* Project preview shown in the hero */
+.project-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.project-preview-card {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(16, 18, 27, 0.6);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.project-preview-card strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.project-preview-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.project-preview-thumb {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  object-fit: cover;
+}
+
+.card-image-wrap {
+  width: 100%;
+  height: 0;
+  padding-bottom: 52.5%;
+  /* 800x420 aspect ratio */
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-image {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+/* Project type banner (colorful) */
+.project-type-banner {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: white;
+  text-transform: uppercase;
+}
+
+.project-type-hackathon {
+  background: linear-gradient(90deg, #ff6b6b, #ff9a6b);
+}
+
+.project-type-games {
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+}
+
+.project-type-website {
+  background: linear-gradient(90deg, #06b6d4, #7dd3fc);
+}
+
+.project-type-project {
+  background: linear-gradient(90deg, #94a3b8, #64748b);
+}
+.project-type-web-design { background: linear-gradient(90deg,#f97316,#f43f5e); }
 
 .card {
   background: var(--card-background);
