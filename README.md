@@ -1,2 +1,2 @@
-# futuristic-space-portfolio
+space-portfolio
 Futuristic space HUD portfolio
