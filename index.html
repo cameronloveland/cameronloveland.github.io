@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cameron Loveland</title>
+  <meta name="description" content="Software engineer - hobby projects and experiments by Cameron Loveland.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      var preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', saved || preferred);
+    }());
+  </script>
+</head>
+<body>
+<div class="site">
+
+  <header>
+    <div class="header-left">
+      <h1>Cameron Loveland</h1>
+      <p>Software engineer - hobby projects &amp; experiments</p>
+    </div>
+    <nav class="header-links" aria-label="Site links">
+      <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+        <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2 class="section-label">Projects</h2>
+      <div class="grid">
+
+        <div class="card" data-github="cameronloveland/space-portfolio">
+          <div class="card-preview">
+            <img src="images/space-portfolio.png" alt="Futuristic HUD Portfolio preview" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3>Futuristic HUD Portfolio</h3>
+            <p>A space cockpit-themed interactive portfolio built in Next.js with particle effects and HUD-style UI panels.</p>
+            <div class="card-links">
+              <a href="https://cameronloveland.github.io/space-portfolio/" target="_blank" rel="noopener noreferrer" class="card-link">↗ live site</a>
+              <a href="https://github.com/cameronloveland/space-portfolio" target="_blank" rel="noopener noreferrer" class="card-link">↗ github</a>
+            </div>
+          </div>
+          <div class="card-meta" style="display:none">
+            <div class="card-meta-languages"></div>
+            <div class="card-meta-stats"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-preview">
+            <img src="images/tavernborn.png" alt="Tavernborn preview" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3>Tavernborn</h3>
+            <p>A daily text RPG built for the Bolt.new dev hackathon. You are the Tavernborn - return to claim your destiny one day at a time. Early prototype.</p>
+            <div class="card-links">
+              <a href="https://tavernborn.com" target="_blank" rel="noopener noreferrer" class="card-link">↗ live site</a>
+              <a href="https://devpost.com/software/tavernborn" target="_blank" rel="noopener noreferrer" class="card-link">↗ devpost</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-preview">
+            <img src="images/cosmic-drift.png" alt="Cosmic Drift preview" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3>Cosmic Drift</h3>
+            <p>A space racing game.</p>
+            <div class="card-links">
+              <a href="https://cosmicdrift.clovola.workers.dev/" target="_blank" rel="noopener noreferrer" class="card-link">↗ live site</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card--unpublished">
+          <div class="card-preview card-preview--strength"></div>
+          <div class="card-body">
+            <h3>Strength Path</h3>
+            <p>A React Native mobile app for tracking strength training progress and building consistent habits.</p>
+            <span class="card-link">coming soon</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>&copy; 2026 Cameron Loveland</span>
+  </footer>
+
+</div>
+
+<script>
+  function toggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  }
+</script>
+</body>
+</html>
