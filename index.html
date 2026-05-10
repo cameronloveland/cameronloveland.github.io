@@ -115,5 +115,76 @@
     localStorage.setItem('theme', next);
   }
 </script>
+
+<script>
+  (function () {
+    var LANG_COLORS = {
+      TypeScript: '#3178c6',
+      JavaScript: '#f1e05a',
+      CSS: '#563d7c',
+      HTML: '#e34c26',
+      Python: '#3572A5',
+      Go: '#00ADD8',
+      Rust: '#dea584',
+      Shell: '#89e051',
+      Vue: '#41b883',
+      Swift: '#fa7343',
+      Kotlin: '#A97BFF',
+      Dart: '#00B4AB'
+    };
+
+    function timeAgo(dateStr) {
+      var days = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+      if (days === 0) return 'today';
+      if (days < 30) return days + 'd ago';
+      var months = Math.floor(days / 30);
+      if (months < 12) return months + 'mo ago';
+      return Math.floor(months / 12) + 'y ago';
+    }
+
+    function formatMonth(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+
+    document.querySelectorAll('[data-github]').forEach(function (card) {
+      var repo = card.dataset.github;
+      var meta = card.querySelector('.card-meta');
+      if (!meta) return;
+
+      var base = 'https://api.github.com/repos/' + repo;
+
+      Promise.all([
+        fetch(base).then(function (r) { return r.json(); }),
+        fetch(base + '/languages').then(function (r) { return r.json(); }),
+        fetch(base + '/commits?per_page=1').then(function (r) {
+          var link = r.headers.get('Link') || '';
+          var m = link.match(/page=(\d+)>; rel="last"/);
+          return m ? parseInt(m[1], 10) : 1;
+        })
+      ]).then(function (results) {
+        var repoData = results[0];
+        var langs = results[1];
+        var commitCount = results[2];
+
+        var langNames = Object.keys(langs).slice(0, 3);
+        meta.querySelector('.card-meta-languages').innerHTML = langNames.map(function (lang) {
+          var color = LANG_COLORS[lang] || '#6b7280';
+          return '<span class="card-meta-lang">'
+            + '<span class="card-meta-lang-dot" style="background:' + color + '"></span>'
+            + lang
+            + '</span>';
+        }).join('');
+
+        meta.querySelector('.card-meta-stats').textContent =
+          commitCount + ' commits · started ' + formatMonth(repoData.created_at)
+          + ' · updated ' + timeAgo(repoData.pushed_at);
+
+        meta.style.display = '';
+      }).catch(function () {
+        meta.style.display = 'none';
+      });
+    });
+  }());
+</script>
 </body>
 </html>
