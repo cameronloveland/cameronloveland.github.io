@@ -1,4 +1,5 @@
-import { CockpitOverlay, FloatingAstronaut, SpaceBackground } from '../components/background/';
+import { CockpitOverlay, SpaceBackground } from '../components/background/';
+import AstronautInteractive from '../components/background/AstronautInteractive';
 import { Logs, Projects } from '../components/hud';
 import { Terminal } from '../components/hud';
 import { RadioPlayer } from '../components/hud';
@@ -17,7 +18,7 @@ export default async function Home() {
           id="main-content"
           className="z-10 flex-1 flex flex-col items-center px-4 py-12 pt-60 relative pb-[220px]"
         >
-          <FloatingAstronaut />
+          <AstronautInteractive />
 
           {/* Glass Texture/Effect */}
           <div className="absolute inset-0 pointer-events-none z-0">
