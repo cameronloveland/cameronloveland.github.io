@@ -27,11 +27,30 @@ module.exports = {
           '0%, 100%': { opacity: '0.3' },
           '50%': { opacity: '0.5' },
         },
+        burnUp: {
+          '0%, 100%': {
+            filter: 'brightness(1)',
+            transform: 'translate(0,0) rotate(0deg) scale(1)',
+          },
+          '25%': {
+            filter: 'brightness(1.4)',
+            transform: 'translate(-2px,2px) rotate(-2deg) scale(1.05)',
+          },
+          '50%': {
+            filter: 'brightness(1.8)',
+            transform: 'translate(2px,-2px) rotate(2deg) scale(1.1)',
+          },
+          '75%': {
+            filter: 'brightness(1.4)',
+            transform: 'translate(-2px,2px) rotate(-2deg) scale(1.05)',
+          },
+        },
       },
       animation: {
         twinkle: 'twinkle 2s ease-in-out infinite',
         nebulaFloat: 'nebulaFloat 60s ease-in-out infinite',
         nebulaPulse: 'nebulaPulse 8s ease-in-out infinite',
+        burnUp: 'burnUp 0.6s linear infinite',
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'sans-serif'],
