@@ -1,9 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
 ---
 <Layout
   title="Cameron Loveland"
   description="Cameron Loveland - software engineer building full-stack apps, mobile tools, and interactive web experiences."
 >
-  <p>Content grid coming soon.</p>
+  <Sidebar slot="sidebar" />
+
+  <section class="section" id="web">
+    <h2 class="section-label">Web</h2>
+    <div class="section-empty">Coming soon</div>
+  </section>
+
+  <section class="section" id="games">
+    <h2 class="section-label">Games</h2>
+    <div class="section-empty">Coming soon</div>
+  </section>
+
+  <section class="section" id="mobile-apps">
+    <h2 class="section-label">Mobile Apps</h2>
+    <div class="section-empty">Coming soon</div>
+  </section>
+
+  <section class="section" id="experiments">
+    <h2 class="section-label">Experiments</h2>
+    <div class="section-empty">Coming soon</div>
+  </section>
 </Layout>
