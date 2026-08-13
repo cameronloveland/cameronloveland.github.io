@@ -6,6 +6,7 @@
 # Claude Code and brainstorming artifacts
 .claude/
 .superpowers/
+.worktrees/
 
 # Env files
 .env*
