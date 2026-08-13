@@ -11,19 +11,30 @@
 </aside>
 <script is:inline>
   (function () {
-    var links = document.querySelectorAll('.sidebar-link');
-    var sections = document.querySelectorAll('.section[id]');
+    function init() {
+      var links = document.querySelectorAll('.sidebar-link');
+      var sections = document.querySelectorAll('.section[id]');
 
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          links.forEach(function (link) { link.classList.remove('active'); });
-          var active = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
-          if (active) { active.classList.add('active'); }
-        }
-      });
-    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            links.forEach(function (link) { link.classList.remove('active'); });
+            var active = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+            if (active) { active.classList.add('active'); }
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
 
-    sections.forEach(function (section) { observer.observe(section); });
+      sections.forEach(function (section) { observer.observe(section); });
+    }
+
+    // This script runs synchronously as the parser reaches it, which is
+    // before <main> (containing the .section[id] elements) has been parsed
+    // into the DOM - so the section lookup must wait for DOMContentLoaded.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   }());
 </script>
