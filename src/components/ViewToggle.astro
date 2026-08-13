@@ -1,0 +1,32 @@
+---
+---
+<div class="view-toggle" role="group" aria-label="View mode">
+  <button type="button" class="view-toggle-btn active" data-view="grid">Grid</button>
+  <button type="button" class="view-toggle-btn" data-view="timeline">Timeline</button>
+</div>
+<script is:inline>
+  (function () {
+    var buttons = document.querySelectorAll('.view-toggle-btn');
+    var sidebar = document.querySelector('.sidebar');
+    var gridView = document.querySelector('[data-view-panel="grid"]');
+    var timelineView = document.querySelector('[data-view-panel="timeline"]');
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var view = button.getAttribute('data-view');
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        button.classList.add('active');
+
+        if (view === 'timeline') {
+          gridView.hidden = true;
+          timelineView.hidden = false;
+          if (sidebar) sidebar.hidden = true;
+        } else {
+          gridView.hidden = false;
+          timelineView.hidden = true;
+          if (sidebar) sidebar.hidden = false;
+        }
+      });
+    });
+  }());
+</script>

@@ -41,6 +41,7 @@ const { title, description } = Astro.props;
     </nav>
   </header>
 
+  <slot name="view-toggle" />
   <div class="body-layout">
     <slot name="sidebar" />
     <main class="content">
