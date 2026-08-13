@@ -7,13 +7,14 @@
 <script is:inline>
   (function () {
     var buttons = document.querySelectorAll('.view-toggle-btn');
-    var sidebar = document.querySelector('.sidebar');
-    var gridView = document.querySelector('[data-view-panel="grid"]');
-    var timelineView = document.querySelector('[data-view-panel="timeline"]');
 
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         var view = button.getAttribute('data-view');
+        var sidebar = document.querySelector('.sidebar');
+        var gridView = document.querySelector('[data-view-panel="grid"]');
+        var timelineView = document.querySelector('[data-view-panel="timeline"]');
+
         buttons.forEach(function (b) { b.classList.remove('active'); });
         button.classList.add('active');
 
