@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatMonthYear } from '../utils/formatDate';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { languages, stack, commits, startDate, updatedDate } = project.data;
+
+const historyParts: string[] = [];
+if (commits) historyParts.push(`${commits} commits`);
+historyParts.push(`started ${formatMonthYear(startDate)}`);
+if (updatedDate) historyParts.push(`updated ${formatMonthYear(updatedDate)}`);
+const historyText = historyParts.join(' · ');
+---
+<div class="card-meta">
+  {languages.length > 0 && (
+    <div class="card-meta-languages">
+      <span class="card-meta-label">Languages</span>
+      {languages.map((lang) => (
+        <span class="card-meta-lang">
+          <span class="card-meta-lang-dot" style={`background:${lang.color}`}></span>{lang.name}
+        </span>
+      ))}
+    </div>
+  )}
+  {stack.length > 0 && (
+    <div class="card-meta-stack">
+      <span class="card-meta-label">Stack</span>
+      {stack.map((tag) => <span class="card-meta-tag">{tag}</span>)}
+    </div>
+  )}
+  <div class="card-meta-stats"><span class="card-meta-label">History</span>{historyText}</div>
+</div>
