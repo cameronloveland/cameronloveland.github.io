@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatMonthYear } from '../utils/formatDate';
+import CardMeta from './CardMeta.astro';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -9,39 +10,93 @@ interface Props {
 const { projects } = Astro.props;
 
 const sorted = [...projects].sort(
-  (a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf()
+  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
 );
+
+const today = new Date();
+const todayLabel = today.toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
 ---
-<ol class="timeline" data-view-panel="timeline" hidden>
-  {sorted.map(({ data }) => (
-    <li class:list={['timeline-entry', { 'card--unpublished': data.unpublished }]}>
-      <div class="timeline-entry-date">
-        {formatMonthYear(data.startDate)}
-        {data.updatedDate && (
-          <span class="timeline-entry-updated">updated {formatMonthYear(data.updatedDate)}</span>
-        )}
-      </div>
-      <div class="timeline-entry-body">
-        <span class="card-meta-tag">{data.section}</span>
-        <h3>{data.title}</h3>
-        <p>{data.description}</p>
-        <div class="card-links">
-          {data.links.length > 0 ? (
-            data.links.map((link) => (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class:list={['card-link', { 'card-link--primary': link.primary }]}
-              >
-                ↗ {link.label}
-              </a>
-            ))
-          ) : (
-            <span class="card-link card-link--soon">coming soon</span>
+<ol class="timeline" data-view-panel="timeline">
+  <li class="timeline-today">
+    <div class="timeline-today-marker" aria-hidden="true"></div>
+    <div class="timeline-today-label">Today<span class="timeline-today-date">{todayLabel}</span></div>
+  </li>
+  {sorted.map((project) => {
+    const { title, description, section, links, image, unpublished, startDate, updatedDate } = project.data;
+    return (
+      <li class:list={['timeline-entry', { 'card--unpublished': unpublished }]}>
+        <div class="timeline-entry-date">
+          {formatMonthYear(startDate)}
+          {updatedDate && (
+            <span class="timeline-entry-updated">updated {formatMonthYear(updatedDate)}</span>
           )}
         </div>
-      </div>
-    </li>
-  ))}
+        <div class="timeline-entry-body">
+          <div class:list={['timeline-entry-media', { 'card-preview--strength': unpublished && !image }]}>
+            {image && <img src={image} alt={`${title} preview`} loading="lazy" />}
+            <span class="timeline-entry-badge">{section}</span>
+          </div>
+          <div class="timeline-entry-content">
+            <h3>{title}</h3>
+            <p>{description}</p>
+            <div class="card-links">
+              {links.length > 0 ? (
+                links.map((link) => (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['card-link', { 'card-link--primary': link.primary }]}
+                  >
+                    ↗ {link.label}
+                  </a>
+                ))
+              ) : (
+                <span class="card-link card-link--soon">coming soon</span>
+              )}
+            </div>
+          </div>
+          {!unpublished && <CardMeta project={project} />}
+        </div>
+      </li>
+    );
+  })}
 </ol>
+<script is:inline>
+  (function () {
+    function init() {
+      var timeline = document.querySelector('.timeline');
+      if (!timeline) return;
+      var items = timeline.querySelectorAll('.timeline-entry, .timeline-today');
+      if (!items.length || !('IntersectionObserver' in window)) return;
+
+      timeline.classList.add('timeline-reveal-ready');
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+      );
+
+      items.forEach(function (item) { observer.observe(item); });
+    }
+
+    // Same DOM-timing hazard as Sidebar.astro's script: this runs before
+    // the timeline's own <li> elements exist if is:inline fires mid-parse.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }());
+</script>
