@@ -1,5 +1,6 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
+import { linkLabel } from '../utils/linkLabel';
 import type { CollectionEntry } from 'astro:content';
 interface Props { project: CollectionEntry<'projects'>; index?: number; }
 const { project, index = 0 } = Astro.props;
@@ -12,12 +13,10 @@ const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',ex
     {image ? <img src={image} alt={`${title} screenshot`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" width="1200" height="750" /> : <div class="image-fallback">{title}</div>}
     <span class="media-category">{labels[section]}</span>
     {primary && <a class="media-link" href={primary.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${title} ${primary.label} (opens in a new tab)`}><span class="launch-arrow"><ExternalLinkIcon /></span></a>}
-    <span class="media-index" aria-hidden="true">{String(index + 1).padStart(2,'0')} / PROJECT</span>
   </div>
   <div class="project-body">
-    <div class="project-title-row"><h3>{title}</h3><span class:list={['project-status',{'is-progress':unpublished}]}><i aria-hidden="true"></i>{unpublished ? 'In progress' : 'Prototype'}</span></div>
+    <div class="project-title-row"><h3>{title}</h3><span class:list={['status',{'status--progress':unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></div>
     <p>{description}</p>
-    <div class="project-bottom"><div class="stack-tags">{stack.map(tag => <span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label === 'live site' ? (section === 'games' ? 'Play project' : 'Visit site') : link.label}<ExternalLinkIcon /></a>)}</div></div>
+    <div class="project-bottom"><div class="stack-tags">{stack.map(tag => <span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, section)}<ExternalLinkIcon /></a>)}</div></div>
   </div>
 </article>
-

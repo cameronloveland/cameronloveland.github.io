@@ -10,8 +10,8 @@ const rank = (id: string) => featured.includes(id) ? featured.indexOf(id) : feat
 const ordered = [...projects].sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
 const sections = [{id:'all',label:'All projects'},{id:'games',label:'Games'},{id:'web',label:'Web'},{id:'mobile-apps',label:'Apps'},{id:'experiments',label:'Experiments'}];
 ---
-<Layout title="Cameron Loveland — Games, apps & experiments" description="A collection of games, apps, and interactive experiences by software engineer Cameron Loveland. Explore the gallery or follow the project timeline.">
-  <div class="work-heading"><h1 class="collection-title">Projects<span class="project-total">{String(projects.length).padStart(2,'0')}</span></h1></div>
+<Layout title="Cameron Loveland - games, apps and experiments" description="A collection of games, apps, and interactive experiences by software engineer Cameron Loveland. Explore the gallery or follow the project timeline.">
+  <div class="work-heading"><h1 class="collection-title">Projects<span class="project-total">{projects.length}</span></h1></div>
   <div class="work-toolbar">
     <div class="category-filter" role="group" aria-label="Project category">{sections.map(({id,label}) => <button type="button" data-category={id} aria-pressed={id === 'all'} disabled>{label}<span>{id === 'all' ? projects.length : projects.filter(p=>p.data.section === id).length}</span></button>)}</div>
     <ViewToggle />
@@ -19,6 +19,6 @@ const sections = [{id:'all',label:'All projects'},{id:'games',label:'Games'},{id
   <p class="sr-only" id="results-status" role="status" aria-live="polite"></p>
   <div class="gallery" id="gallery-panel" data-view-panel="grid" aria-label="Project gallery">{ordered.map((project,index) => <Card project={project} index={index} />)}</div>
   <Timeline projects={projects} />
-  <div class="empty-state" hidden><span aria-hidden="true">↗</span><h3>Still exploring.</h3><p>No projects in this category yet. There’s more to see in the rest of the collection.</p><button type="button" data-reset>View all projects</button></div>
-  <noscript><p class="no-script-note">You’re viewing the full gallery. Enable JavaScript to switch views and categories.</p></noscript>
+  <div class="empty-state" hidden><h3>Nothing here yet</h3><p>No projects in this category so far. The rest of the collection is one click away.</p><button type="button" data-reset>View all projects</button></div>
+  <noscript><p class="no-script-note">You are viewing the full gallery. Enable JavaScript to switch views and categories.</p></noscript>
 </Layout>

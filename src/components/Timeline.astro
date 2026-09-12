@@ -2,27 +2,31 @@
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import type { CollectionEntry } from 'astro:content';
 import { formatMonthYear } from '../utils/formatDate';
+import { linkLabel } from '../utils/linkLabel';
 interface Props { projects: CollectionEntry<'projects'>[]; }
 const { projects } = Astro.props;
 const sorted = [...projects].sort((a,b) => b.data.startDate.valueOf() - a.data.startDate.valueOf() || a.data.title.localeCompare(b.data.title));
 const years = [...new Set(sorted.map(p => p.data.startDate.getUTCFullYear()))];
+const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
 ---
 <div id="timeline-panel" class="project-timeline" data-view-panel="timeline" aria-label="Projects by start date" hidden>
-  <div class="timeline-intro"><span class="eyebrow">Project timeline</span><span>Newest starts first ↓</span></div>
-  {years.map(year => <section class="timeline-year" aria-label={`Projects started in ${year}`}>
-    <div class="year-label"><h3>{year}</h3><span>PROJECT ORIGINS</span></div>
+  <p class="timeline-intro">Every project by the month it started, newest first.</p>
+  {years.map(year => {
+    const started = sorted.filter(p => p.data.startDate.getUTCFullYear() === year);
+    return <section class="timeline-year" aria-label={`Projects started in ${year}`}>
+    <div class="year-label"><h3>{year}</h3><span>{started.length} {started.length === 1 ? 'project' : 'projects'} started</span></div>
     <ol class="timeline-list">
-      {sorted.filter(p => p.data.startDate.getUTCFullYear() === year).map(project => {
+      {started.map(project => {
         const {title,description,startDate,updatedDate,links,image,section,unpublished,stack} = project.data;
         return <li class="journal-entry" data-project-category={section}>
-          <div class="journal-date"><span class="journal-dot" aria-hidden="true"></span><time datetime={startDate.toISOString().slice(0,10)}>{formatMonthYear(startDate)}</time><span>Project started</span></div>
+          <div class="journal-date"><span class="journal-dot" aria-hidden="true"></span><time datetime={startDate.toISOString().slice(0,10)}>{formatMonthYear(startDate)}</time><span>Started</span></div>
           <article class="journal-card">
             {image && <img src={image} alt={`${title} screenshot`} loading="lazy" width="600" height="400" />}
-            <div class="journal-content"><div class="journal-eyebrow">{section === 'mobile-apps' ? 'Mobile app' : section}<span>{unpublished ? 'In progress' : 'Prototype'}</span></div><h4>{title}</h4><p>{description}</p><div class="stack-tags">{stack.map(tag=><span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label === 'live site' ? 'Explore project' : link.label} <ExternalLinkIcon /></a>)}</div>{updatedDate && updatedDate.valueOf() !== startDate.valueOf() && <p class="journal-update">Project record updated {formatMonthYear(updatedDate)}</p>}</div>
+            <div class="journal-content"><div class="journal-meta"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></div><h4>{title}</h4><p>{description}</p><div class="stack-tags">{stack.map(tag=><span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, section)}<ExternalLinkIcon /></a>)}</div>{updatedDate && updatedDate.valueOf() !== startDate.valueOf() && <p class="journal-update">Last updated {formatMonthYear(updatedDate)}</p>}</div>
           </article>
         </li>;
       })}
     </ol>
-  </section>)}
+  </section>;
+  })}
 </div>
-

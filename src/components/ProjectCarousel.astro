@@ -5,23 +5,28 @@ const order = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hu
 const projects = (await getCollection('projects')).filter(p => p.data.image);
 const rank = (id: string) => order.includes(id) ? order.indexOf(id) : order.length;
 projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
+const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
 ---
 {projects.length > 0 && <section class="showreel" aria-label="Featured projects" aria-roledescription="carousel">
   <div class="reel-stage">
     {projects.map((project,index) => {
       const link = project.data.links.find(link => link.primary) || project.data.links[0];
+      const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
       return <div class:list={['reel-slide', {'is-active': index === 0}]} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${projects.length}: ${project.data.title}`}>
         {project.data.video
           ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
           : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
-        <div class="reel-caption"><div><span class="reel-kicker">{project.data.section === 'mobile-apps' ? 'Mobile app' : project.data.section} / {project.data.unpublished ? 'In progress' : 'Prototype'}</span><h2>{project.data.title}</h2></div>{link && <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Explore ${project.data.title} (opens in a new tab)`}>Explore <ExternalLinkIcon /></a>}</div>
+        <div class="reel-caption"><div><p class="reel-kicker"><span>{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p><h2>{project.data.title}</h2></div>{link && <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>}</div>
       </div>;
     })}
-    <span class="reel-badge">PROJECT SPOTLIGHT</span>
   </div>
   <div class="reel-controls" hidden>
-    <div class="reel-selectors" role="group" aria-label="Choose featured project">{projects.map((project,index) => <button type="button" data-slide-to={index} aria-pressed={index === 0}><span class="reel-number">{String(index+1).padStart(2,'0')}</span><span>{project.data.title}</span><span class="reel-track" aria-hidden="true"></span></button>)}</div>
-    <div class="reel-actions"><button type="button" data-reel-prev aria-label="Previous project">←</button><button type="button" data-reel-play aria-label="Pause slideshow">Ⅱ</button><button type="button" data-reel-next aria-label="Next project">→</button></div>
+    <div class="reel-selectors" role="group" aria-label="Choose featured project">{projects.map((project,index) => <button type="button" data-slide-to={index} aria-pressed={index === 0}><span class="reel-selector-title">{project.data.title}</span><span class="reel-selector-meta">{categories[project.data.section]}</span><span class="reel-track" aria-hidden="true"></span></button>)}</div>
+    <div class="reel-actions">
+      <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+      <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
+      <button type="button" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+    </div>
   </div>
 </section>}
 <script>
@@ -67,7 +72,8 @@ projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.d
     }
     function setPaused(value: boolean) {
       paused = value;
-      play.textContent = paused ? '▷' : 'Ⅱ';
+      // The button holds both icons; the class decides which one shows.
+      play.classList.toggle('is-paused', paused);
       play.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
       schedule();
     }
@@ -88,4 +94,3 @@ projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.d
     show(current);
   }
 </script>
-

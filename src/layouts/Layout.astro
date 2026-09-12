@@ -13,6 +13,7 @@ const { title, description } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <link rel="preload" href="/fonts/bricolage-grotesque-latin-opsz.woff2" as="font" type="font/woff2" crossorigin />
   <script is:inline>
     try { var saved = localStorage.getItem('theme'); if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved); } catch (_) {}
   </script>
@@ -21,7 +22,7 @@ const { title, description } = Astro.props;
 <a class="skip-link" href="#projects">Skip to projects</a>
 <div class="site">
   <header class="site-header">
-    <a class="wordmark" href="#" aria-label="Cameron Loveland home"><span class="wordmark-name">Cameron Loveland</span><span class="wordmark-role">Software engineer &middot; games, apps &amp; experiments</span></a>
+    <a class="wordmark" href="#" aria-label="Cameron Loveland home"><span class="wordmark-name">Cameron Loveland</span><span class="wordmark-role">Software engineer making games, apps and experiments</span></a>
     <nav class="header-links" aria-label="Site links">
       <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub <ExternalLinkIcon /></a>
       <a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn <ExternalLinkIcon /></a>
@@ -32,8 +33,7 @@ const { title, description } = Astro.props;
     <ProjectCarousel />
     <div id="projects" class="work-area"><slot /></div>
   </main>
-  <footer><span>&copy; {new Date().getUTCFullYear()} Cameron Loveland</span><a href="#">Back to top ↑</a></footer>
+  <footer><span>&copy; {new Date().getUTCFullYear()} Cameron Loveland</span><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></footer>
 </div>
 </body>
 </html>
-
