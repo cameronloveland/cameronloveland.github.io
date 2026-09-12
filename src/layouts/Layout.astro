@@ -3,6 +3,7 @@ import ExternalLinkIcon from '../components/ExternalLinkIcon.astro';
 import '../styles/portfolio.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
+import SkyField from '../components/SkyField.astro';
 interface Props { title: string; description: string; }
 const { title, description } = Astro.props;
 ---
@@ -20,17 +21,22 @@ const { title, description } = Astro.props;
 </head>
 <body>
 <a class="skip-link" href="#projects">Skip to projects</a>
-<div class="site">
-  <header class="site-header">
-    <a class="wordmark" href="#" aria-label="Cameron Loveland home"><span class="wordmark-name">Cameron Loveland</span><span class="wordmark-role">Software engineer making games, apps and experiments</span></a>
-    <nav class="header-links" aria-label="Site links">
-      <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub <ExternalLinkIcon /></a>
-      <a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn <ExternalLinkIcon /></a>
-      <ThemeToggle />
-    </nav>
-  </header>
-  <main>
+<div class="fold">
+  <SkyField />
+  <div class="site">
+    <header class="site-header">
+      <a class="mark" href="#" aria-label="Cameron Loveland home"><svg viewBox="0 0 28 28" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="11"/><circle class="mark-core" cx="14" cy="14" r="2.6"/><circle class="mark-body" cx="21.07" cy="5.57" r="2"/></svg></a>
+      <nav class="header-links" aria-label="Site links">
+        <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub <ExternalLinkIcon /></a>
+        <a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn <ExternalLinkIcon /></a>
+        <ThemeToggle />
+      </nav>
+    </header>
     <ProjectCarousel />
+  </div>
+</div>
+<div class="site">
+  <main>
     <div id="projects" class="work-area"><slot /></div>
   </main>
   <footer><span>&copy; {new Date().getUTCFullYear()} Cameron Loveland</span><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></footer>

@@ -43,6 +43,14 @@
     0 2px 4px color-mix(in srgb, var(--shadow-ink) 8%, transparent),
     0 18px 44px color-mix(in srgb, var(--shadow-ink) 12%, transparent);
   --shadow-frame: 0 24px 64px color-mix(in srgb, var(--shadow-ink) 16%, transparent);
+  /* The fold: a daytime sky with ink-line rings, like an engraving plate. */
+  --sky-zenith: color-mix(in srgb, var(--signal-fill) 26%, var(--bg));
+  --star-alpha: 0.16;
+  --ring: color-mix(in srgb, var(--text) 42%, transparent);
+  --ring-faint: color-mix(in srgb, var(--text) 16%, transparent);
+  --bezel: color-mix(in srgb, var(--text) 6%, transparent);
+  --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
+  --body-fill: var(--surface);
 
   --font: "Bricolage Grotesque", "Segoe UI", system-ui, -apple-system, sans-serif;
   --text-xs: 0.8125rem;
@@ -52,6 +60,7 @@
   --text-xl: 1.5rem;
   --text-title: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
   --text-display: clamp(2rem, 1.2rem + 3.2vw, 3.25rem);
+  --text-hero: clamp(2.75rem, 0.5rem + 4.8vw, 5.5rem);
   --text-year: clamp(2.5rem, 2rem + 2vw, 3.75rem);
   --weight-body: 400;
   --weight-ui: 500;
@@ -107,6 +116,14 @@
   --shadow-card: 0 0 0 0 transparent;
   --shadow-card-hover: 0 18px 44px color-mix(in srgb, var(--shadow-ink) 50%, transparent);
   --shadow-frame: 0 28px 72px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+  /* The fold: night sky, brass rings. */
+  --sky-zenith: color-mix(in srgb, var(--shadow-ink) 45%, var(--bg));
+  --star-alpha: 1;
+  --ring: color-mix(in srgb, var(--accent) 52%, transparent);
+  --ring-faint: color-mix(in srgb, var(--accent) 20%, transparent);
+  --bezel: color-mix(in srgb, var(--accent) 9%, transparent);
+  --rim-light: color-mix(in srgb, var(--text) 22%, transparent);
+  --body-fill: color-mix(in srgb, var(--accent) 14%, var(--bg));
   color-scheme: dark;
 }
 
@@ -126,8 +143,6 @@ html {
 }
 body {
   background-color: var(--bg);
-  background-image: radial-gradient(ellipse 70% 45% at 50% 0, var(--glow), transparent);
-  background-repeat: no-repeat;
   color: var(--text);
   font-family: var(--font);
   font-size: var(--text-md);
@@ -299,31 +314,40 @@ video {
   padding: 0 64px;
   margin: auto;
 }
+main {
+  padding-top: var(--space-5);
+}
 .site-header {
-  min-height: 112px;
+  min-height: 96px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border);
   gap: var(--space-5);
 }
-.wordmark {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* The maker's mark: a ring with one body on it, the instrument in miniature. */
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -8px;
+  color: var(--accent);
+  border-radius: var(--radius-pill);
 }
-.wordmark-name {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-heading);
-  letter-spacing: var(--track-heading);
-  line-height: 1.2;
-  font-variation-settings: "opsz" 32;
+.mark svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
 }
-.wordmark-role {
-  display: block;
-  font-size: var(--text-sm);
-  line-height: var(--leading-small);
-  color: var(--muted);
+.mark-core,
+.mark-body {
+  fill: currentColor;
+  stroke: none;
+}
+.mark:hover {
+  color: var(--text);
 }
 .header-links {
   display: flex;
@@ -371,20 +395,191 @@ video {
   display: block;
 }
 
-/* ---------- Showreel (featured project carousel) ---------- */
-.showreel {
-  margin: 28px 0 36px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-frame);
+/* ---------- The fold: night sky ---------- */
+.fold {
+  position: relative;
+  isolation: isolate;
   overflow: hidden;
-  box-shadow: var(--shadow-frame);
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--sky-zenith), var(--bg));
+}
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  color: var(--text);
+}
+.sky-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  opacity: var(--star-alpha);
+  -webkit-mask-image: linear-gradient(180deg, var(--text) 68%, transparent);
+  mask-image: linear-gradient(180deg, var(--text) 68%, transparent);
+}
+.stars-far {
+  opacity: 0.38;
+}
+.stars-mid {
+  opacity: 0.62;
+}
+.stars-near {
+  opacity: 0.95;
+}
+/* One meteor, rarely, in the dark. It travels head first along its own axis. */
+.sky-meteor {
+  position: absolute;
+  top: 12%;
+  left: 60%;
+  width: 150px;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--text));
+}
+[data-theme="dark"] .sky-meteor {
+  animation: meteor 34s linear 6s infinite;
+}
+@keyframes meteor {
+  0% {
+    transform: rotate(148deg) translateX(0);
+    opacity: 0;
+  }
+  0.6% {
+    opacity: 0.85;
+  }
+  3.6% {
+    transform: rotate(148deg) translateX(620px);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(148deg) translateX(620px);
+    opacity: 0;
+  }
+}
+
+/* ---------- Hero: identity and the orrery ---------- */
+.hero {
+  --orbit: clamp(360px, 40vw, 580px);
+  --label-room: 200px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--orbit) + var(--label-room));
+  grid-template-rows: auto 1fr;
+  column-gap: var(--space-7);
+  padding: 12px 0 72px;
+}
+.identity {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 20px;
+}
+.hero-name {
+  font-size: var(--text-hero);
+  font-weight: var(--weight-display);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  font-variation-settings: "opsz" 96;
+}
+.hero-name span {
+  display: block;
+}
+/* Light first name over a heavy surname: one variable face, two weights. */
+.hero-name span:first-child {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.hero-lede {
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--secondary);
+  max-width: 26ch;
+  text-wrap: pretty;
+}
+/* The carousel region has no box of its own; its parts sit in the hero grid. */
+.reel {
+  display: contents;
+}
+.orbit {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  position: relative;
+  width: var(--orbit);
+  max-width: 100%;
+}
+.orbit-window {
+  position: relative;
+  aspect-ratio: 1;
+}
+.orbit-rings {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+}
+.ring {
+  stroke: var(--ring);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.ring-outer {
+  stroke: var(--ring-faint);
+}
+.bezel-band {
+  fill: var(--bezel);
+}
+/* The dial turns so the hand points at the active body on the orbit. */
+.bezel-dial {
+  transform: rotate(calc(var(--reel-index, 0) * var(--body-step, 40deg)));
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.bezel-ticks {
+  stroke: var(--ring);
+  stroke-width: 1.3;
+}
+.bezel-ticks--major {
+  stroke: var(--accent);
+  stroke-width: 2.2;
+}
+.bezel-hand {
+  fill: var(--accent);
+}
+.bezel-rim {
+  stroke: var(--rim-light);
+}
+/* The slide timer is a brass sweep around the bezel. */
+.reel-sweep {
+  stroke: var(--accent);
+  stroke-width: 0.4;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.is-playing .reel-sweep {
+  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
+}
+@keyframes reel-sweep {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 .reel-stage {
-  position: relative;
-  height: clamp(310px, 33vw, 445px);
-  background: var(--scrim);
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
   overflow: hidden;
+  isolation: isolate;
+  background: var(--scrim);
+  box-shadow: var(--shadow-frame);
+  transform: translateZ(0);
 }
 .reel-slide {
   position: absolute;
@@ -419,29 +614,94 @@ video {
 .reel-slide.is-active > img {
   transform: scale(1);
 }
+/* Glass: the porthole darkens toward its rim. */
 .reel-slide::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--scrim) 18%, transparent),
-    transparent 35%,
-    color-mix(in srgb, var(--scrim) 86%, transparent)
+  background: radial-gradient(
+    circle at 50% 46%,
+    transparent 56%,
+    color-mix(in srgb, var(--scrim) 58%, transparent)
   );
   pointer-events: none;
 }
-.reel-caption {
+.orbit-bodies {
   position: absolute;
-  bottom: 28px;
-  left: 30px;
-  right: 30px;
+  inset: 0;
+}
+.orbit-body {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-7px, -50%);
   z-index: 2;
   display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: var(--space-5);
-  color: var(--on-media);
+  align-items: center;
+  gap: 12px;
+  padding: 4px 10px 4px 0;
+  border: 0;
+  background: none;
+  color: var(--secondary);
+  text-align: left;
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+}
+.orbit-body::before {
+  content: "";
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring);
+  background: var(--body-fill);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+.orbit-body:hover {
+  color: var(--text);
+}
+.orbit-body:hover::before {
+  border-color: var(--accent);
+}
+.orbit-body[aria-pressed="true"] {
+  color: var(--text);
+}
+.orbit-body[aria-pressed="true"]::before {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-fill) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--accent-fill) 55%, transparent);
+}
+.orbit-body:focus-visible {
+  outline-offset: 2px;
+}
+.orbit-body-title {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  line-height: 1.25;
+}
+.orbit-body-meta {
+  display: block;
+  font-size: var(--text-xs);
+  line-height: var(--leading-small);
+  letter-spacing: var(--track-small);
+  color: var(--muted);
+}
+.orbit-body[aria-pressed="true"] .orbit-body-meta {
+  color: var(--accent);
+}
+
+/* ---------- Hero: the active project readout ---------- */
+.reel-readout-area {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+  padding-top: var(--space-7);
 }
 .reel-kicker {
   display: flex;
@@ -449,30 +709,33 @@ video {
   gap: var(--space-3);
   font-size: var(--text-sm);
   font-weight: var(--weight-ui);
-  color: color-mix(in srgb, var(--on-media) 82%, transparent);
+  color: var(--muted);
 }
 .reel-kicker .status {
   color: inherit;
 }
-.reel-kicker .status::before {
-  background: var(--accent-fill);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-fill) 25%, transparent);
-}
-.reel-kicker .status--progress::before {
-  background: var(--signal-fill);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal-fill) 25%, transparent);
-}
-.reel-caption h2 {
-  font-size: var(--text-display);
-  font-weight: var(--weight-display);
-  letter-spacing: var(--track-display);
-  line-height: var(--leading-display);
-  font-variation-settings: "opsz" 96;
+.reel-readout h2 {
   margin-top: var(--space-2);
-  text-shadow: 0 2px 24px color-mix(in srgb, var(--scrim) 60%, transparent);
+  font-size: var(--text-title);
+  letter-spacing: var(--track-title);
+  line-height: var(--leading-title);
+  font-variation-settings: "opsz" 48;
 }
-.reel-caption a {
+.reel-blurb {
+  margin-top: var(--space-3);
+  color: var(--secondary);
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+.reel-console {
   display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-5);
+}
+.reel-open {
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 12px 20px;
@@ -484,121 +747,32 @@ video {
   white-space: nowrap;
   transition: background 0.2s;
 }
-.reel-caption a .external-link-icon {
+.reel-open .external-link-icon {
   opacity: 0.85;
 }
-.reel-caption a:hover {
-  background: color-mix(in srgb, var(--accent-fill) 86%, var(--on-media));
-}
-.reel-caption a:focus-visible {
-  outline-color: var(--on-media);
-}
-.reel-controls {
-  display: flex;
-  align-items: stretch;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  min-height: 74px;
-}
-.reel-selectors {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  flex: 1;
-  min-width: 0;
-}
-.reel-selectors button {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 2px;
-  text-align: left;
-  padding: 14px 20px;
-  border: 0;
-  border-right: 1px solid var(--border);
-  background: none;
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.3;
-  transition: background 0.2s;
-}
-.reel-selectors button:hover {
-  background: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
-}
-.reel-selector-title {
-  font-weight: var(--weight-strong);
-  color: var(--secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-.reel-selector-meta {
-  font-size: var(--text-xs);
-  line-height: var(--leading-small);
-  color: var(--muted);
-}
-.reel-selectors button[aria-pressed="true"] {
-  background: var(--surface-2);
-}
-.reel-selectors button[aria-pressed="true"] .reel-selector-title {
-  color: var(--text);
-}
-.reel-selectors button[aria-pressed="true"] .reel-selector-meta {
-  color: var(--accent);
-}
-.reel-track {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  overflow: hidden;
-}
-.reel-selectors button[aria-pressed="true"] .reel-track {
-  background: var(--border-strong);
-}
-.reel-selectors button[aria-pressed="true"] .reel-track::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform-origin: left;
-}
-.is-playing .reel-selectors button[aria-pressed="true"] .reel-track::after {
-  animation: reel-progress var(--reel-delay, 6.5s) linear forwards;
-}
-@keyframes reel-progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+.reel-open:hover {
+  background: color-mix(in srgb, var(--accent-fill) 86%, var(--text));
 }
 .reel-actions {
   display: flex;
-  align-items: center;
-  padding: 0 var(--space-3);
-  gap: 2px;
+  gap: var(--space-1);
 }
 .reel-actions button {
   display: grid;
   place-items: center;
-  border: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ring-faint);
+  border-radius: var(--radius-pill);
   background: none;
   color: var(--secondary);
-  width: 40px;
-  height: 44px;
-  border-radius: var(--radius-pill);
   transition:
-    background 0.2s,
-    color 0.2s;
+    color 0.2s,
+    border-color 0.2s;
 }
 .reel-actions button:hover {
   color: var(--accent);
-  background: var(--surface-2);
+  border-color: var(--accent);
 }
 .reel-actions .icon-play,
 .reel-actions .icon-pause {
@@ -611,9 +785,6 @@ video {
 }
 [data-reel-play].is-paused .icon-play {
   display: block;
-}
-.reel-controls button:focus-visible {
-  outline-offset: -4px;
 }
 
 /* ---------- Work heading and toolbar ---------- */
@@ -1095,15 +1266,28 @@ footer a .ui-icon {
     min-height: 0;
   }
 }
-@media (max-width: 900px) {
-  .reel-selectors button {
-    padding: 12px 12px;
+@media (max-width: 1040px) {
+  .hero {
+    --orbit: min(100%, 440px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: var(--space-6);
+    padding-bottom: 56px;
   }
-  .reel-actions {
-    padding: 0 6px;
+  .identity,
+  .orbit,
+  .reel-readout-area {
+    grid-column: 1;
+    grid-row: auto;
   }
-  .reel-actions button {
-    width: 34px;
+  .identity {
+    padding-top: 8px;
+  }
+  .orbit {
+    margin-top: var(--space-2);
+  }
+  .reel-readout-area {
+    padding-top: 0;
   }
 }
 @media (max-width: 720px) {
@@ -1113,12 +1297,6 @@ footer a .ui-icon {
   .site-header {
     min-height: 88px;
     gap: var(--space-3);
-  }
-  .wordmark-name {
-    font-size: var(--text-md);
-  }
-  .wordmark-role {
-    font-size: var(--text-xs);
   }
   .header-links {
     gap: var(--space-4);
@@ -1194,60 +1372,51 @@ footer a .ui-icon {
     gap: var(--space-2);
   }
 }
-@media (max-width: 620px) {
-  .showreel {
-    margin: 20px 0 28px;
-    border-radius: var(--radius-card);
+@media (max-width: 720px) {
+  .hero {
+    --orbit: min(100%, 420px);
+    row-gap: var(--space-5);
+    padding-bottom: 44px;
+  }
+  .ring-outer,
+  .ring-main {
+    display: none;
+  }
+  .orbit-rings {
+    transform: scale(1.2);
   }
   .reel-stage {
-    height: 290px;
+    inset: 6.6%;
   }
-  .reel-slide > img,
-  .reel-slide > video {
-    object-position: 65% center;
+  .orbit-bodies {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
   }
-  .reel-caption {
-    left: 18px;
-    right: 18px;
-    bottom: 18px;
-    gap: var(--space-3);
+  .orbit-body {
+    position: static;
+    transform: none;
+    gap: 9px;
+    padding: 8px 14px 8px 9px;
+    border: 1px solid var(--ring-faint);
+    white-space: normal;
+    transition: border-color 0.2s;
+  }
+  .orbit-body:hover,
+  .orbit-body[aria-pressed="true"] {
+    border-color: var(--accent);
+  }
+  .orbit-body-meta {
+    display: none;
   }
   .reel-kicker {
     font-size: var(--text-xs);
     gap: 10px;
   }
-  .reel-caption a {
-    padding: 9px 14px;
-    gap: 8px;
-    font-size: var(--text-xs);
-  }
-  .reel-controls {
-    flex-wrap: wrap;
-    min-height: 0;
-  }
-  .reel-selectors {
-    flex-basis: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  }
-  .reel-selectors button {
-    padding: 11px 10px;
-    font-size: var(--text-xs);
-  }
-  .reel-selectors button:nth-last-child(1) {
-    border-right: 0;
-  }
-  .reel-selector-meta {
-    font-size: 0.75rem;
-  }
-  .reel-actions {
-    margin-left: auto;
-    padding: 3px 10px;
-    border-top: 1px solid var(--border);
-    width: 100%;
-    justify-content: flex-end;
-  }
-  .reel-actions button {
-    width: 40px;
+  .reel-open {
+    padding: 10px 16px;
   }
 }
 @media (max-width: 420px) {
@@ -1256,9 +1425,6 @@ footer a .ui-icon {
   }
   .header-links {
     gap: 10px;
-  }
-  .wordmark-role {
-    display: none;
   }
   .theme-toggle {
     width: 36px;

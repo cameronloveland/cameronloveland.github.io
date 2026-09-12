@@ -6,34 +6,82 @@ const projects = (await getCollection('projects')).filter(p => p.data.image);
 const rank = (id: string) => order.includes(id) ? order.indexOf(id) : order.length;
 projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
 const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
+const count = projects.length;
+
+// Orrery geometry in a 100-unit box centred on the porthole. Bodies sit on the
+// main orbit (radius 47) spread across the right-hand sweep from the top (0deg)
+// to just short of the bottom (160deg), so every title reads outward to the right.
+const R = 47;
+const step = count > 1 ? 160 / (count - 1) : 0;
+const at = (r: number, deg: number) => { const a = deg * Math.PI / 180; return [50 + r * Math.sin(a), 50 - r * Math.cos(a)]; };
+const pt = (r: number, deg: number) => at(r, deg).map(v => v.toFixed(2)).join(' ');
+const arc = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${pt(r, to)}`;
+const ring = (r: number) => `M50 ${50 - r} A${r} ${r} 0 1 1 50 ${50 + r} A${r} ${r} 0 1 1 50 ${50 - r} Z`;
+const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
+const bodies = projects.map((project, index) => { const [x, y] = at(R, index * step); return { project, index, x: x.toFixed(2), y: y.toFixed(2) }; });
 ---
-{projects.length > 0 && <section class="showreel" aria-label="Featured projects" aria-roledescription="carousel">
-  <div class="reel-stage">
-    {projects.map((project,index) => {
-      const link = project.data.links.find(link => link.primary) || project.data.links[0];
-      const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
-      return <div class:list={['reel-slide', {'is-active': index === 0}]} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${projects.length}: ${project.data.title}`}>
-        {project.data.video
-          ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
-          : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
-        <div class="reel-caption"><div><p class="reel-kicker"><span>{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p><h2>{project.data.title}</h2></div>{link && <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>}</div>
-      </div>;
-    })}
+{count > 0 && <section class="hero" aria-labelledby="hero-name" style={`--body-step:${step}deg`}>
+  <div class="identity">
+    <h1 class="hero-name" id="hero-name"><span>Cameron</span><span>Loveland</span></h1>
+    <p class="hero-lede">Software engineer making games, apps and experiments.</p>
   </div>
-  <div class="reel-controls" hidden>
-    <div class="reel-selectors" role="group" aria-label="Choose featured project">{projects.map((project,index) => <button type="button" data-slide-to={index} aria-pressed={index === 0}><span class="reel-selector-title">{project.data.title}</span><span class="reel-selector-meta">{categories[project.data.section]}</span><span class="reel-track" aria-hidden="true"></span></button>)}</div>
-    <div class="reel-actions">
-      <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
-      <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
-      <button type="button" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+  <div class="reel" role="region" aria-label="Featured projects" aria-roledescription="carousel">
+    <div class="orbit">
+      <div class="orbit-window">
+        <svg class="orbit-rings" viewBox="-20 -20 140 140" aria-hidden="true" focusable="false">
+          <path class="ring ring-outer" d={arc(60, 95, 250)} vector-effect="non-scaling-stroke" />
+          <path class="ring ring-main" d={arc(R, -25, 185)} vector-effect="non-scaling-stroke" />
+          <path class="bezel-band" fill-rule="evenodd" d={ring(39.2) + ring(36)} />
+          <g class="bezel-dial">
+            <circle class="bezel-ticks" cx="50" cy="50" r="37.6" stroke-dasharray="0.22 3.0612" stroke-dashoffset="0.11" />
+            <circle class="bezel-ticks bezel-ticks--major" cx="50" cy="50" r="37.6" stroke-dasharray="0.32 29.21" stroke-dashoffset="0.16" />
+            <path class="bezel-hand" d="M50 8.3 48.4 10.9h3.2Z" />
+          </g>
+          <circle class="ring bezel-rim" cx="50" cy="50" r="36.15" vector-effect="non-scaling-stroke" />
+          <circle class="ring bezel-edge" cx="50" cy="50" r="39.2" vector-effect="non-scaling-stroke" />
+          <circle class="reel-sweep" cx="50" cy="50" r="39.2" pathLength="1" transform="rotate(-90 50 50)" />
+        </svg>
+        <div class="reel-stage">
+          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0}]} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
+            {project.data.video
+              ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
+              : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
+          </div>)}
+        </div>
+      </div>
+      <div class="orbit-bodies" role="group" aria-label="Choose featured project" hidden>
+        {bodies.map(({project,index,x,y}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y}%`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{categories[project.data.section]}</span></button>)}
+      </div>
+    </div>
+    <div class="reel-readout-area">
+      <div class="reel-readouts">
+        {projects.map((project,index) => <div class="reel-readout" data-readout={index} hidden={index !== 0}>
+          <p class="reel-kicker"><span>{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
+          <h2>{project.data.title}</h2>
+          <p class="reel-blurb">{firstSentence(project.data.description)}</p>
+        </div>)}
+      </div>
+      <div class="reel-console">
+        {projects.map((project,index) => {
+          const link = project.data.links.find(link => link.primary) || project.data.links[0];
+          const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
+          return link && <a class="reel-open" data-readout={index} hidden={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
+        })}
+        <div class="reel-actions" hidden>
+          <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+          <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
+          <button type="button" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+        </div>
+      </div>
     </div>
   </div>
 </section>}
 <script>
-  const reel = document.querySelector<HTMLElement>('.showreel');
+  const reel = document.querySelector<HTMLElement>('.reel');
   if (reel) {
     const slides = Array.from(reel.querySelectorAll<HTMLElement>('[data-slide]'));
     const selectors = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-slide-to]'));
+    const readouts = Array.from(reel.querySelectorAll<HTMLElement>('[data-readout]'));
     const play = reel.querySelector<HTMLButtonElement>('[data-reel-play]')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     let current = 0;
@@ -44,8 +92,8 @@ const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app
       clearTimeout(timer);
       reel!.classList.remove('is-playing');
       if (paused || hovering || document.hidden || slides.length < 2) return;
-      // Restart the selected project's progress indicator with the slide timer.
-      void reel!.offsetWidth;
+      // Restart the bezel sweep with the slide timer (the region itself has no box).
+      void reel!.querySelector<HTMLElement>('.orbit')!.offsetWidth;
       // A video slide holds long enough to finish one loop.
       const video = slides[current].querySelector('video');
       if (video && !video.duration) video.addEventListener('loadedmetadata', schedule, { once: true });
@@ -62,6 +110,9 @@ const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app
         slide.setAttribute('aria-hidden', String(i !== current));
       });
       selectors.forEach((button,i) => button.setAttribute('aria-pressed', String(i === current)));
+      readouts.forEach(readout => { readout.hidden = Number(readout.dataset.readout) !== current; });
+      // The bezel hand turns to point at the active body on the orbit.
+      reel!.style.setProperty('--reel-index', String(current));
       // Only the visible slide's video plays; reduced-motion users get the poster.
       slides.forEach((slide,i) => {
         const video = slide.querySelector('video');
@@ -83,13 +134,17 @@ const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app
     let pausedBeforePointer = paused;
     play.addEventListener('pointerdown', () => { pausedBeforePointer = paused; });
     play.addEventListener('click', event => setPaused(event.detail > 0 ? !pausedBeforePointer : !paused));
-    reel.addEventListener('mouseenter', () => { hovering = true; schedule(); });
-    reel.addEventListener('mouseleave', () => { hovering = false; schedule(); });
+    // The region has no box of its own (display: contents), so hover is tracked on its parts.
+    reel.querySelectorAll<HTMLElement>('.orbit, .reel-readout-area').forEach(part => {
+      part.addEventListener('mouseenter', () => { hovering = true; schedule(); });
+      part.addEventListener('mouseleave', () => { hovering = false; schedule(); });
+    });
     // Keyboard interaction stops rotation until explicitly restarted.
     reel.addEventListener('focusin', () => setPaused(true));
     document.addEventListener('visibilitychange', schedule);
     reduced.addEventListener('change', () => { if (reduced.matches) setPaused(true); });
-    reel.querySelector<HTMLElement>('.reel-controls')!.hidden = slides.length < 2;
+    reel.querySelector<HTMLElement>('.orbit-bodies')!.hidden = slides.length < 2;
+    reel.querySelector<HTMLElement>('.reel-actions')!.hidden = slides.length < 2;
     setPaused(paused);
     show(current);
   }

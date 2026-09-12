@@ -11,7 +11,7 @@ const ordered = [...projects].sort((a,b) => rank(a.id) - rank(b.id) || a.data.ti
 const sections = [{id:'all',label:'All projects'},{id:'games',label:'Games'},{id:'web',label:'Web'},{id:'mobile-apps',label:'Apps'},{id:'experiments',label:'Experiments'}];
 ---
 <Layout title="Cameron Loveland - games, apps and experiments" description="A collection of games, apps, and interactive experiences by software engineer Cameron Loveland. Explore the gallery or follow the project timeline.">
-  <div class="work-heading"><h1 class="collection-title">Projects<span class="project-total">{projects.length}</span></h1></div>
+  <div class="work-heading"><h2 class="collection-title">Projects<span class="project-total">{projects.length}</span></h2></div>
   <div class="work-toolbar">
     <div class="category-filter" role="group" aria-label="Project category">{sections.map(({id,label}) => <button type="button" data-category={id} aria-pressed={id === 'all'} disabled>{label}<span>{id === 'all' ? projects.length : projects.filter(p=>p.data.section === id).length}</span></button>)}</div>
     <ViewToggle />
