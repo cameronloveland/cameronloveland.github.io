@@ -1,22 +1,39 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import { linkLabel } from '../utils/linkLabel';
+import { formatMonthYear } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
 interface Props { project: CollectionEntry<'projects'>; index?: number; }
 const { project, index = 0 } = Astro.props;
-const { title, description, links, image, unpublished, section, stack } = project.data;
+const { title, description, links, image, imageFocus, unpublished, section, stack, languages, startDate, updatedDate, commits } = project.data;
+// One way to open a project: the primary link stretches over the whole card.
+// Any other links (source, hackathon page) stay as plain text links beside it.
 const primary = links.find(l => l.primary) || links[0];
+const secondary = links.filter(l => l !== primary);
 const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
+const updated = updatedDate && updatedDate.valueOf() !== startDate.valueOf() ? updatedDate : undefined;
+const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 ---
-<article class:list={['project-card', `project-${project.id}`, {'project-card--wide': index % 4 === 0 || index % 4 === 3}]} data-project-category={section}>
-  <div class="project-media">
+<article class:list={['project-card', `project-${project.id}`]} data-project-category={section}>
+  <div class="project-media" style={imageFocus && `--focus:${imageFocus}`}>
     {image ? <img src={image} alt={`${title} screenshot`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" width="1200" height="750" /> : <div class="image-fallback">{title}</div>}
-    <span class="media-category">{labels[section]}</span>
-    {primary && <a class="media-link" href={primary.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${title} ${primary.label} (opens in a new tab)`}><span class="launch-arrow"><ExternalLinkIcon /></span></a>}
   </div>
   <div class="project-body">
-    <div class="project-title-row"><h3>{title}</h3><span class:list={['status',{'status--progress':unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></div>
-    <p>{description}</p>
-    <div class="project-bottom"><div class="stack-tags">{stack.map(tag => <span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, section)}<ExternalLinkIcon /></a>)}</div></div>
+    <div class="project-copy">
+      <p class="project-kicker"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+    <dl class="project-plate">
+      {languages.length > 0 && <><dt>Languages</dt><dd>{languages.map(language => <span class="project-lang" style={`--lang-color:${language.color}`}>{language.name}</span>)}</dd></>}
+      {stack.length > 0 && <><dt>Stack</dt><dd>{stack.join(', ')}</dd></>}
+      <dt>Started</dt>
+      <dd><time datetime={isoDate(startDate)}>{formatMonthYear(startDate)}</time>{updated && <>, updated <time datetime={isoDate(updated)}>{formatMonthYear(updated)}</time></>}</dd>
+      {commits && <><dt>Commits</dt><dd>{commits}</dd></>}
+    </dl>
+    {links.length > 0 && <div class="project-actions">
+      {primary && <a class="project-open" href={primary.href} target="_blank" rel="noopener noreferrer" aria-label={`${linkLabel(primary.label, section)}: ${title} (opens in a new tab)`}>{linkLabel(primary.label, section)}<ExternalLinkIcon /></a>}
+      {secondary.map(link => <a class="project-more" href={link.href} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, section)}<ExternalLinkIcon /></a>)}
+    </div>}
   </div>
 </article>
