@@ -4,6 +4,7 @@ description: "React Native strength training app focused on staged progression, 
 section: "mobile-apps"
 startDate: 2026-02-01
 unpublished: true
+image: "/images/strength-path.png"
 links:
   - label: "preview"
     href: "https://strengthpath.app/"

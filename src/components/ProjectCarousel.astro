@@ -1,0 +1,91 @@
+---
+import ExternalLinkIcon from './ExternalLinkIcon.astro';
+import { getCollection } from 'astro:content';
+const order = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hud-portfolio'];
+const projects = (await getCollection('projects')).filter(p => p.data.image);
+const rank = (id: string) => order.includes(id) ? order.indexOf(id) : order.length;
+projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
+---
+{projects.length > 0 && <section class="showreel" aria-label="Featured projects" aria-roledescription="carousel">
+  <div class="reel-stage">
+    {projects.map((project,index) => {
+      const link = project.data.links.find(link => link.primary) || project.data.links[0];
+      return <div class:list={['reel-slide', {'is-active': index === 0}]} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${projects.length}: ${project.data.title}`}>
+        {project.data.video
+          ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
+          : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
+        <div class="reel-caption"><div><span class="reel-kicker">{project.data.section === 'mobile-apps' ? 'Mobile app' : project.data.section} / {project.data.unpublished ? 'In progress' : 'Prototype'}</span><h2>{project.data.title}</h2></div>{link && <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Explore ${project.data.title} (opens in a new tab)`}>Explore <ExternalLinkIcon /></a>}</div>
+      </div>;
+    })}
+    <span class="reel-badge">PROJECT SPOTLIGHT</span>
+  </div>
+  <div class="reel-controls" hidden>
+    <div class="reel-selectors" role="group" aria-label="Choose featured project">{projects.map((project,index) => <button type="button" data-slide-to={index} aria-pressed={index === 0}><span class="reel-number">{String(index+1).padStart(2,'0')}</span><span>{project.data.title}</span><span class="reel-track" aria-hidden="true"></span></button>)}</div>
+    <div class="reel-actions"><button type="button" data-reel-prev aria-label="Previous project">←</button><button type="button" data-reel-play aria-label="Pause slideshow">Ⅱ</button><button type="button" data-reel-next aria-label="Next project">→</button></div>
+  </div>
+</section>}
+<script>
+  const reel = document.querySelector<HTMLElement>('.showreel');
+  if (reel) {
+    const slides = Array.from(reel.querySelectorAll<HTMLElement>('[data-slide]'));
+    const selectors = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-slide-to]'));
+    const play = reel.querySelector<HTMLButtonElement>('[data-reel-play]')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    let current = 0;
+    let paused = reduced.matches;
+    let hovering = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    function schedule() {
+      clearTimeout(timer);
+      reel!.classList.remove('is-playing');
+      if (paused || hovering || document.hidden || slides.length < 2) return;
+      // Restart the selected project's progress indicator with the slide timer.
+      void reel!.offsetWidth;
+      // A video slide holds long enough to finish one loop.
+      const video = slides[current].querySelector('video');
+      if (video && !video.duration) video.addEventListener('loadedmetadata', schedule, { once: true });
+      const delay = video ? Math.round((video.duration || 20) * 1000) + 300 : 6500;
+      reel!.style.setProperty('--reel-delay', `${delay}ms`);
+      reel!.classList.add('is-playing');
+      timer = setTimeout(() => show(current + 1), delay);
+    }
+    function show(index: number) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide,i) => {
+        slide.classList.toggle('is-active', i === current);
+        slide.inert = i !== current;
+        slide.setAttribute('aria-hidden', String(i !== current));
+      });
+      selectors.forEach((button,i) => button.setAttribute('aria-pressed', String(i === current)));
+      // Only the visible slide's video plays; reduced-motion users get the poster.
+      slides.forEach((slide,i) => {
+        const video = slide.querySelector('video');
+        if (!video) return;
+        if (i === current && !reduced.matches) video.play().catch(() => {}); else video.pause();
+      });
+      schedule();
+    }
+    function setPaused(value: boolean) {
+      paused = value;
+      play.textContent = paused ? '▷' : 'Ⅱ';
+      play.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
+      schedule();
+    }
+    selectors.forEach((button,i) => button.addEventListener('click', () => { setPaused(true); show(i); }));
+    reel.querySelector('[data-reel-prev]')?.addEventListener('click', () => { setPaused(true); show(current - 1); });
+    reel.querySelector('[data-reel-next]')?.addEventListener('click', () => { setPaused(true); show(current + 1); });
+    let pausedBeforePointer = paused;
+    play.addEventListener('pointerdown', () => { pausedBeforePointer = paused; });
+    play.addEventListener('click', event => setPaused(event.detail > 0 ? !pausedBeforePointer : !paused));
+    reel.addEventListener('mouseenter', () => { hovering = true; schedule(); });
+    reel.addEventListener('mouseleave', () => { hovering = false; schedule(); });
+    // Keyboard interaction stops rotation until explicitly restarted.
+    reel.addEventListener('focusin', () => setPaused(true));
+    document.addEventListener('visibilitychange', schedule);
+    reduced.addEventListener('change', () => { if (reduced.matches) setPaused(true); });
+    reel.querySelector<HTMLElement>('.reel-controls')!.hidden = slides.length < 2;
+    setPaused(paused);
+    show(current);
+  }
+</script>
+

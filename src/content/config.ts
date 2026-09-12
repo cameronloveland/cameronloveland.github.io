@@ -29,6 +29,7 @@ const projects = defineCollection({
     stack: z.array(z.string()).default([]),
     commits: z.number().optional(),
     image: z.string().optional(),
+    video: z.string().optional(),
     unpublished: z.boolean().default(false),
   }),
 });
