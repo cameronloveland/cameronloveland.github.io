@@ -31,8 +31,9 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
     <div class="orbit">
       <div class="orbit-window">
         <svg class="orbit-rings" viewBox="-20 -20 140 140" aria-hidden="true" focusable="false">
-          <path class="ring ring-outer" d={arc(60, 95, 250)} vector-effect="non-scaling-stroke" />
-          <path class="ring ring-main" d={arc(R, -25, 185)} vector-effect="non-scaling-stroke" />
+          {/* Each orbit sits in a group with an unpainted full circle, so the group's box is centred on the porthole and the arrival can turn it into place (the same trick as the dial). */}
+          <g class="ring-set ring-set--outer"><circle class="ring-extent" cx="50" cy="50" r="60" /><path class="ring ring-outer" d={arc(60, 95, 250)} vector-effect="non-scaling-stroke" /></g>
+          <g class="ring-set ring-set--main"><circle class="ring-extent" cx="50" cy="50" r={R} /><path class="ring ring-main" d={arc(R, -25, 185)} vector-effect="non-scaling-stroke" /></g>
           <path class="bezel-band" fill-rule="evenodd" d={ring(39.2) + ring(36)} />
           <g class="bezel-dial">
             <circle class="bezel-dial-extent" cx="50" cy="50" r="41.7" />
@@ -57,19 +58,22 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
       </div>
     </div>
     <div class="reel-readout-area">
+      {/* Every readout sits in the same grid cell, so the column is always as tall as the tallest one and the console below never moves; the script crossfades them. */}
       <div class="reel-readouts">
-        {projects.map((project,index) => <div class="reel-readout" data-readout={index} hidden={index !== 0}>
+        {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0}>
           <p class="reel-kicker"><span>{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
           <h2>{project.data.title}</h2>
           <p class="reel-blurb">{firstSentence(project.data.description)}</p>
         </div>)}
       </div>
       <div class="reel-console">
-        {projects.map((project,index) => {
-          const link = project.data.links.find(link => link.primary) || project.data.links[0];
-          const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
-          return link && <a class="reel-open" data-readout={index} hidden={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
-        })}
+        <div class="reel-cta">
+          {projects.map((project,index) => {
+            const link = project.data.links.find(link => link.primary) || project.data.links[0];
+            const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
+            return link && <a class:list={['reel-open', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
+          })}
+        </div>
         <div class="reel-actions" hidden>
           <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
           <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
@@ -87,14 +91,17 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
     const readouts = Array.from(reel.querySelectorAll<HTMLElement>('[data-readout]'));
     const play = reel.querySelector<HTMLButtonElement>('[data-reel-play]')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.documentElement;
     let current = 0;
     let paused = reduced.matches;
     let hovering = false;
+    let started = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     function schedule() {
       clearTimeout(timer);
       reel!.classList.remove('is-playing');
-      if (paused || hovering || document.hidden || slides.length < 2) return;
+      // The sweep waits for the arrival (the instrument winding up) to finish.
+      if (paused || hovering || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
       // Restart the bezel sweep with the slide timer (the region itself has no box).
       void reel!.querySelector<HTMLElement>('.orbit')!.offsetWidth;
       // A video slide holds long enough to finish one loop.
@@ -113,7 +120,15 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
         slide.setAttribute('aria-hidden', String(i !== current));
       });
       selectors.forEach((button,i) => button.setAttribute('aria-pressed', String(i === current)));
-      readouts.forEach(readout => { readout.hidden = Number(readout.dataset.readout) !== current; });
+      // Readouts and CTAs stay in flow so they can crossfade; only the active one is exposed.
+      readouts.forEach(readout => {
+        const active = Number(readout.dataset.readout) === current;
+        readout.classList.toggle('is-active', active);
+        readout.inert = !active;
+        readout.setAttribute('aria-hidden', String(!active));
+      });
+      // After the first turn the readout crossfades as it changes; on load it is simply there.
+      if (started) reel!.classList.add('has-turned');
       // The bezel hand turns to point at the active body on the orbit.
       reel!.style.setProperty('--reel-index', String(current));
       // Only the visible slide's video plays; reduced-motion users get the poster.
@@ -150,5 +165,30 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
     reel.querySelector<HTMLElement>('.reel-actions')!.hidden = slides.length < 2;
     setPaused(paused);
     show(current);
+    started = true;
+    // The arrival (see "Arrival" in portfolio.css): the head sets is-arriving
+    // before first paint. It comes off when the dial settles, or at the first
+    // pointer or key on the instrument so a person is never made to wait; the
+    // hand then eases from wherever it was. Either way the sweep starts here.
+    const dial = reel.querySelector<SVGGElement>('.bezel-dial');
+    function arrive() {
+      if (!root.classList.contains('is-arriving')) return;
+      // A transition does not pick up where a cancelled animation left off, so
+      // the dial's current angle is held inline for one style pass and the
+      // transition to wherever the reel points starts from there.
+      if (dial) {
+        const m = getComputedStyle(dial).transform.match(/matrix\(([^)]+)\)/);
+        if (m) { const [a, b] = m[1].split(',').map(Number); dial.style.transform = `rotate(${Math.atan2(b, a) * 180 / Math.PI}deg)`; }
+      }
+      root.classList.remove('is-arriving');
+      if (dial) { void dial.getBoundingClientRect(); dial.style.transform = ''; }
+      schedule();
+    }
+    if (root.classList.contains('is-arriving')) {
+      dial?.addEventListener('animationend', event => { if (event.target === dial) arrive(); });
+      reel.addEventListener('pointerdown', arrive, { capture: true });
+      reel.addEventListener('keydown', arrive, { capture: true });
+      setTimeout(arrive, 1600);
+    }
   }
 </script>

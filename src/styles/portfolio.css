@@ -95,6 +95,15 @@
   --header-h: 96px;
   --site-pad: 64px;
 
+  /* Motion: two easings and three durations, used by everything that moves.
+     Out for anything that travels (hands, bodies, entering things), in-out for
+     anything that crossfades in place (slides, colors, the theme). */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-base: 300ms;
+  --dur-slow: 800ms;
+
   color-scheme: light;
 }
 
@@ -181,11 +190,39 @@ button {
 button:disabled {
   cursor: default;
 }
+/* One focus ring everywhere: brass, set off the shape it belongs to. Pills and
+   frames carry their own radius; a text link has none, so it takes the tag's. */
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
+}
+.header-links a,
+.footer-links a,
+.project-links a,
+.project-more,
+.entry-open,
+.closing-plate dd a {
   border-radius: var(--radius-tag);
+}
+/* One press everywhere: a pill or button sinks while held, a text link dips a
+   pixel. Each control lists transform in its own transition at the fast pace. */
+.mark:active,
+.theme-toggle:active,
+.reel-open:active,
+.reel-actions button:active,
+.category-filter button:active,
+.view-toggle button:active,
+.empty-state button:active {
+  transform: scale(0.96);
+}
+.header-links a:active,
+.footer-links a:active,
+.project-links a:active,
+.project-more:active,
+.entry-open:active,
+.closing-plate dd a:active {
+  transform: translateY(1px);
 }
 [hidden] {
   display: none !important;
@@ -338,6 +375,9 @@ video {
   margin-left: -8px;
   color: var(--accent);
   border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .mark svg {
   width: 28px;
@@ -366,6 +406,9 @@ video {
   align-items: center;
   gap: 6px;
   min-height: 44px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .header-links a:hover {
   color: var(--accent);
@@ -380,6 +423,10 @@ video {
   box-shadow: inset 0 1px 0 var(--rim);
   color: var(--text);
   border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .theme-toggle:hover {
   border-color: var(--border-strong);
@@ -556,6 +603,16 @@ video {
 .ring-outer {
   stroke: var(--ring-faint);
 }
+/* Each orbit's group pivots on the porthole's centre (its box is kept round by
+   the unpainted extent circle) so the arrival can turn it into place. */
+.ring-set {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.ring-extent {
+  fill: none;
+  stroke: none;
+}
 .bezel-band {
   fill: var(--bezel);
 }
@@ -567,7 +624,7 @@ video {
   transform: rotate(calc(var(--reel-index, 0) * var(--body-step, 40deg)));
   transform-box: fill-box;
   transform-origin: 50% 50%;
-  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 .bezel-dial-extent {
   fill: none;
@@ -615,19 +672,27 @@ video {
   box-shadow: var(--shadow-frame);
   transform: translateZ(0);
 }
+/* Turning the reel: the outgoing slide recedes (fades and draws back a touch)
+   under the incoming one, which lands at full size at once and then settles
+   from a slight zoom to rest over the length of its stay. The dial's hand and
+   the bodies move on the same easing, so the whole instrument turns as one. */
 .reel-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
   visibility: hidden;
+  transform: scale(0.96);
   transition:
-    opacity 1s ease,
-    visibility 1s;
+    opacity var(--dur-slow) var(--ease-in-out),
+    visibility var(--dur-slow),
+    transform var(--dur-slow) var(--ease-out);
   pointer-events: none;
 }
 .reel-slide.is-active {
   opacity: 1;
   visibility: visible;
+  transform: none;
+  transition-duration: var(--dur-slow), var(--dur-slow), 0s;
   pointer-events: auto;
   z-index: 1;
 }
@@ -640,7 +705,7 @@ video {
   display: block;
   transform: scale(1.035);
   transform-origin: var(--fx, 50%) var(--fy, 44%);
-  transition: transform 7s linear;
+  transition: transform calc(var(--dur-slow) * 8) var(--ease-out);
 }
 .reel-slide > video {
   transform: none;
@@ -684,7 +749,7 @@ video {
   white-space: nowrap;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .orbit-body::before {
   content: "";
@@ -695,17 +760,17 @@ video {
   border: 1.5px solid var(--ring);
   background: var(--body-fill);
   transition:
-    background 0.3s,
-    border-color 0.3s,
-    box-shadow 0.3s,
-    transform 0.2s;
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .orbit-body-title {
   display: block;
   font-size: var(--text-sm);
   font-weight: var(--weight-strong);
   line-height: 1.25;
-  transition: transform 0.2s;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .orbit-body-meta {
   display: block;
@@ -713,7 +778,7 @@ video {
   line-height: var(--leading-small);
   letter-spacing: var(--track-small);
   color: var(--muted);
-  transition: color 0.2s;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 /* Hover: the body catches light and its title brightens and leans in. */
 .orbit-body:hover {
@@ -754,6 +819,80 @@ video {
   color: var(--accent);
 }
 
+/* ---------- Arrival: the instrument winds up ---------- */
+/* The one moment on first paint belongs to the orrery. The porthole and its
+   bezel are there from the first frame; the main orbit turns clockwise into
+   alignment as it comes up, the outer ring turns the other way behind it
+   (rings meshing), the bodies take their places in orbit order, and the dial
+   turns up from past its last tick to point at the first project. Everything
+   else (name, readout, stars) is still and readable from the first frame.
+   Only transform and opacity move. The html class is set in the head before
+   first paint and taken off by the carousel script once the dial settles, or
+   at the first pointer or key on the instrument; only then does the slide
+   timer's sweep begin. Under reduced motion the class is never set. Timing,
+   from first paint: main orbit 0 to 800, outer ring 140 to 940, bodies from
+   300 at 100 apart, dial 300 to 1100. */
+.is-arriving .ring-set--main {
+  animation: ring-align var(--dur-slow) var(--ease-out) both;
+}
+.is-arriving .ring-set--outer {
+  animation: ring-align-back var(--dur-slow) var(--ease-out) var(--dur-fast) both;
+}
+.is-arriving .bezel-dial {
+  animation: dial-set var(--dur-slow) var(--ease-out) var(--dur-base) both;
+}
+.is-arriving .orbit-body {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 100ms) both;
+}
+.is-arriving .orbit-body::before {
+  animation: body-place var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 100ms) both;
+}
+.orbit-body:nth-child(2) {
+  --turn: 1;
+}
+.orbit-body:nth-child(3) {
+  --turn: 2;
+}
+.orbit-body:nth-child(4) {
+  --turn: 3;
+}
+.orbit-body:nth-child(5) {
+  --turn: 4;
+}
+.orbit-body:nth-child(n + 6) {
+  --turn: 5;
+}
+@keyframes ring-align {
+  from {
+    opacity: 0;
+    transform: rotate(-26deg);
+  }
+}
+@keyframes ring-align-back {
+  from {
+    opacity: 0;
+    transform: rotate(16deg);
+  }
+}
+@keyframes dial-set {
+  from {
+    transform: rotate(-70deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+@keyframes body-arrive {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes body-place {
+  from {
+    transform: scale(0);
+  }
+}
+
 /* ---------- Hero: the active project readout ---------- */
 /* The readout follows the lede at a measured gap so the left column reads as
    one stack; its CTA lands on the porthole's bottom edge at 1440. */
@@ -762,6 +901,41 @@ video {
   grid-row: 2;
   align-self: start;
   padding-top: var(--space-7);
+}
+/* Every readout sits in the same grid cell, so the column holds the height of
+   the tallest one and the console under it never moves as the reel turns. */
+.reel-readouts {
+  display: grid;
+}
+.reel-readout {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+.reel-readout.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+/* Turning the reel: the outgoing readout fades where it stands while the
+   incoming one fades in over it and settles up the last few pixels, so the
+   column never sits empty. Only after the fade does the outgoing one hide and
+   drop back to its waiting offset. The first readout is simply there on load
+   (has-turned comes on with the first turn), and reduced motion swaps at once. */
+.has-turned .reel-readout {
+  transition:
+    opacity var(--dur-base) var(--ease-in-out),
+    visibility 0s linear var(--dur-base),
+    transform 0s linear var(--dur-base);
+}
+.has-turned .reel-readout.is-active {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    visibility 0s,
+    transform var(--dur-base) var(--ease-out);
 }
 .reel-kicker {
   display: flex;
@@ -805,13 +979,48 @@ video {
   font-size: var(--text-sm);
   font-weight: var(--weight-strong);
   white-space: nowrap;
-  transition: background 0.2s;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .reel-open .external-link-icon {
   opacity: 0.85;
 }
 .reel-open:hover {
   background: color-mix(in srgb, var(--accent-fill) 86%, var(--text));
+}
+/* The CTAs share one cell too, sized to the widest, so the prev/pause/next
+   controls keep their place. The incoming pill fades in on top of the outgoing
+   one (same fill, so the pill itself never dims); the outgoing hides after. */
+.reel-cta {
+  display: grid;
+}
+.reel-cta .reel-open {
+  grid-area: 1 / 1;
+  justify-content: center;
+}
+.reel-open:not(.is-active) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.reel-open.is-active {
+  position: relative;
+  z-index: 1;
+}
+.has-turned .reel-open {
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    opacity 0s linear var(--dur-base),
+    visibility 0s linear var(--dur-base);
+}
+.has-turned .reel-open.is-active {
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out),
+    visibility 0s;
 }
 .reel-actions {
   display: flex;
@@ -827,8 +1036,9 @@ video {
   background: none;
   color: var(--secondary);
   transition:
-    color 0.2s,
-    border-color 0.2s;
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .reel-actions button:hover {
   color: var(--accent);
@@ -894,15 +1104,16 @@ video {
   font-size: var(--text-sm);
   font-weight: var(--weight-ui);
   transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .category-filter button span {
   font-size: var(--text-xs);
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  transition: color 0.15s;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .category-filter button:hover {
   color: var(--accent);
@@ -943,8 +1154,9 @@ video {
   font-weight: var(--weight-ui);
   border-radius: calc(var(--radius-control) - 4px);
   transition:
-    background 0.15s,
-    color 0.15s;
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .view-toggle svg {
   width: 17px;
@@ -973,7 +1185,10 @@ video {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--space-7) var(--space-5);
+  view-transition-name: gallery;
 }
+/* Each card carries a stable view-transition-name (card-<id>, set in the
+   markup) so a filter moves it to its new slot instead of redrawing it. */
 .project-card {
   position: relative;
   grid-column: span 4;
@@ -983,6 +1198,7 @@ video {
   row-gap: 20px;
   min-width: 0;
   border-radius: var(--radius-card);
+  view-transition-class: card;
 }
 .project-media {
   position: relative;
@@ -993,8 +1209,9 @@ video {
   background: var(--scrim);
   box-shadow: var(--shadow-card);
   transition:
-    border-color 0.25s,
-    box-shadow 0.25s;
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .project-media img {
   position: absolute;
@@ -1004,15 +1221,29 @@ video {
   object-fit: cover;
   object-position: var(--focus, 50% 40%);
 }
+/* The warm wash: brass light falling in from the top of the frame, held back
+   until the card is hovered. */
+.project-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-fill) 22%, transparent), transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
 /* The rim light: brass catching light along the top edge (dark theme only). */
 .project-media::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   border-radius: inherit;
   box-shadow: inset 0 1px 0 var(--rim);
   pointer-events: none;
-  transition: box-shadow 0.25s;
+  transition: box-shadow var(--dur-base) var(--ease-out);
 }
 /* Strength Path's artwork is a poster with a headline beside the phone; a
    landscape crop would cut the headline, so the gallery zooms to the phone. */
@@ -1127,9 +1358,9 @@ video {
   font-weight: var(--weight-strong);
   white-space: nowrap;
   transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
 }
 .project-open .external-link-icon {
   opacity: 0.85;
@@ -1158,14 +1389,18 @@ video {
   font-weight: var(--weight-ui);
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
-  transition: color 0.15s;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .project-more:hover {
   color: var(--accent);
   text-decoration: underline;
 }
-/* The one response: the pill fills brass and the media catches light along
-   its rim, whether the pointer is anywhere on the card or the pill has focus. */
+/* The one response: the pill fills brass and the media frame warms (its edge
+   turns brass, a glow rings it, light falls in from the top), whether the
+   pointer is anywhere on the card or the pill has focus. The image itself
+   never scales. */
 .project-open:hover,
 .project-open:focus-visible {
   background: var(--accent-fill);
@@ -1174,12 +1409,27 @@ video {
 }
 .project-card:has(.project-open:hover) .project-media,
 .project-card:has(.project-open:focus-visible) .project-media {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-  box-shadow: var(--shadow-card-hover);
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 5px var(--glow),
+    var(--shadow-card-hover);
+}
+.project-card:has(.project-open:hover) .project-media::before,
+.project-card:has(.project-open:focus-visible) .project-media::before {
+  opacity: 1;
 }
 .project-card:has(.project-open:hover) .project-media::after,
 .project-card:has(.project-open:focus-visible) .project-media::after {
   box-shadow: inset 0 1px 0 var(--rim-light);
+}
+/* Pressing: the frame sinks and the pill darkens. The pill itself never takes
+   a transform, because its stretched hit area is positioned by the card. */
+.project-open:active {
+  background: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+  border-color: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+}
+.project-card:has(.project-open:active) .project-media {
+  transform: scale(0.985);
 }
 
 /* Desktop composition: lead (8 of 12) and a companion that stretches to the
@@ -1263,6 +1513,9 @@ video {
    progress). Rods that overlap in time take separate lanes, so concurrent work
    sits side by side. The entries are the engraved legend beside the scale, in
    columns that line up like the card plate; the scale carries the imagery. */
+.project-timeline {
+  view-transition-name: timeline;
+}
 .timeline-intro {
   margin: 8px 0 40px;
   font-size: var(--text-md);
@@ -1408,7 +1661,7 @@ video {
   border-radius: var(--radius-tag);
   background: color-mix(in srgb, var(--rod-color) 9%, transparent);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity var(--dur-fast) var(--ease-out);
 }
 .entry-rod {
   position: relative;
@@ -1429,7 +1682,7 @@ video {
   margin-left: calc(var(--rod-w) / -2);
   border-radius: calc(var(--rod-w) / 2);
   background: var(--rod-color);
-  transition: box-shadow 0.2s;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 /* The body: the project on its orbit, sitting on the month it began. */
 .entry-rod::after {
@@ -1444,8 +1697,8 @@ video {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--rod-color) 22%, transparent);
   transform: translate(-50%, -50%);
   transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 /* A live rod ends with a cap on its last month; an in-progress rod has no cap
    and runs straight into the Now line. */
@@ -1479,7 +1732,7 @@ video {
   right: calc(var(--space-2) - var(--space-6));
   height: 1px;
   background: var(--ring);
-  transition: background 0.2s;
+  transition: background var(--dur-fast) var(--ease-out);
 }
 /* Whatever the filter hides, the first entry left has nothing above it, so
    its label returns to its start month and the spur goes. */
@@ -1509,7 +1762,7 @@ video {
   letter-spacing: var(--track-heading);
   line-height: 1.15;
   font-variation-settings: "opsz" 32;
-  transition: transform 0.2s;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .entry-kicker {
   display: flex;
@@ -1535,7 +1788,7 @@ video {
   line-height: 1.5;
   color: var(--secondary);
   font-variant-numeric: tabular-nums;
-  transition: color 0.2s;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .entry-range {
   display: block;
@@ -1564,6 +1817,7 @@ video {
   white-space: nowrap;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .entry-open .external-link-icon {
   opacity: 0.85;
@@ -1621,6 +1875,12 @@ video {
   padding: 11px 20px;
   margin-top: var(--space-5);
   font-weight: var(--weight-strong);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.empty-state button:hover {
+  background: color-mix(in srgb, var(--accent-fill) 86%, var(--text));
 }
 .no-script-note {
   color: var(--muted);
@@ -1729,6 +1989,7 @@ video {
   font-weight: var(--weight-strong);
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .closing-plate dd a:hover {
   text-decoration: underline;
@@ -1813,7 +2074,9 @@ video {
   gap: 8px;
   min-height: 44px;
   color: var(--text);
-  transition: color 0.15s;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .footer-links a:hover {
   color: var(--accent);
@@ -2138,7 +2401,75 @@ video {
   }
 }
 
+/* ---------- View transitions: answering a click ---------- */
+/* Switching view, filtering and changing theme run through the View
+   Transitions API where the browser has it; the scripts fall back to a plain
+   update elsewhere. The page crossfades underneath in the base duration. What
+   goes clears first (two thirds of the base), what arrives starts a third in,
+   so a frame mid-way shows one thing, not two half-things: a card that goes
+   recedes, a card that arrives settles in, a panel sinks away and rises into
+   place. A card that stays glides to its new slot; its snapshots crop rather
+   than stretch as the slot changes shape, and the old one clears in half the
+   time so a single image travels. */
+::view-transition-group(*) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-old(.card),
+::view-transition-new(.card) {
+  object-fit: cover;
+  object-position: top;
+}
+::view-transition-old(.card) {
+  animation-duration: calc(var(--dur-base) / 2);
+}
+::view-transition-old(.card):only-child {
+  animation: vt-recede calc(var(--dur-base) * 2 / 3) var(--ease-in-out) both;
+}
+::view-transition-new(.card):only-child {
+  animation: vt-settle var(--dur-base) var(--ease-out) calc(var(--dur-base) / 3) both;
+}
+::view-transition-old(gallery):only-child,
+::view-transition-old(timeline):only-child {
+  animation: vt-sink calc(var(--dur-base) * 2 / 3) var(--ease-in-out) both;
+}
+::view-transition-new(gallery):only-child,
+::view-transition-new(timeline):only-child {
+  animation: vt-rise var(--dur-base) var(--ease-out) calc(var(--dur-base) / 3) both;
+}
+@keyframes vt-recede {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes vt-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes vt-sink {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
 /* ---------- Reduced motion ---------- */
+/* Every state is instant: no arrival, no sweep, no crossfades, no transitions.
+   The scripts also skip the View Transitions API and never set is-arriving. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2148,6 +2479,12 @@ video {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
   .reel-slide,
   .reel-slide > img,

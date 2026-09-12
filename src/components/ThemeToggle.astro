@@ -15,7 +15,13 @@
   function toggleTheme() {
     var current = document.documentElement.getAttribute('data-theme');
     var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('theme', next); } catch (_) {}
+    var apply = function () {
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (_) {}
+    };
+    // The page crossfades between themes where the browser has view transitions; elsewhere, or under reduced motion, it switches at once.
+    var reduced = false;
+    try { reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
+    if (document.startViewTransition && !reduced) document.startViewTransition(apply); else apply();
   }
 </script>

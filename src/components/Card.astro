@@ -14,7 +14,8 @@ const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',ex
 const updated = updatedDate && updatedDate.valueOf() !== startDate.valueOf() ? updatedDate : undefined;
 const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 ---
-<article class:list={['project-card', `project-${project.id}`]} data-project-category={section}>
+{/* The stable view-transition-name lets a filter move the card to its new slot rather than redraw it. */}
+<article class:list={['project-card', `project-${project.id}`]} data-project-category={section} style={`view-transition-name:card-${project.id}`}>
   <div class="project-media" style={imageFocus && `--focus:${imageFocus}`}>
     {image ? <img src={image} alt={`${title} screenshot`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" width="1200" height="750" /> : <div class="image-fallback">{title}</div>}
   </div>

@@ -29,7 +29,15 @@
       group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-project-category]')).some(project => !project.hidden);
     });
   }
-  viewButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { view = button.dataset.view!; render(); }); });
-  categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { category = button.dataset.category!; render(); }); });
-  document.querySelector('[data-reset]')?.addEventListener('click', () => { category = 'all'; render(); categoryButtons[0]?.focus(); });
+  // A change runs inside a view transition where the browser has one (cards glide
+  // to their new slots, panels rise and sink; see portfolio.css), and applies at
+  // once where it does not or where motion is reduced. The hidden toggling and
+  // aria updates in render() are the same either way.
+  function change(update: () => void) {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { update(); return; }
+    document.startViewTransition(update);
+  }
+  viewButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { change(() => { view = button.dataset.view!; render(); }); }); });
+  categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { change(() => { category = button.dataset.category!; render(); }); }); });
+  document.querySelector('[data-reset]')?.addEventListener('click', () => { change(() => { category = 'all'; render(); }); categoryButtons[0]?.focus(); });
 </script>
