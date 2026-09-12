@@ -1,32 +1,93 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import type { CollectionEntry } from 'astro:content';
-import { formatMonthYear } from '../utils/formatDate';
+import { monthIndex, monthFromIndex, formatMonthShort, formatMonthIndex, isoMonth, monthsInclusive } from '../utils/formatDate';
 import { linkLabel } from '../utils/linkLabel';
 interface Props { projects: CollectionEntry<'projects'>[]; }
 const { projects } = Astro.props;
-const sorted = [...projects].sort((a,b) => b.data.startDate.valueOf() - a.data.startDate.valueOf() || a.data.title.localeCompare(b.data.title));
-const years = [...new Set(sorted.map(p => p.data.startDate.getUTCFullYear()))];
 const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
+
+// The scale: one row per month from the earliest start to the current month
+// (or the latest date in the data, if that is later). Oldest at the top, so
+// time runs down the page and every rod grows toward the Now line at the foot.
+const today = new Date();
+const nowMonth = monthIndex(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)));
+const sorted = [...projects].sort((a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf() || a.data.title.localeCompare(b.data.title));
+const firstMonth = Math.min(...sorted.map(p => monthIndex(p.data.startDate)));
+const lastMonth = Math.max(nowMonth, ...sorted.map(p => monthIndex(p.data.updatedDate ?? p.data.startDate)));
+const rows = monthsInclusive(firstMonth, lastMonth);
+
+// Each project is a rod from its start month to the month it was last updated,
+// or to now while it is still in progress. Rods that overlap in time take
+// separate lanes (first free lane wins), so concurrent work sits side by side.
+const laneEnds: number[] = [];
+const entries = sorted.map(project => {
+  const { startDate, updatedDate, unpublished } = project.data;
+  const start = monthIndex(startDate);
+  const end = unpublished ? nowMonth : Math.max(start, monthIndex(updatedDate ?? startDate));
+  let lane = laneEnds.findIndex(laneEnd => laneEnd < start);
+  if (lane === -1) { lane = laneEnds.length; laneEnds.push(end); } else { laneEnds[lane] = end; }
+  return { project, start, end, lane, row: start - firstMonth + 1, rodRows: monthsInclusive(start, end), label: 0, labelSm: 0 };
+});
+const lanes = laneEnds.length;
+
+// Labels sit at their start month unless an earlier entry already holds that
+// row; then they slide down the rod, one row per entry on wide screens and two
+// on narrow ones where the entry stacks. Rows are fixed height so the scale
+// stays true, which is why the label windows are worked out here.
+let taken = 0;
+entries.forEach(entry => { entry.label = Math.max(entry.row, taken + 1); taken = entry.label; });
+taken = -1;
+entries.forEach(entry => { entry.labelSm = Math.max(entry.row, taken + 2); taken = entry.labelSm; });
+
+const ticks = Array.from({ length: rows }, (_, i) => {
+  const index = firstMonth + i;
+  const { year, month } = monthFromIndex(index);
+  return { row: i + 1, year, yearStart: month === 0 || i === 0, label: formatMonthShort(index) };
+});
 ---
 <div id="timeline-panel" class="project-timeline" data-view-panel="timeline" aria-label="Projects by start date" hidden>
-  <p class="timeline-intro">Every project by the month it started, newest first.</p>
-  {years.map(year => {
-    const started = sorted.filter(p => p.data.startDate.getUTCFullYear() === year);
-    return <section class="timeline-year" aria-label={`Projects started in ${year}`}>
-    <div class="year-label"><h3>{year}</h3><span>{started.length} {started.length === 1 ? 'project' : 'projects'} started</span></div>
-    <ol class="timeline-list">
-      {started.map(project => {
-        const {title,description,startDate,updatedDate,links,image,section,unpublished,stack} = project.data;
-        return <li class="journal-entry" data-project-category={section}>
-          <div class="journal-date"><span class="journal-dot" aria-hidden="true"></span><time datetime={startDate.toISOString().slice(0,10)}>{formatMonthYear(startDate)}</time><span>Started</span></div>
-          <article class="journal-card">
-            {image && <img src={image} alt={`${title} screenshot`} loading="lazy" width="600" height="400" />}
-            <div class="journal-content"><div class="journal-meta"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></div><h4>{title}</h4><p>{description}</p><div class="stack-tags">{stack.map(tag=><span>{tag}</span>)}</div><div class="project-links">{links.map(link => <a href={link.href} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, section)}<ExternalLinkIcon /></a>)}</div>{updatedDate && updatedDate.valueOf() !== startDate.valueOf() && <p class="journal-update">Last updated {formatMonthYear(updatedDate)}</p>}</div>
-          </article>
+  <p class="timeline-intro">{rows} months on one scale, oldest first. Each rod runs from the month a project started to the month it was last updated, or to now while it is still in progress.</p>
+  <div class="timeline-scale" style={`--rows:${rows};--lanes:${lanes}`}>
+    <span class="scale-spine" aria-hidden="true"></span>
+    {ticks.map(tick => <>
+      {tick.yearStart && <span class="scale-year" style={`--row:${tick.row}`} aria-hidden="true">{tick.year}</span>}
+      <span class:list={['scale-tick', { 'scale-tick--major': tick.yearStart }]} style={`--row:${tick.row}`} aria-hidden="true">{tick.label}</span>
+    </>)}
+    <span class="scale-now" aria-hidden="true"><svg class="scale-now-hand" viewBox="0 0 8 8"><path d="M0 0l8 4-8 4z"/></svg><span>Now</span></span>
+    <ol class="timeline-entries">
+      {entries.map(({ project, start, end, lane, row, rodRows, label, labelSm }) => {
+        const { title, links, section, unpublished, commits } = project.data;
+        const primary = links.find(l => l.primary) || links[0];
+        // A single-month rod already says "Sep 2026", so the count only appears
+        // once there is a span to count. In progress always counts, "so far".
+        const months = monthsInclusive(start, end);
+        const span = `${months} ${months === 1 ? 'month' : 'months'}`;
+        const note = [
+          unpublished ? `${span} so far` : months > 1 ? span : '',
+          commits ? `${commits} commits` : '',
+        ].filter(Boolean).join(', ');
+        const rowEnd = Math.max(row + rodRows, label + 1);
+        const rowEndSm = Math.max(row + rodRows, labelSm + 2);
+        const style = `--r0:${row};--r1:${rowEnd};--r1-sm:${rowEndSm};--rod-rows:${rodRows};--lane:${lane};--lrow:${label - row + 1};--lrow-sm:${labelSm - row + 1}`;
+        return <li class:list={['timeline-entry', { 'timeline-entry--progress': unpublished, 'timeline-entry--offset': label !== row }]} data-project-category={section} style={style}>
+          <span class="entry-band" aria-hidden="true"></span>
+          <span class="entry-rod" aria-hidden="true"><span class="entry-rod-end"></span></span>
+          {label !== row && <span class="entry-spur" aria-hidden="true"></span>}
+          <div class="entry-text">
+            <div class="entry-name">
+              <h3>{title}</h3>
+              <p class="entry-kicker"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
+            </div>
+            <p class="entry-when"><span class="entry-range">{unpublished
+                ? <>Since <time datetime={isoMonth(start)}>{formatMonthIndex(start)}</time></>
+                : end > start
+                  ? <><time datetime={isoMonth(start)}>{formatMonthIndex(start)}</time> to <time datetime={isoMonth(end)}>{formatMonthIndex(end)}</time></>
+                  : <time datetime={isoMonth(start)}>{formatMonthIndex(start)}</time>}</span>{note && <span class="entry-note">{note}</span>}</p>
+            {primary && <a class="entry-open" href={primary.href} target="_blank" rel="noopener noreferrer" aria-label={`${linkLabel(primary.label, section)}: ${title} (opens in a new tab)`}>{linkLabel(primary.label, section)}<ExternalLinkIcon /></a>}
+          </div>
         </li>;
       })}
     </ol>
-  </section>;
-  })}
+  </div>
 </div>
