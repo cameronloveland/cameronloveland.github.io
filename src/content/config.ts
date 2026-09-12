@@ -29,6 +29,9 @@ const projects = defineCollection({
     stack: z.array(z.string()).default([]),
     commits: z.number().optional(),
     image: z.string().optional(),
+    // Where the hero porthole crop should centre, as a CSS object-position pair
+    // like "50% 40%". Defaults to the centre when omitted.
+    imageFocus: z.string().regex(/^\d{1,3}% \d{1,3}%$/, 'Use two percentages, e.g. "50% 40%"').optional(),
     video: z.string().optional(),
     unpublished: z.boolean().default(false),
   }),

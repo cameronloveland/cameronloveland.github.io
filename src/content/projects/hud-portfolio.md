@@ -18,4 +18,5 @@ languages:
 stack: ["Next.js", "Three.js", "Tailwind", "Framer Motion"]
 commits: 329
 image: "/images/space-portfolio.png"
+imageFocus: "50% 40%"
 ---

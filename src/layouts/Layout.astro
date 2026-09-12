@@ -6,6 +6,9 @@ import ProjectCarousel from '../components/ProjectCarousel.astro';
 import SkyField from '../components/SkyField.astro';
 interface Props { title: string; description: string; }
 const { title, description } = Astro.props;
+// Social previews need an absolute image URL; fall back to the path when no site is configured.
+const shareImage = Astro.site ? new URL('/images/antikythera.png', Astro.site).href : '/images/antikythera.png';
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
@@ -14,6 +17,15 @@ const { title, description } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f4fa" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e1128" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={shareImage} />
+  {pageUrl && <meta property="og:url" content={pageUrl} />}
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preload" href="/fonts/bricolage-grotesque-latin-opsz.woff2" as="font" type="font/woff2" crossorigin />
   <script is:inline>
     try { var saved = localStorage.getItem('theme'); if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved); } catch (_) {}
@@ -21,24 +33,28 @@ const { title, description } = Astro.props;
 </head>
 <body>
 <a class="skip-link" href="#projects">Skip to projects</a>
-<div class="fold">
-  <SkyField />
-  <div class="site">
-    <header class="site-header">
-      <a class="mark" href="#" aria-label="Cameron Loveland home"><svg viewBox="0 0 28 28" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="11"/><circle class="mark-core" cx="14" cy="14" r="2.6"/><circle class="mark-body" cx="21.07" cy="5.57" r="2"/></svg></a>
-      <nav class="header-links" aria-label="Site links">
-        <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub <ExternalLinkIcon /></a>
-        <a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn <ExternalLinkIcon /></a>
-        <ThemeToggle />
-      </nav>
-    </header>
-    <ProjectCarousel />
+<header class="site-header-band">
+  <div class="site site-header">
+    <a class="mark" href="#" aria-label="Cameron Loveland home"><svg viewBox="0 0 28 28" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="11"/><circle class="mark-core" cx="14" cy="14" r="2.6"/><circle class="mark-body" cx="21.07" cy="5.57" r="2"/></svg></a>
+    <nav class="header-links" aria-label="Site links">
+      <a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub <ExternalLinkIcon /></a>
+      <a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn <ExternalLinkIcon /></a>
+      <ThemeToggle />
+    </nav>
   </div>
-</div>
-<div class="site">
-  <main>
+</header>
+<main>
+  <div class="fold">
+    <SkyField />
+    <div class="site">
+      <ProjectCarousel />
+    </div>
+  </div>
+  <div class="site">
     <div id="projects" class="work-area"><slot /></div>
-  </main>
+  </div>
+</main>
+<div class="site">
   <footer><span>&copy; {new Date().getUTCFullYear()} Cameron Loveland</span><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></footer>
 </div>
 </body>

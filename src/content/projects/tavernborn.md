@@ -18,4 +18,5 @@ languages:
 stack: ["React", "Three.js", "Vite", "Supabase", "Tailwind"]
 commits: 434
 image: "/images/tavernborn.png"
+imageFocus: "50% 42%"
 ---

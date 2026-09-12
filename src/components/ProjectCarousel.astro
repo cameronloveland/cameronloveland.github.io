@@ -19,6 +19,8 @@ const arc = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r}
 const ring = (r: number) => `M50 ${50 - r} A${r} ${r} 0 1 1 50 ${50 + r} A${r} ${r} 0 1 1 50 ${50 - r} Z`;
 const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
 const bodies = projects.map((project, index) => { const [x, y] = at(R, index * step); return { project, index, x: x.toFixed(2), y: y.toFixed(2) }; });
+// Each slide carries its focal point so the crop, the glass and the settle-in zoom agree.
+const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' '); return `--fx:${x};--fy:${y}`; };
 ---
 {count > 0 && <section class="hero" aria-labelledby="hero-name" style={`--body-step:${step}deg`}>
   <div class="identity">
@@ -33,6 +35,7 @@ const bodies = projects.map((project, index) => { const [x, y] = at(R, index * s
           <path class="ring ring-main" d={arc(R, -25, 185)} vector-effect="non-scaling-stroke" />
           <path class="bezel-band" fill-rule="evenodd" d={ring(39.2) + ring(36)} />
           <g class="bezel-dial">
+            <circle class="bezel-dial-extent" cx="50" cy="50" r="41.7" />
             <circle class="bezel-ticks" cx="50" cy="50" r="37.6" stroke-dasharray="0.22 3.0612" stroke-dashoffset="0.11" />
             <circle class="bezel-ticks bezel-ticks--major" cx="50" cy="50" r="37.6" stroke-dasharray="0.32 29.21" stroke-dashoffset="0.16" />
             <path class="bezel-hand" d="M50 8.3 48.4 10.9h3.2Z" />
@@ -42,7 +45,7 @@ const bodies = projects.map((project, index) => { const [x, y] = at(R, index * s
           <circle class="reel-sweep" cx="50" cy="50" r="39.2" pathLength="1" transform="rotate(-90 50 50)" />
         </svg>
         <div class="reel-stage">
-          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0}]} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
+          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0}]} style={focus(project.data.imageFocus)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
             {project.data.video
               ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
               : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}

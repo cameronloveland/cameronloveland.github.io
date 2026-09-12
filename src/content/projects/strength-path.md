@@ -5,6 +5,7 @@ section: "mobile-apps"
 startDate: 2026-02-01
 unpublished: true
 image: "/images/strength-path.png"
+imageFocus: "92% 50%"
 links:
   - label: "preview"
     href: "https://strengthpath.app/"

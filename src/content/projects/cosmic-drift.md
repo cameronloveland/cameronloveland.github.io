@@ -16,4 +16,5 @@ languages:
 stack: ["Three.js", "Vite"]
 commits: 94
 image: "/images/cosmic-drift.png"
+imageFocus: "50% 64%"
 ---

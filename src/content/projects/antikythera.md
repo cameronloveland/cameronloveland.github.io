@@ -15,5 +15,6 @@ languages:
 stack: ["Three.js", "React", "Next.js", "Blender"]
 commits: 28
 image: "/images/antikythera.png"
+imageFocus: "48% 46%"
 video: "/videos/antikythera.mp4"
 ---
