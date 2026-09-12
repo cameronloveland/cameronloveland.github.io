@@ -1626,32 +1626,215 @@ video {
   color: var(--muted);
   margin-top: var(--space-5);
 }
-footer {
+
+/* ---------- Closing: the readout at Now ---------- */
+/* The page ends where the timeline does. Its brass Now line, hand and all,
+   runs across the top of the closing; under it, the state of things at build
+   time and the one way to get in touch. The heading and the plate share the
+   gallery's column lines (4 of 12 and 8 of 12), so the plate's labels sit on
+   the same edge as the second card in the bottom row. */
+.closing {
+  margin-top: var(--space-9);
+  padding-bottom: var(--space-8);
+}
+.closing-now {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  border-top: 1px solid var(--border);
-  padding: 28px 0 36px;
-  margin-top: 76px;
-  font-size: var(--text-xs);
-  color: var(--muted);
+  gap: 1px;
 }
-footer a {
+.closing-now-hand {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  fill: var(--accent);
+}
+.closing-now-line {
+  flex: 1;
+  height: 2px;
+  background: var(--accent);
+}
+.closing-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-5);
+  padding-top: var(--space-6);
+}
+.closing-head {
+  grid-column: span 4;
+}
+.closing-title {
+  font-size: var(--text-display);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-display);
+  font-variation-settings: "opsz" 96;
+}
+.closing-lede {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--secondary);
+  max-width: 26ch;
+  text-wrap: pretty;
+}
+/* The plate at section scale: the card plate's two columns, one size up, with
+   a lamp on each project name so the status reads the same way it does on the
+   cards (brass, you can use it; ion, still being built). */
+.closing-plate {
+  grid-column: 5 / -1;
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  column-gap: var(--space-5);
+  row-gap: var(--space-3);
+  align-content: start;
+  padding-top: 0.55em;
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+}
+.closing-plate dt {
+  grid-column: 1;
+  color: var(--muted);
+  font-weight: var(--weight-ui);
+}
+.closing-plate dd {
+  grid-column: 2;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+/* The lamp runs inline here so the sentence wraps as text and the comma after
+   a name stays on its line. */
+.closing-plate dd .status {
+  display: inline;
+  font: inherit;
+  letter-spacing: 0;
+  font-weight: var(--weight-strong);
+  color: var(--text);
+  white-space: normal;
+}
+.closing-plate dd .status::before {
+  display: inline-block;
+  vertical-align: 0.1em;
+  margin-right: 10px;
+}
+.closing-plate dd a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--text);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-ui);
-  padding: 10px 0;
+  gap: 8px;
+  min-height: 44px;
+  margin: -12px 0;
+  color: var(--accent);
+  font-weight: var(--weight-strong);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
-footer a:hover {
+.closing-plate dd a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Footer: sinking back into the sky ---------- */
+/* One object on the same column lines as the closing. The band deepens from
+   the page ground to the fold's zenith, so the page ends in the sky it began
+   in. Left, the maker's mark and the name set the way the hero sets it (light
+   first name, heavy surname); right, the links in two labelled rows, then what
+   the site is made of. */
+.site-footer {
+  background: linear-gradient(180deg, var(--bg), var(--sky-zenith));
+  padding: 56px 0 var(--space-8);
+  color: var(--secondary);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-7) var(--space-5);
+  align-items: start;
+}
+.footer-signature {
+  grid-column: span 4;
+  grid-row: 1 / span 2;
+}
+.footer-wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text);
+}
+.footer-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.25;
   color: var(--accent);
 }
-footer a .ui-icon {
+.footer-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+  font-variation-settings: "opsz" 32;
+}
+.footer-name span:first-child {
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.footer-role {
+  margin-top: var(--space-3);
+  max-width: 30ch;
+  text-wrap: pretty;
+}
+.footer-links {
+  grid-column: 5 / -1;
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+}
+.footer-links-label {
+  color: var(--muted);
+  line-height: 44px;
+}
+.footer-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
+  list-style: none;
+  padding: 0;
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--text);
+  transition: color 0.15s;
+}
+.footer-links a:hover {
+  color: var(--accent);
+}
+.footer-links a .ui-icon {
   width: 15px;
   height: 15px;
+}
+.footer-colophon {
+  grid-column: 5 / -1;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+.footer-copyright {
+  grid-column: 5 / -1;
+  margin-top: calc(-1 * var(--space-5));
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--muted);
 }
 
 /* ---------- Responsive ---------- */
@@ -1665,6 +1848,18 @@ footer a .ui-icon {
   .timeline-scale {
     --year-w: 110px;
     --ticks-w: 64px;
+  }
+  /* Tablet: the heading keeps 5 columns and the plate takes the rest, since
+     the gallery's 6 and 6 would squeeze the plate's sentences. */
+  .closing-head,
+  .footer-signature {
+    grid-column: span 5;
+  }
+  .closing-plate,
+  .footer-links,
+  .footer-colophon,
+  .footer-copyright {
+    grid-column: 6 / -1;
   }
 }
 @media (max-width: 1040px) {
@@ -1838,10 +2033,41 @@ footer a .ui-icon {
   .entry-spur::before {
     right: calc(var(--space-2) - var(--space-4));
   }
-  footer {
-    flex-wrap: wrap;
-    margin-top: 44px;
-    gap: var(--space-2);
+  /* Phones: the closing and footer stack into one column on the left edge. */
+  .closing {
+    margin-top: var(--space-8);
+    padding-bottom: var(--space-7);
+  }
+  .closing-grid {
+    row-gap: var(--space-6);
+    padding-top: var(--space-5);
+  }
+  .closing-head,
+  .closing-plate,
+  .footer-signature,
+  .footer-links,
+  .footer-colophon,
+  .footer-copyright {
+    grid-column: 1 / -1;
+  }
+  .closing-plate {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    padding-top: 0;
+  }
+  .footer-signature {
+    grid-row: auto;
+  }
+  .site-footer {
+    padding: var(--space-7) 0 var(--space-7);
+  }
+  .footer-grid {
+    row-gap: var(--space-6);
+  }
+  .footer-links {
+    grid-template-columns: 6rem minmax(0, 1fr);
+  }
+  .footer-links ul {
+    gap: 0 var(--space-5);
   }
 }
 /* Phones: a compact orrery. The bezel grows to wrap a larger porthole, the main

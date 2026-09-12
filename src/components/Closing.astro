@@ -1,0 +1,56 @@
+---
+import ExternalLinkIcon from './ExternalLinkIcon.astro';
+import { getCollection } from 'astro:content';
+import { formatMonthYear, monthIndex, isoMonth } from '../utils/formatDate';
+
+// The closing readout: where things stand at build time, worked out from the
+// collection so it stays true as projects are added or ship. It sits at Now,
+// the same line every in-progress rod on the timeline runs into.
+const projects = await getCollection('projects');
+const byStart = (a: typeof projects[number], b: typeof projects[number]) =>
+  a.data.startDate.valueOf() - b.data.startDate.valueOf() || a.data.title.localeCompare(b.data.title);
+const inProgress = projects.filter(p => p.data.unpublished).sort(byStart);
+const live = projects.filter(p => !p.data.unpublished);
+const newest = [...projects].sort(byStart).at(-1);
+const first = [...projects].sort(byStart)[0];
+// The newest project only gets its own row when the in-progress row has not
+// already named it.
+const showNewest = newest && !newest.data.unpublished;
+
+const described = {games:'a game', web:'an interactive web project', 'mobile-apps':'a mobile app', experiments:'an experiment'};
+const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const word = (n: number) => words[n] ?? String(n);
+const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const count = projects.length;
+const split = count === 1
+  ? inProgress.length ? ', in progress' : ', live'
+  : inProgress.length === 0 ? ', all live'
+  : live.length === 0 ? ', all in progress'
+  : `, ${word(live.length)} live and ${word(inProgress.length)} in progress`;
+const lede = first ? `${capital(word(count))} ${count === 1 ? 'project' : 'projects'} since ${formatMonthYear(first.data.startDate)}${split}.` : '';
+const iso = (date: Date) => isoMonth(monthIndex(date));
+---
+{count > 0 && <section class="closing" aria-labelledby="closing-title">
+  <div class="site">
+    <div class="closing-now" aria-hidden="true"><svg class="closing-now-hand" viewBox="0 0 8 8"><path d="M0 0l8 4-8 4z"/></svg><span class="closing-now-line"></span></div>
+    <div class="closing-grid">
+      <div class="closing-head">
+        <h2 class="closing-title" id="closing-title">Now</h2>
+        <p class="closing-lede">{lede}</p>
+        <!-- personal line: ask the author -->
+      </div>
+      <dl class="closing-plate">
+        {inProgress.length > 0 && <>
+          <dt>In progress</dt>
+          {inProgress.map(project => <dd><span class="status status--progress">{project.data.title}</span>, {described[project.data.section]}, since <time datetime={iso(project.data.startDate)}>{formatMonthYear(project.data.startDate)}</time></dd>)}
+        </>}
+        {showNewest && <>
+          <dt>Newest</dt>
+          <dd><span class="status">{newest.data.title}</span>, {described[newest.data.section]}, started <time datetime={iso(newest.data.startDate)}>{formatMonthYear(newest.data.startDate)}</time></dd>
+        </>}
+        <dt>Contact</dt>
+        <dd><a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">Message on LinkedIn<ExternalLinkIcon /></a></dd>
+      </dl>
+    </div>
+  </div>
+</section>}

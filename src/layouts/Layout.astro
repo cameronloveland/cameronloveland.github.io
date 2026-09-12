@@ -4,6 +4,7 @@ import '../styles/portfolio.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
 import SkyField from '../components/SkyField.astro';
+import Closing from '../components/Closing.astro';
 interface Props { title: string; description: string; }
 const { title, description } = Astro.props;
 // Social previews need an absolute image URL; fall back to the path when no site is configured.
@@ -53,9 +54,29 @@ const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : unde
   <div class="site">
     <div id="projects" class="work-area"><slot /></div>
   </div>
+  <Closing />
 </main>
-<div class="site">
-  <footer><span>&copy; {new Date().getUTCFullYear()} Cameron Loveland</span><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></footer>
-</div>
+<footer class="site-footer">
+  <div class="site footer-grid">
+    <div class="footer-signature">
+      <p class="footer-wordmark"><svg class="footer-mark" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><circle cx="14" cy="14" r="11"/><circle class="mark-core" cx="14" cy="14" r="2.6"/><circle class="mark-body" cx="21.07" cy="5.57" r="2"/></svg><span class="footer-name"><span>Cameron</span> <span>Loveland</span></span></p>
+      <p class="footer-role">Software engineer making games, apps and experiments.</p>
+    </div>
+    <nav class="footer-links" aria-label="Footer links">
+      <p class="footer-links-label" id="footer-elsewhere">Elsewhere</p>
+      <ul aria-labelledby="footer-elsewhere">
+        <li><a href="https://github.com/cameronloveland" target="_blank" rel="noopener noreferrer">GitHub<ExternalLinkIcon /></a></li>
+        <li><a href="https://www.linkedin.com/in/cameron-loveland/" target="_blank" rel="noopener noreferrer">LinkedIn<ExternalLinkIcon /></a></li>
+      </ul>
+      <p class="footer-links-label" id="footer-this-site">This site</p>
+      <ul aria-labelledby="footer-this-site">
+        <li><a href="https://github.com/cameronloveland/cameronloveland.github.io" target="_blank" rel="noopener noreferrer">Source code<ExternalLinkIcon /></a></li>
+        <li><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></li>
+      </ul>
+    </nav>
+    <p class="footer-colophon">Built with Astro as a static site. Handwritten CSS and one typeface, Bricolage Grotesque. No client framework and no tracking.</p>
+    <p class="footer-copyright">&copy; {new Date().getUTCFullYear()} Cameron Loveland</p>
+  </div>
+</footer>
 </body>
 </html>
