@@ -1,20 +1,33 @@
 # cameronloveland.github.io
 
-Personal project showcase — static HTML/CSS site hosted on GitHub Pages.
+Personal project showcase: games, apps and experiments. An Astro static site hosted
+on GitHub Pages, with no client framework and no tracking.
 
 ## Local preview
 
-Open `index.html` in a browser. No build step required.
+```sh
+npm install
+npm run dev        # dev server with live reload
+npm run build      # astro check + astro build -> dist/
+npm run preview    # serve the built dist/
+```
 
 ## Adding a project
 
-Edit the project cards in `index.html`. Each card is an `<a class="card">` element
-with an `<h3>` name, `<p>` description, and `<span class="card-link">` for the
-destination domain.
+Add a markdown file to `src/content/projects/` (copy an existing one) and a WebP
+image to `public/images/`. The frontmatter is validated by the schema in
+`src/content/config.ts`; a bad file fails the build. The homepage renders the hero
+reel, the gallery and the timeline from that one collection.
 
 ## Deploy
 
-Push or merge to `main`. The `.github/workflows/deploy.yml` GitHub Actions workflow
-publishes the repo root to GitHub Pages automatically (no build step).
+Push or merge to `main`. `.github/workflows/deploy.yml` builds the site with GitHub
+Actions and publishes `dist/` to GitHub Pages.
 
 One-time setup: Repo Settings > Pages > Source = **GitHub Actions**.
+
+## Design
+
+The visual direction (palette, type, the "instrument" hero) is written up in
+`docs/superpowers/specs/2026-09-12-award-gauntlet-design-direction.md`. Set in
+Schibsted Grotesk (OFL, self-hosted).
