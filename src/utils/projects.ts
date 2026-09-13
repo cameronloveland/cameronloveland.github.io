@@ -10,10 +10,11 @@ export function sortByOrder<T extends { id: string; data: { title: string } }>(p
   return [...projects].sort((a, b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
 }
 
-// The hero's featured set: every project with a picture, in this order.
-export const featuredOrder = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hud-portfolio'];
+// The hero's featured set: these five, in this order, and only those with a
+// picture. The gallery can grow without the reel growing with it.
+export const featuredOrder = ['antikythera', 'strength-path', 'cosmic-drift', 'stickfight', 'hud-portfolio'];
 export const featured = <T extends { id: string; data: { title: string; image?: string } }>(projects: T[]): T[] =>
-  sortByOrder(projects.filter(p => p.data.image), featuredOrder);
+  sortByOrder(projects.filter(p => p.data.image && featuredOrder.includes(p.id)), featuredOrder);
 
 // Instrument geometry the maker's mark shares with the hero: bodies sit
 // evenly from bodyA to bodyB percent of the arc's width, so one step is this

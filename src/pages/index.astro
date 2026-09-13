@@ -7,7 +7,7 @@ import Timeline from '../components/Timeline.astro';
 import { sortByOrder } from '../utils/projects';
 const projects = await getCollection('projects');
 // Gallery order: the featured five first, the rest alphabetically.
-const ordered = sortByOrder(projects, ['antikythera', 'cosmic-drift', 'strength-path', 'tavernborn', 'hud-portfolio']);
+const ordered = sortByOrder(projects, ['antikythera', 'cosmic-drift', 'strength-path', 'stickfight', 'hud-portfolio']);
 const sections = [{id:'all',label:'All projects'},{id:'games',label:'Games'},{id:'web',label:'Web'},{id:'mobile-apps',label:'Apps'},{id:'experiments',label:'Experiments'}]
   .map(section => { const count = section.id === 'all' ? projects.length : projects.filter(p => p.data.section === section.id).length; return { ...section, count, name: `${section.label}, ${count} ${count === 1 ? 'project' : 'projects'}` }; });
 ---

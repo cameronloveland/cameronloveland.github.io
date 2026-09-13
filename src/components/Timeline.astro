@@ -46,6 +46,18 @@ entries.forEach(entry => { entry.label = Math.max(entry.row, taken + windows.wid
 taken = 1 - windows.narrow;
 entries.forEach(entry => { entry.labelSm = Math.max(entry.row, taken + windows.narrow); taken = entry.labelSm; });
 
+// When several projects start in the last few months their labels cascade
+// past Now. The grid grows by as many spare rows as the last label's window
+// needs, so labels never spill onto what follows the panel. Spare rows carry
+// no tick and no year; the spine and the Now line stop at the last real month.
+const spare = (window: number, at: (e: typeof entries[number]) => number) =>
+  Math.max(0, ...entries.map(e => at(e) + window - 1 - rows));
+const gridRows = rows + spare(windows.wide, e => e.label);
+const gridRowsSm = rows + spare(windows.narrow, e => e.labelSm);
+// Each entry also says which row its label window ends on, so the filter
+// (ViewToggle) can shrink the grid back to what the entries still showing need.
+const need = (e: typeof entries[number]) => ({ wide: e.label + windows.wide - 1, narrow: e.labelSm + windows.narrow - 1 });
+
 const ticks = Array.from({ length: rows }, (_, i) => {
   const index = firstMonth + i;
   const { year, month } = monthFromIndex(index);
@@ -58,7 +70,7 @@ const ticks = Array.from({ length: rows }, (_, i) => {
   <ul class="timeline-legend" aria-label="Rod colors by category">
     {categories.map(section => <li data-legend={section}><span class="legend-rod" aria-hidden="true"></span>{sectionLabel(section)}</li>)}
   </ul>
-  <div class="timeline-scale" style={`--rows:${rows};--lanes:${lanes}`}>
+  <div class="timeline-scale" data-months={rows} style={`--rows:${gridRows};--rows-sm:${gridRowsSm};--now-row:${rows};--lanes:${lanes}`}>
     <span class="scale-spine" aria-hidden="true"></span>
     {ticks.map(tick => <>
       {tick.yearStart && <span class="scale-year" style={`--row:${tick.row}`} aria-hidden="true">{tick.year}</span>}
@@ -79,7 +91,8 @@ const ticks = Array.from({ length: rows }, (_, i) => {
         ].filter(Boolean).join(', ');
         // --kn and --kn-sm: how many months the label sits below its start.
         const style = `--r0:${row};--r1:${row + rodRows};--rod-rows:${rodRows};--lane:${lane};--kn:${label - row};--kn-sm:${labelSm - row}`;
-        return <li class:list={['timeline-entry', { 'timeline-entry--progress': unpublished }]} data-project-category={section} style={style}>
+        const rowsNeeded = need({ project, start, end, lane, row, rodRows, label, labelSm });
+        return <li class:list={['timeline-entry', { 'timeline-entry--progress': unpublished }]} data-project-category={section} data-need={rowsNeeded.wide} data-need-sm={rowsNeeded.narrow} style={style}>
           <span class="entry-band" aria-hidden="true"></span>
           <span class="entry-rod" aria-hidden="true"><span class="entry-rod-end"></span></span>
           {(label !== row || labelSm !== row) && <span class="entry-spur" aria-hidden="true"></span>}
