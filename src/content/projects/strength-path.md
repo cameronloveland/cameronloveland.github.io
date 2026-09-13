@@ -6,8 +6,8 @@ startDate: 2026-02-01
 unpublished: true
 stack: ["React Native"]
 image: "/images/strength-path.png"
-imageFocus: "50% 50%"
-stageFit: "contain"
+stageImage: "/images/strength-path-hero.png"
+imageFocus: "70% 45%"
 links:
   - label: "preview"
     href: "https://strengthpath.app/"

@@ -27,7 +27,7 @@ const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : unde
   <meta property="og:image" content={shareImage} />
   {pageUrl && <meta property="og:url" content={pageUrl} />}
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="preload" href="/fonts/bricolage-grotesque-latin-opsz.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
   <script is:inline>
     try { var saved = localStorage.getItem('theme'); if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved); } catch (_) {}
     // The arrival: the instrument winds up on first paint (see "Arrival" in portfolio.css). Set here so the first frame already holds its starting state; never set under reduced motion.
@@ -82,7 +82,7 @@ const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : unde
         <li><a href="#">Back to top<svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5 9l5-5 5 5"/></svg></a></li>
       </ul>
     </nav>
-    <p class="footer-colophon">Built with Astro as a static site. Plain CSS, no client framework, no tracking. Set in Bricolage Grotesque.</p>
+    <p class="footer-colophon">Built with Astro as a static site. Plain CSS, no client framework, no tracking. Set in Schibsted Grotesk.</p>
     <p class="footer-copyright">&copy; {new Date().getUTCFullYear()} Cameron Loveland</p>
   </div>
 </footer>

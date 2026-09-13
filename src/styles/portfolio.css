@@ -1,15 +1,15 @@
 /* Design direction: docs/superpowers/specs/2026-09-12-award-gauntlet-design-direction.md
-   One family (Bricolage Grotesque, variable), brass on night, labels that carry
+   One family (Schibsted Grotesk, variable), brass on night, labels that carry
    information. Tokens live in the two blocks below; nothing else declares a color. */
 
 @font-face {
-  font-family: "Bricolage Grotesque";
+  font-family: "Schibsted Grotesk";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 400 900;
   font-display: swap;
   src:
-    url("/fonts/bricolage-grotesque-latin-opsz.woff2") format("woff2") tech("variations"),
-    url("/fonts/bricolage-grotesque-latin-opsz.woff2") format("woff2-variations");
+    url("/fonts/schibsted-grotesk-latin.woff2") format("woff2") tech("variations"),
+    url("/fonts/schibsted-grotesk-latin.woff2") format("woff2-variations");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
     U+FEFF, U+FFFD;
@@ -63,7 +63,7 @@
   --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
   --body-fill: var(--surface);
 
-  --font: "Bricolage Grotesque", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font: "Schibsted Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-md: 1.0625rem;
@@ -76,8 +76,8 @@
   --weight-ui: 500;
   --weight-strong: 600;
   --weight-heading: 700;
-  --weight-display: 800;
-  --track-display: -0.035em;
+  --weight-display: 700;
+  --track-display: -0.02em;
   --track-title: -0.025em;
   --track-heading: -0.02em;
   --track-small: 0.005em;
@@ -229,7 +229,8 @@ button:focus-visible {
 .mark:active,
 .theme-toggle:active,
 .reel-open:active,
-.reel-actions button:active,
+.terminal:active,
+.reel-pause:active,
 .category-filter button:active,
 .view-toggle button:active,
 .empty-state button:active {
@@ -429,11 +430,10 @@ video {
   font-weight: var(--weight-heading);
   letter-spacing: var(--track-heading);
   line-height: 1.2;
-  font-variation-settings: "opsz" 32;
   text-wrap: balance;
 }
 .wordmark-name span:first-child {
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: -0.01em;
 }
 .wordmark-role {
@@ -465,6 +465,15 @@ video {
 .mark-body {
   fill: currentColor;
   stroke: none;
+}
+/* The mark is the instrument in miniature: its body turns about the ring's
+   centre by the share of the arc the hand has travelled (--reel-index and
+   --reel-step are set on the page by the carousel script), at the hand's
+   pace. Under reduced motion it is simply at its angle. */
+.mark-body {
+  transform: rotate(calc(var(--reel-index, 0) * var(--reel-step, 0) * 360deg));
+  transform-origin: 14px 14px;
+  transition: transform var(--dur-slow) var(--ease-in-out);
 }
 .mark:hover {
   color: var(--text);
@@ -549,8 +558,11 @@ video {
   height: 100%;
   fill: currentColor;
   opacity: var(--star-alpha);
-  -webkit-mask-image: linear-gradient(180deg, var(--text) 68%, transparent);
-  mask-image: linear-gradient(180deg, var(--text) 68%, transparent);
+  /* The header band is clear sky: no star is painted in the top --header-h
+     plus 16px, so nothing lands beside the name; the field runs down behind
+     the stage and the instrument and only fades at the foot of the fold. */
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(var(--header-h) + 16px), var(--text) calc(var(--header-h) + 28px), var(--text) 86%, transparent);
+  mask-image: linear-gradient(180deg, transparent calc(var(--header-h) + 16px), var(--text) calc(var(--header-h) + 28px), var(--text) 86%, transparent);
 }
 .stars-far {
   opacity: 0.38;
@@ -561,57 +573,82 @@ video {
 .stars-near {
   opacity: 0.95;
 }
-/* One meteor, rarely, in the dark. It travels head first along its own axis
-   through the band of clear sky between the wordmark and the links, from
-   right of centre down and to the left, and dies behind the stage. Narrow
-   layouts have no clear band, so it stays still there. */
+/* Meteors, in the dark. Three of them, each on its own line and its own
+   clock: one through the clear band beside the name, one long fall from the
+   top right that shows in the gutter and dies behind the stage, and one low
+   across the instrument. Each travels head first along its own axis. Phones
+   have no clear band beside the name, so the sky stays still there. */
 .sky-meteor {
   position: absolute;
-  top: 10px;
-  left: calc(50% + 120px);
-  width: 150px;
+  width: 180px;
   height: 1px;
   opacity: 0;
   transform-origin: 100% 50%;
   background: linear-gradient(90deg, transparent, var(--text));
+  --meteor-angle: 160deg;
+  --meteor-run: 380px;
 }
-@media (min-width: 1041px) {
-  [data-theme="dark"] .sky-meteor {
-    animation: meteor 34s linear 6s infinite;
+.sky-meteor--band {
+  top: 10px;
+  left: calc(50% + 120px);
+}
+.sky-meteor--long {
+  top: 24px;
+  left: calc(100% - 60px);
+  width: 260px;
+  --meteor-angle: 148deg;
+  --meteor-run: 720px;
+}
+.sky-meteor--low {
+  bottom: 96px;
+  left: 62%;
+  width: 220px;
+  --meteor-angle: 166deg;
+  --meteor-run: 520px;
+}
+@media (min-width: 721px) {
+  [data-theme="dark"] .sky-meteor--band {
+    animation: meteor 21s linear 5s infinite;
+  }
+  [data-theme="dark"] .sky-meteor--long {
+    animation: meteor 29s linear 13s infinite;
+  }
+  [data-theme="dark"] .sky-meteor--low {
+    animation: meteor 25s linear 19s infinite;
   }
 }
 @keyframes meteor {
   0% {
-    transform: rotate(160deg) translateX(0);
+    transform: rotate(var(--meteor-angle)) translateX(0);
     opacity: 0;
   }
-  0.6% {
-    opacity: 0.85;
+  0.8% {
+    opacity: 0.9;
   }
-  3.6% {
-    transform: rotate(160deg) translateX(360px);
+  4.5% {
+    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-run));
     opacity: 0;
   }
   100% {
-    transform: rotate(160deg) translateX(360px);
+    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-run));
     opacity: 0;
   }
 }
 
 /* ---------- Hero: the stage and the instrument ---------- */
-/* The featured project fills a wide stage. Under it the orrery's bezel is
-   unrolled into a straight tick rail, and a shallow brass arc below carries
-   the bodies, one per project, with the transport at the arc's right end.
-   Every position is a share of the width, set in the markup (--body-a and
-   --body-step for the hand, --x and --y for each body), so the hand on the
-   rail and the bodies on the arc agree at any width. The rail runs the full
-   width; the arc stops --console-room short of the right edge, where the
-   controls sit. */
+/* The featured project fills a wide stage. Under it sits the instrument, one
+   row: a shallow brass arc, engraved with ticks, that runs from the previous
+   terminal to the next and carries the bodies, one per project, with the hand
+   riding it to the active one. Every position is a share of the arc's width,
+   set in the markup (--body-a and --body-step for the hand and the majors,
+   --x and --y for each body), so the hand, the ticks and the bodies agree at
+   any width. --hand-x is the active body's share; the sweep runs from there
+   to the next body, or to the arc's end from the last one. */
 .hero {
-  --rail-h: 26px;
   --arc-h: 112px;
-  --console-room: 144px;
+  --terminal: 40px;
   --hand-x: calc(var(--body-a, 0.5) + var(--reel-index, 0) * var(--body-step, 0));
+  --sweep-len: calc(min(var(--body-step, 1), 1 - var(--hand-x)) * var(--arc-len, 1000) * 1px);
   padding: 12px 0 40px;
 }
 .stage {
@@ -778,7 +815,6 @@ video {
   font-weight: var(--weight-display);
   letter-spacing: var(--track-display);
   line-height: var(--leading-display);
-  font-variation-settings: "opsz" 96;
   text-shadow: 0 2px 24px color-mix(in srgb, var(--scrim) 60%, transparent);
 }
 .reel-open {
@@ -843,71 +879,68 @@ video {
 }
 
 /* ---------- Hero: the instrument ---------- */
+/* One row: the previous terminal, the arc, the next terminal, then pause at
+   its side. The terminals sit exactly at the arc's two ends, centred on its
+   height there, so the arc runs from one to the other. Phones show none of
+   this; their selector and stage buttons (see "Responsive") stay out of the
+   way, and out of the accessibility tree, everywhere else. */
 .instrument {
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20px;
 }
-/* The rail: fine ticks every eight pixels and a brass major every eighth,
-   hanging from the stage's bottom edge like the bezel's engraving. */
-.rail {
-  position: relative;
-  height: var(--rail-h);
-  background:
-    repeating-linear-gradient(90deg, var(--accent) 0 1px, transparent 1px 64px) 0 0 / 100% 12px no-repeat,
-    repeating-linear-gradient(90deg, var(--ring) 0 1px, transparent 1px 8px) 0 0 / 100% 6px no-repeat;
+.stage-nav,
+.reel-chips {
+  display: none;
 }
-/* The slide timer is a brass line that runs the length of the rail. */
-.reel-sweep {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
+.terminal,
+.reel-pause {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: var(--terminal);
+  height: var(--terminal);
+  margin-top: calc(var(--arc-end, 0.18) * var(--arc-h) - var(--terminal) / 2);
+  border: 1px solid var(--ring-faint);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--secondary);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
-.is-playing .reel-sweep {
-  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
+.terminal:hover,
+.reel-pause:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
-@keyframes reel-sweep {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+/* Pause is the one control that is not part of the arc: a bare icon at the
+   right terminal's side that takes its ring on hover. */
+.reel-pause {
+  margin-left: var(--space-2);
+  border-color: transparent;
+  color: var(--muted);
 }
-/* The hand: a brass point on the rail's lower edge that slides to sit over
-   the active body. It is as wide as the rail so its travel can be a share of
-   that width (the arc's width, since the controls' room is taken off). */
-.rail-hand {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--rail-h);
-  pointer-events: none;
-  transform: translateX(calc(var(--hand-x) * (100% - var(--console-room))));
-  transition: transform var(--dur-slow) var(--ease-in-out);
+[data-reel-play] .icon-play,
+[data-reel-play] .icon-pause {
+  fill: currentColor;
+  stroke: none;
 }
-.rail-hand::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 1px;
-  width: 12px;
-  height: 8px;
-  transform: translateX(-50%);
-  background: var(--accent);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+[data-reel-play] .icon-play,
+[data-reel-play].is-paused .icon-pause {
+  display: none;
 }
-/* The arc: one shallow orbit, drawn edge to edge in a box that stretches to
-   the arc's width. Its box is a size container so titles can be capped at
-   the spacing between bodies. */
+[data-reel-play].is-paused .icon-play {
+  display: block;
+}
+/* The arc: one shallow orbit, drawn edge to edge of its box. The box is a
+   size container so titles can be capped at the spacing between bodies. */
 .arc {
   position: relative;
+  flex: 1;
+  min-width: 0;
   height: var(--arc-h);
-  margin-right: var(--console-room);
   container-type: inline-size;
 }
 .arc-line {
@@ -922,6 +955,69 @@ video {
   stroke: var(--ring);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
+}
+/* The engraving: three more copies of the arc. A wide, finely dashed stroke
+   reads as ticks standing on the line, normal to the curve; each copy is
+   lifted by half its width so its ticks rise from the line toward the stage.
+   Minors every eight pixels; a heavier major at each body, set along the
+   drawn length (--arc-len, from the script) at the bodies' spacing. */
+.arc-ticks,
+.arc-majors {
+  stroke-linecap: butt;
+}
+.arc-ticks {
+  stroke: var(--ring-faint);
+  stroke-width: 5;
+  stroke-dasharray: 1 7;
+  transform: translateY(-2.5px);
+}
+.arc-majors {
+  stroke: var(--ring);
+  stroke-width: 14;
+  stroke-dasharray: 1.5px calc(var(--body-step, 1) * var(--arc-len, 1000) * 1px - 1.5px);
+  stroke-dashoffset: calc(0.75px - var(--body-a, 0.5) * var(--arc-len, 1000) * 1px);
+  transform: translateY(-7px);
+}
+/* The slide timer's sweep: a brass length of the arc that draws from the
+   active body toward the next one (or the arc's end, from the last body)
+   over the slide's stay. One dash, starting at the hand's place. */
+.arc-sweep {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-dasharray: 0px calc(var(--arc-len, 1000) * 1px);
+  stroke-dashoffset: calc(-1 * var(--hand-x) * var(--arc-len, 1000) * 1px);
+}
+.is-playing .arc-sweep {
+  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
+}
+@keyframes reel-sweep {
+  from {
+    stroke-dasharray: 0px calc(var(--arc-len, 1000) * 1px);
+  }
+  to {
+    stroke-dasharray: var(--sweep-len) calc(var(--arc-len, 1000) * 1px);
+  }
+}
+/* The hand: a small brass pointer that rides the arc to the active body,
+   standing off the line so it clears the body and its glow, and turning with
+   the curve so it always points straight in at the line. */
+.arc-hand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 8px;
+  pointer-events: none;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  offset-path: path(var(--arc-d));
+  offset-distance: calc(var(--hand-x) * 100%);
+  offset-anchor: 50% 100%;
+  offset-rotate: auto;
+  transform-origin: 50% 100%;
+  transform: translateY(-15px);
+  transition: offset-distance var(--dur-slow) var(--ease-in-out);
 }
 .arc-bodies {
   position: absolute;
@@ -939,7 +1035,7 @@ video {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  max-width: max(140px, calc(var(--body-step) * 100cqw - 16px));
+  max-width: calc(var(--body-step) * 100cqw - 12px);
   padding: 0 4px 4px;
   border: 0;
   background: none;
@@ -1025,9 +1121,13 @@ video {
   color: var(--accent);
 }
 /* A crowded arc (more than seven bodies) names only the active body and its
-   two neighbours; the others keep their title for screen readers. */
+   two neighbours, and an arc whose spacing is narrower than its widest title
+   (reel--tight, measured by the script) names only the active body, which
+   then takes its full width. The others keep their names for screen readers. */
 .reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-title,
-.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-meta {
+.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-meta,
+.reel--tight .orbit-body:not([aria-pressed="true"]) .orbit-body-title,
+.reel--tight .orbit-body:not([aria-pressed="true"]) .orbit-body-meta {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1035,56 +1135,23 @@ video {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
 }
-/* The transport sits at the arc's right end, centred on its height there. */
-.reel-actions {
-  position: absolute;
-  top: calc(var(--rail-h) + var(--arc-end, 0.18) * var(--arc-h) - 20px);
-  right: 0;
-  display: flex;
-  gap: var(--space-1);
-}
-.reel-actions button {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--ring-faint);
-  border-radius: var(--radius-pill);
-  background: none;
-  color: var(--secondary);
-  transition:
-    color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
-}
-.reel-actions button:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-.reel-actions .icon-play,
-.reel-actions .icon-pause {
-  fill: currentColor;
-  stroke: none;
-}
-[data-reel-play] .icon-play,
-[data-reel-play].is-paused .icon-pause {
-  display: none;
-}
-[data-reel-play].is-paused .icon-play {
-  display: block;
+.reel--tight .orbit-body[aria-pressed="true"] {
+  max-width: none;
 }
 
 /* ---------- Arrival: the instrument winds up ---------- */
 /* The one moment on first paint belongs to the instrument. The stage settles
-   in from a touch small, the arc draws itself from the left, the bodies take
-   their places in order, the hand travels along the rail from its left end
-   to the first body, and the transport comes up last. Only transform, opacity
-   and the arc's dash move. The html class is set in the head before first
-   paint and taken off by the carousel script once the hand settles, or at
-   the first pointer or key on the instrument; only then does the slide
+   in from a touch small, the arc draws itself from the previous terminal to
+   the next, its ticks come up, the bodies take their places in order, the
+   hand travels along the arc from its left end to the first body, and the
+   terminals come up last. Only transform, opacity, the hand's place on the
+   path and the arc's dash move. The html class is set in the head before
+   first paint and taken off by the carousel script once the hand settles, or
+   at the first pointer or key on the instrument; only then does the slide
    timer's sweep begin. Under reduced motion the class is never set. Timing,
-   from first paint: stage 0 to 600, arc 140 to 940, bodies from 300 at 90
-   apart, hand 300 to 1100, transport from 750. */
+   from first paint: stage 0 to 600, arc 140 to 940, ticks 600 to 900, bodies
+   from 300 at 90 apart, hand 300 to 1100, terminals from 750. On phones the
+   chip strip comes up at 300 and the stage buttons at 750. */
 .is-arriving .stage {
   animation: stage-settle calc(var(--dur-slow) * 0.75) var(--ease-out) both;
 }
@@ -1092,7 +1159,11 @@ video {
   stroke-dasharray: 1;
   animation: arc-draw var(--dur-slow) var(--ease-out) var(--dur-fast) both;
 }
-.is-arriving .rail-hand {
+.is-arriving .arc-ticks,
+.is-arriving .arc-majors {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-slow) * 0.75) both;
+}
+.is-arriving .arc-hand {
   animation: hand-set var(--dur-slow) var(--ease-in-out) var(--dur-base) both;
 }
 .is-arriving .orbit-body {
@@ -1101,8 +1172,13 @@ video {
 .is-arriving .orbit-body::before {
   animation: body-place var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 90ms) both;
 }
-.is-arriving .reel-actions {
+.is-arriving .terminal,
+.is-arriving .reel-pause,
+.is-arriving .stage-nav button {
   animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + 5 * 90ms) both;
+}
+.is-arriving .reel-chips {
+  animation: body-arrive var(--dur-base) var(--ease-out) var(--dur-base) both;
 }
 .orbit-body:nth-child(2) {
   --turn: 1;
@@ -1135,7 +1211,11 @@ video {
 }
 @keyframes hand-set {
   from {
-    transform: translateX(0);
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
   }
 }
 @keyframes body-arrive {
@@ -1168,7 +1248,6 @@ video {
   font-weight: var(--weight-heading);
   letter-spacing: var(--track-title);
   line-height: var(--leading-title);
-  font-variation-settings: "opsz" 48;
 }
 .work-toolbar {
   display: flex;
@@ -1391,7 +1470,6 @@ video {
   font-size: var(--text-xl);
   letter-spacing: var(--track-title);
   line-height: 1.15;
-  font-variation-settings: "opsz" 48;
 }
 .project-copy > p:last-child {
   margin-top: var(--space-3);
@@ -1736,7 +1814,6 @@ video {
   font-weight: var(--weight-display);
   letter-spacing: -0.04em;
   line-height: var(--leading-display);
-  font-variation-settings: "opsz" 96;
   font-variant-numeric: tabular-nums;
   pointer-events: none;
 }
@@ -1928,7 +2005,6 @@ video {
   font-size: var(--text-lg);
   letter-spacing: var(--track-heading);
   line-height: 1.15;
-  font-variation-settings: "opsz" 32;
   transition: transform var(--dur-fast) var(--ease-out);
 }
 .entry-kicker {
@@ -2099,7 +2175,6 @@ video {
   font-weight: var(--weight-display);
   letter-spacing: var(--track-display);
   line-height: var(--leading-display);
-  font-variation-settings: "opsz" 96;
 }
 .closing-lede {
   margin-top: var(--space-4);
@@ -2208,10 +2283,9 @@ video {
   font-weight: var(--weight-heading);
   letter-spacing: var(--track-heading);
   line-height: 1.2;
-  font-variation-settings: "opsz" 32;
 }
 .footer-name span:first-child {
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: -0.01em;
 }
 .footer-role {
@@ -2297,12 +2371,17 @@ video {
     grid-column: 6 / -1;
   }
 }
-/* Tablet: the stage grows taller, the arc takes the full width with the
-   transport on its own row beneath, and titles drop a size so five still
-   fit between the bodies. */
+/* Body titles drop a size before the spacing between five bodies gets
+   narrower than the widest of them, so all five stay named as far down as
+   the arc allows; past that the script names only the active one. */
+@media (max-width: 1170px) {
+  .orbit-body-title {
+    font-size: var(--text-xs);
+  }
+}
+/* Tablet: the stage grows taller and the arc a touch shallower. */
 @media (max-width: 1040px) {
   .hero {
-    --console-room: 0px;
     --arc-h: 104px;
     padding-bottom: 32px;
   }
@@ -2313,14 +2392,6 @@ video {
     left: 26px;
     right: 26px;
     bottom: 24px;
-  }
-  .orbit-body-title {
-    font-size: var(--text-xs);
-  }
-  .reel-actions {
-    position: static;
-    justify-content: flex-end;
-    margin-top: var(--space-2);
   }
 }
 /* Below the ledger width the entry stacks into one text column beside the
@@ -2377,18 +2448,38 @@ video {
     --header-h: 88px;
     --site-pad: 22px;
   }
+  /* Phones: the name sits on one line beside the mark and the links (which
+     drop their new-tab glyphs to make the room), folding to two only where
+     even that is too wide, and the role line takes its own line under all
+     three, on the column's left edge. The band may grow rather than cut
+     anything off on the narrowest screens. */
   .site-header {
-    gap: var(--space-3);
+    height: auto;
+    min-height: var(--header-h);
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 2px var(--space-2);
   }
   .header-links {
-    gap: var(--space-4);
+    gap: var(--space-3);
     font-size: var(--text-xs);
   }
+  .header-links .external-link-icon {
+    display: none;
+  }
+  .brand,
+  .wordmark {
+    display: contents;
+  }
   .wordmark-name {
+    flex: 1 1 0;
+    min-width: 0;
     font-size: var(--text-md);
   }
   .wordmark-role {
-    display: none;
+    flex-basis: 100%;
+    order: 1;
+    font-size: var(--text-xs);
   }
   .work-heading {
     padding-top: 25px;
@@ -2483,7 +2574,6 @@ video {
     font-weight: var(--weight-strong);
     letter-spacing: var(--track-small);
     line-height: var(--leading-small);
-    font-variation-settings: "opsz" 12;
     color: var(--secondary);
   }
   .entry-band {
@@ -2551,20 +2641,26 @@ video {
     gap: 0;
   }
 }
-/* Phones: a compact instrument. The stage turns to 4:3 with the title
-   smaller over it and the pill beneath it; the rail keeps its
-   ticks and hand; the bodies become bare brass points with 44px targets,
-   and only the active one shows its title, hung from its point and pulled
-   inward at either end so it stays inside the frame. The transport takes
-   its own row. */
+/* Phones: the arc is not practical this narrow, so the instrument stays
+   above 720px and phones get their own selector. The stage turns to 4:3
+   with the title smaller over it and the pill beneath it, previous and next
+   sit on the stage at mid height with pause in its top right corner (all
+   translucent glass on the artwork, brass while pressed), and the stage
+   takes a swipe. Under the stage, the only thing there, a strip of chips
+   scrolls sideways to the page edges and snaps chip by chip: each is the
+   project's thumbnail, title and category in its colour; the active one
+   takes the brass ring and carries the slide timer as a brass line along
+   its top edge. */
 @media (max-width: 720px) {
   .hero {
-    --rail-h: 22px;
-    --arc-h: 84px;
-    padding: 8px 0 28px;
+    padding: 8px 0 16px;
+  }
+  .instrument {
+    display: none;
   }
   .stage {
     aspect-ratio: 4 / 3;
+    touch-action: pan-y;
   }
   .stage-caption {
     left: 18px;
@@ -2579,7 +2675,7 @@ video {
     gap: 10px;
   }
   .reel-readout h2 {
-    font-size: 1.875rem;
+    font-size: 1.625rem;
     text-wrap: pretty;
   }
   .reel-open {
@@ -2587,55 +2683,170 @@ video {
     padding: 8px 16px;
     font-size: var(--text-xs);
   }
-  .rail {
-    background-size: 100% 10px, 100% 5px;
+  /* The step buttons sit at the middle of the clear band above the caption,
+     so they never cross the kicker or the title. */
+  .stage-nav {
+    display: contents;
   }
-  .orbit-body {
-    width: min(44px, calc(var(--body-step) * 100cqw));
-    height: 44px;
-    max-width: none;
-    padding: 0;
-    gap: 0;
-    justify-content: center;
-    transform: translate(-50%, -50%);
-  }
-  .orbit-body-title,
-  .orbit-body-meta {
+  .stage-nav button {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--on-media) 22%, transparent);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--scrim) 55%, transparent);
+    color: var(--on-media);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .stage-step {
+    top: 38%;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+  .stage-step--prev {
+    left: 10px;
+  }
+  .stage-step--next {
+    right: 10px;
+  }
+  .stage-pause {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  .stage-pause svg {
+    width: 16px;
+    height: 16px;
+  }
+  .stage-nav button:active {
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    color: var(--on-accent);
+  }
+  .reel-chips {
+    position: relative;
+    display: flex;
+    gap: var(--space-2);
+    margin: 12px calc(-1 * var(--site-pad)) 0;
+    /* Side padding of half the strip less half a chip, so the first and last
+       chips can sit at the centre (the strip is the column plus its gutters). */
+    padding: 6px calc((100% + 2 * var(--site-pad)) / 2 - 124px) 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .reel-chips::-webkit-scrollbar {
+    display: none;
+  }
+  .reel-chip {
+    position: relative;
+    flex: 0 0 248px;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    box-shadow: inset 0 1px 0 var(--rim);
+    color: var(--text);
+    text-align: left;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  .reel-chip:active {
+    transform: scale(0.98);
+  }
+  .reel-chip:focus-visible {
+    outline-offset: 2px;
+  }
+  .reel-chip[aria-pressed="true"] {
+    border-color: var(--accent-fill);
+    box-shadow:
+      inset 0 1px 0 var(--rim),
+      0 0 0 3px color-mix(in srgb, var(--accent-fill) 22%, transparent);
+  }
+  /* The slide timer: a brass line that runs the top edge of the active chip
+     over the slide's stay. Under reduced motion it is simply not there. */
+  .reel-chip::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .is-playing .reel-chip[aria-pressed="true"]::before {
+    animation: chip-sweep var(--reel-delay, 6.5s) linear forwards;
+  }
+  .reel-chip-thumb {
+    flex-shrink: 0;
+    width: 56px;
+    height: 36px;
+    border-radius: var(--radius-tag);
+    object-fit: cover;
+    object-position: var(--fx, 50%) var(--fy, 44%);
+    background: var(--scrim);
+  }
+  .reel-chip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .reel-chip-title,
+  .reel-chip-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  /* The active title hangs from one line just under the arc's lowest point,
-     whatever the height of its own body, so it never crosses the arc. */
-  .orbit-body[aria-pressed="true"] .orbit-body-title {
-    top: calc((var(--arc-dip, 0.52) - var(--y) / 100) * var(--arc-h) + 38px);
-    left: 50%;
-    width: auto;
-    height: auto;
-    max-width: none;
-    clip: auto;
-    transform: translateX(calc(var(--share, 0.5) * -100%));
     font-size: var(--text-xs);
+    line-height: 1.3;
   }
-  .orbit-body:focus-visible {
-    outline-offset: -6px;
+  .reel-chip-title {
+    font-weight: var(--weight-strong);
   }
-  .orbit-body:hover .orbit-body-title {
-    transform: translateX(calc(var(--share, 0.5) * -100%));
+  .reel-chip-meta {
+    font-weight: var(--weight-ui);
+    letter-spacing: var(--track-small);
+    color: var(--cat, var(--accent));
   }
-  /* Touch targets: the round controls grow to the 44px minimum. */
-  .reel-actions button,
+  /* Touch targets: the theme toggle grows to the 44px minimum too. */
   .theme-toggle {
     width: 44px;
     height: 44px;
   }
 }
+@keyframes chip-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
 @media (max-width: 420px) {
   :root {
     --site-pad: 16px;
+  }
+  .wordmark-name {
+    font-size: var(--text-sm);
   }
   .header-links {
     gap: 10px;

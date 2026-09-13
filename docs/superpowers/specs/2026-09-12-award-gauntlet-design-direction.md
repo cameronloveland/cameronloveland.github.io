@@ -80,24 +80,25 @@ family and meet AA for normal text on their ground.
 
 ## Typography
 
-One family: Bricolage Grotesque (variable, OFL, self-hosted, latin subset with
-weight and optical size axes, 77 KB). It is a grotesk with visible quirks at
-display sizes and a calm, readable text cut at small optical sizes, so a single
-file covers both roles and the page never mixes a "display" personality with a
-neutral body face. No monospace anywhere: dates, counts, and tags are set in the
+One family: Schibsted Grotesk (variable, OFL, self-hosted, latin subset with
+a weight axis from 400 to 900, 47 KB). It is an editorial grotesk: firm and
+legible as text, with enough character at heavy weights to carry a title over
+imagery, so a single file covers both roles and the page never mixes a
+"display" personality with a neutral body face. It replaced Bricolage Grotesque
+after the owner compared eleven faces on the hero stage. No monospace anywhere: dates, counts, and tags are set in the
 same family with tabular numerals.
 
 Roles and scale (fluid where it matters):
 
-| Role | Size | Weight | Optical size | Tracking | Line height |
-| --- | --- | --- | --- | --- | --- |
-| Display (hero title) | clamp(2rem, 1.2rem + 3.2vw, 3.25rem) | 800 | 96 | -0.035em | 1.0 |
-| Title (page h1, card h3) | clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem) | 700 | 48 | -0.025em | 1.1 |
-| Year (timeline) | clamp(2.5rem, 2rem + 2vw, 3.75rem) | 800 | 96 | -0.04em | 1.0 |
-| Heading (journal h4) | 1.5rem | 700 | 48 | -0.02em | 1.15 |
-| Wordmark | 1.25rem | 700 | 32 | -0.02em | 1.2 |
-| Body | 1.0625rem (17px) | 400 | 14 | 0 | 1.55 |
-| UI (buttons, links, filters) | 0.9375rem (15px) | 500 | 14 | 0 | 1.4 |
+| Role | Size | Weight | Tracking | Line height |
+| --- | --- | --- | --- | --- |
+| Display (hero title) | clamp(2rem, 1.2rem + 3.2vw, 3.25rem) | 700 | -0.02em | 1.0 |
+| Title (page h1, card h3) | clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem) | 700 | -0.025em | 1.1 |
+| Year (timeline) | clamp(2.5rem, 2rem + 2vw, 3.75rem) | 800 | -0.04em | 1.0 |
+| Heading (journal h4) | 1.5rem | 700 | -0.02em | 1.15 |
+| Wordmark | 1.25rem | 400 first name, 700 surname | -0.02em | 1.2 |
+| Body | 1.0625rem (17px) | 400 | 0 | 1.55 |
+| UI (buttons, links, filters) | 0.9375rem (15px) | 500 | 0 | 1.4 |
 | Small (meta, tags, status) | 0.8125rem (13px) | 500 | 12 | 0.005em | 1.4 |
 
 Rules: sentence case everywhere, including labels. No tracked-out capitals. No
@@ -150,35 +151,49 @@ and timeline keep their current structure and dimensions in this piece.
 Above the fold, the featured project fills a wide stage, the full width of the
 column in the large-radius frame, with the category, the status lamp and the
 title over the artwork at the bottom left and the one thing to press at the
-bottom right. Under the stage sits the instrument: the orrery's bezel unrolled
-into a straight tick rail along the stage's bottom edge, fine ticks with a
-brass major every so often like the Antikythera calendar ring, and below it a
-shallow brass arc, drawn as inline SVG, that carries the bodies. Each featured
-project is a small brass body on the arc with its title and category beneath
-it; the active body takes the brass fill and glows, a brass hand on the rail
-slides to sit over it when the reel turns, and the slide timer is a brass line
-that runs the length of the rail. The transport (previous, pause, next) sits at
-the arc's right end. The bodies are the selector: choosing one turns the
-mechanism to it. Positions are shares of the width, so the arc takes any number
-of projects; past seven, only the active body and its neighbours are named.
+bottom right. Under the stage sits the instrument, one row: a shallow brass
+arc, drawn as inline SVG, that runs from the previous terminal at its left end
+to the next terminal at its right, two round buttons the arc visibly joins.
+The arc is engraved like the Antikythera calendar ring, fine ticks along its
+length and a heavier major at each body, and it carries the bodies. Each
+featured project is a small brass body on the arc with its title and category
+beneath it; the active body takes the brass fill and glows, a small brass hand
+rides the arc to sit over it when the reel turns, always square to the curve,
+and the slide timer is a brass line that draws along the arc from the active
+body toward the next. Pause sits at the next terminal's side. The bodies are
+the selector: choosing one turns the mechanism to it. Positions are shares of
+the width, so the arc takes any number of projects; past seven, only the
+active body and its neighbours are named, and when the spacing gets narrower
+than the widest title only the active body is.
 
-On first paint the instrument winds up once: the stage settles in, the arc draws
-itself, the bodies take their places in order, and the hand travels along the
-rail to the first project before the timer starts. Under reduced motion
-everything is simply there.
+On first paint the instrument winds up once: the stage settles in, the arc
+draws itself from terminal to terminal, its ticks come up, the bodies take
+their places in order, and the hand travels along the arc to the first project
+before the timer starts. The maker's mark in the header is the instrument in
+miniature: its one body turns about the ring by the share of the arc the hand
+has travelled, at the hand's pace. Under reduced motion everything is simply
+there, and the mark is simply at its angle.
 
-In dark mode a sparse, static field of Starlight points sits behind the stage.
-In light mode the rail and the arc render as fine ink lines on Daylight, like an
-engraving plate. A single meteor streak, rare and CSS-only, crosses the band of
-sky above the stage.
+Phones get the stage and a different selector, since the arc is not practical
+that narrow: a strip of chips under the stage, one per project with its
+thumbnail, title and category, that scrolls sideways and snaps chip by chip.
+The active chip takes the brass ring and carries the timer as a brass line
+along its top edge; previous and next sit on the stage at its sides, pause in
+its top corner, and the stage takes a swipe.
 
-Everything in this piece serves that moment: Brass is the metal of the rail, the
+In dark mode a sparse, static field of Starlight points sits behind the stage,
+kept out of the header band so nothing lands beside the name. In light mode
+the arc and its ticks render as fine ink lines on Daylight, like an engraving
+plate. A single meteor streak, rare and CSS-only, crosses the band of sky
+above the stage.
+
+Everything in this piece serves that moment: Brass is the metal of the arc, the
 hand and the bodies, Night is the sky, the pill and frame radii are the
 instrument's geometry, and the display face is the engraved label.
 
 ## What this piece implements
 
-- Bricolage Grotesque self-hosted in `public/fonts/`, declared with
+- Schibsted Grotesk self-hosted in `public/fonts/`, declared with
   `font-display: swap` and preloaded in `Layout.astro`.
 - The token block in `src/styles/portfolio.css`: color (light and dark parity),
   type scale, radius scale, spacing scale, elevation.
