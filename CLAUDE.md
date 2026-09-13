@@ -62,13 +62,12 @@ projects with an image, in the order set at the top of `ProjectCarousel.astro`.
   and filter changes run inside the View Transitions API where available.
 - `Timeline.astro` - the chronological view: a month scale, one lane per project in
   start-date order, rods in category color, dashed to Now while in progress.
-- `Closing.astro` - the "Now" section above the footer.
 - `ThemeToggle.astro` - the dark/light toggle (crossfades via a view transition).
 - `ExternalLinkIcon.astro` - the shared new-tab glyph.
 
 `src/layouts/Layout.astro` holds the `<head>` (theme init, font preload, Open Graph
 meta), the header band (maker's mark, wordmark, links, theme toggle), the fold, the
-main slot, the closing section and the footer.
+main slot and the footer.
 
 ## Styling (`src/styles/portfolio.css`)
 

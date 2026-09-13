@@ -220,8 +220,7 @@ button:focus-visible {
 .footer-links a,
 .project-links a,
 .project-more,
-.entry-open,
-.closing-plate dd a {
+.entry-open {
   border-radius: var(--radius-tag);
 }
 /* One press everywhere: a pill or button sinks while held, a text link dips a
@@ -240,8 +239,7 @@ button:focus-visible {
 .footer-links a:active,
 .project-links a:active,
 .project-more:active,
-.entry-open:active,
-.closing-plate dd a:active {
+.entry-open:active {
   transform: translateY(1px);
 }
 [hidden] {
@@ -2148,121 +2146,13 @@ video {
   margin-top: var(--space-5);
 }
 
-/* ---------- Closing: the readout at Now ---------- */
-/* The page ends where the timeline does. Its brass Now line, hand and all,
-   runs across the top of the closing; under it, the state of things at build
-   time and the one way to get in touch. The heading and the plate share the
-   gallery's column lines (4 of 12 and 8 of 12), so the plate's labels sit on
-   the same edge as the second card in the bottom row. */
-/* The closing and the footer read as one block: one step of the scale
-   between the plate and the footer band, and one more to the wordmark. */
-.closing {
-  margin-top: var(--space-9);
-  padding-bottom: var(--space-6);
-}
-.closing-now {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
-.closing-now-hand {
-  width: 8px;
-  height: 8px;
-  flex-shrink: 0;
-  fill: var(--accent);
-}
-.closing-now-line {
-  flex: 1;
-  height: 2px;
-  background: var(--accent);
-}
-.closing-grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--space-6) var(--space-5);
-  padding-top: var(--space-6);
-}
-.closing-head {
-  grid-column: span 4;
-}
-.closing-title {
-  font-size: var(--text-display);
-  font-weight: var(--weight-display);
-  letter-spacing: var(--track-display);
-  line-height: var(--leading-display);
-}
-.closing-lede {
-  margin-top: var(--space-4);
-  font-size: var(--text-lg);
-  line-height: 1.4;
-  color: var(--secondary);
-  max-width: 26ch;
-  text-wrap: pretty;
-}
-/* The plate at section scale: the card plate's two columns, one size up, with
-   a lamp on each project name so the status reads the same way it does on the
-   cards (filled, you can use it; hollow, still being built). */
-.closing-plate {
-  grid-column: 5 / -1;
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  column-gap: var(--space-5);
-  row-gap: var(--space-3);
-  align-content: start;
-  padding-top: 0.55em;
-  font-size: var(--text-md);
-  line-height: var(--leading-body);
-}
-.closing-plate dt {
-  grid-column: 1;
-  color: var(--muted);
-  font-weight: var(--weight-ui);
-}
-.closing-plate dd {
-  grid-column: 2;
-  color: var(--secondary);
-  min-width: 0;
-  max-width: 60ch;
-  text-wrap: pretty;
-}
-/* The lamp runs inline here so the sentence wraps as text and the comma after
-   a name stays on its line. */
-.closing-plate dd .status {
-  display: inline;
-  font: inherit;
-  letter-spacing: 0;
-  font-weight: var(--weight-strong);
-  color: var(--text);
-  white-space: normal;
-}
-.closing-plate dd .status::before {
-  display: inline-block;
-  vertical-align: 0.1em;
-  margin-right: 10px;
-}
-.closing-plate dd a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  margin: -12px 0;
-  color: var(--accent);
-  font-weight: var(--weight-strong);
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-.closing-plate dd a:hover {
-  text-decoration: underline;
-}
-
 /* ---------- Footer: sinking back into the sky ---------- */
-/* One object on the same column lines as the closing. The band deepens from
-   the page ground to the fold's zenith, so the page ends in the sky it began
-   in. Left, the maker's mark and the name set the way the hero sets it (light
+/* One object on the gallery's column lines. The band deepens from the page
+   ground to the fold's zenith, so the page ends in the sky it began in. Left, the maker's mark and the name set the way the hero sets it (light
    first name, heavy surname); right, the links in two labelled rows, then what
    the site is made of. */
 .site-footer {
+  margin-top: var(--space-9);
   background: linear-gradient(180deg, var(--bg), var(--sky-zenith));
   padding: var(--space-6) 0 var(--space-8);
   color: var(--secondary);
@@ -2372,13 +2262,10 @@ video {
     --year-w: 110px;
     --ticks-w: 64px;
   }
-  /* Tablet: the heading keeps 5 columns and the plate takes the rest, since
-     the gallery's 6 and 6 would squeeze the plate's sentences. */
-  .closing-head,
+  /* Tablet: the signature keeps 5 columns and the links take the rest. */
   .footer-signature {
     grid-column: span 5;
   }
-  .closing-plate,
   .footer-links,
   .footer-colophon,
   .footer-copyright {
@@ -2619,31 +2506,18 @@ video {
   .entry-spur::before {
     right: calc(var(--space-2) - var(--space-4));
   }
-  /* Phones: the closing and footer stack into one column on the left edge. */
-  .closing {
-    margin-top: var(--space-8);
-    padding-bottom: var(--space-5);
-  }
-  .closing-grid {
-    row-gap: var(--space-6);
-    padding-top: var(--space-5);
-  }
-  .closing-head,
-  .closing-plate,
+  /* Phones: the footer stacks into one column on the left edge. */
   .footer-signature,
   .footer-links,
   .footer-colophon,
   .footer-copyright {
     grid-column: 1 / -1;
   }
-  .closing-plate {
-    grid-template-columns: 6rem minmax(0, 1fr);
-    padding-top: 0;
-  }
   .footer-signature {
     grid-row: auto;
   }
   .site-footer {
+    margin-top: var(--space-8);
     padding: var(--space-5) 0 var(--space-7);
   }
   .footer-grid {

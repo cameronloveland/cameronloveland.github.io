@@ -4,7 +4,6 @@ import '../styles/portfolio.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
 import SkyField from '../components/SkyField.astro';
-import Closing from '../components/Closing.astro';
 interface Props { title: string; description: string; }
 const { title, description } = Astro.props;
 // Social previews need an absolute image URL; fall back to the path when no site is configured.
@@ -62,7 +61,6 @@ const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : unde
   <div class="site">
     <div id="projects" class="work-area"><slot /></div>
   </div>
-  <Closing />
 </main>
 <footer class="site-footer">
   <div class="site footer-grid">
