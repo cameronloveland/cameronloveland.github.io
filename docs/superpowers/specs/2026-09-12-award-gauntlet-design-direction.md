@@ -116,7 +116,7 @@ Radius encodes hierarchy rather than decorating everything equally:
 
 | Token | Value | Used for |
 | --- | --- | --- |
-| radius-frame | 24px | the hero instrument frame |
+| radius-frame | 24px | the hero stage |
 | radius-card | 16px | card media, journal cards, empty state |
 | radius-control | 12px | grouped controls (view toggle shell) |
 | radius-tag | 6px | stack tags, category chips |
@@ -147,24 +147,34 @@ and timeline keep their current structure and dimensions in this piece.
 
 ## The one memorable thing
 
-Above the fold, the featured-project stage becomes the face of an orrery. Thin
-brass orbit rings, drawn as inline SVG, ring the stage (or sweep out from its
-lower-left corner) with fine engraved tick marks like the Antikythera calendar
-ring. Each of the five projects sits on its own ring as a small brass body with
-its title beside it; the active project's body glows and its ring brightens,
-and the rings turn one notch when the carousel advances. The selector row below
-the stage is the crank: choosing a project turns the mechanism to it. The stage
-itself is masked by the large-radius frame like a porthole, which is the HUD
-portfolio's own window over Earth.
+Above the fold, the featured project fills a wide stage, the full width of the
+column in the large-radius frame, with the category, the status lamp and the
+title over the artwork at the bottom left and the one thing to press at the
+bottom right. Under the stage sits the instrument: the orrery's bezel unrolled
+into a straight tick rail along the stage's bottom edge, fine ticks with a
+brass major every so often like the Antikythera calendar ring, and below it a
+shallow brass arc, drawn as inline SVG, that carries the bodies. Each featured
+project is a small brass body on the arc with its title and category beneath
+it; the active body takes the brass fill and glows, a brass hand on the rail
+slides to sit over it when the reel turns, and the slide timer is a brass line
+that runs the length of the rail. The transport (previous, pause, next) sits at
+the arc's right end. The bodies are the selector: choosing one turns the
+mechanism to it. Positions are shares of the width, so the arc takes any number
+of projects; past seven, only the active body and its neighbours are named.
 
-In dark mode a sparse, static field of Starlight points sits behind the rings.
-In light mode the rings render as fine ink lines on Daylight, like an engraving
-plate. A single meteor streak, rare and CSS-only, may return from the old site
-if a later piece finds it earns its place.
+On first paint the instrument winds up once: the stage settles in, the arc draws
+itself, the bodies take their places in order, and the hand travels along the
+rail to the first project before the timer starts. Under reduced motion
+everything is simply there.
 
-Everything in this piece serves that moment: Brass is the ring metal, Night is
-the sky, the pill and frame radii are the ring geometry, and the display face is
-the engraved label.
+In dark mode a sparse, static field of Starlight points sits behind the stage.
+In light mode the rail and the arc render as fine ink lines on Daylight, like an
+engraving plate. A single meteor streak, rare and CSS-only, crosses the band of
+sky above the stage.
+
+Everything in this piece serves that moment: Brass is the metal of the rail, the
+hand and the bodies, Night is the sky, the pill and frame radii are the
+instrument's geometry, and the display face is the engraved label.
 
 ## What this piece implements
 
@@ -179,6 +189,6 @@ the engraved label.
 
 ## Left for later pieces
 
-- The orrery hero identity moment described above.
-- Motion choreography (page-load reveal, ring rotation on slide change).
+- The instrument hero identity moment described above.
+- Motion choreography (page-load reveal, the hand's travel on slide change).
 - Any change to the hero, card grid, or timeline layout dimensions.

@@ -37,9 +37,14 @@
   --cat-web: #4b4fd6;
   --cat-mobile: #1a6f4e;
   --cat-experiments: #855810;
-  /* Media overlays sit on project screenshots, which are dark in both themes. */
+  /* Media overlays sit on project screenshots, which are dark in both themes,
+     so text on them uses the night text and the night category colors. */
   --scrim: #0e1128;
   --on-media: #eef0fb;
+  --media-cat-games: #f088b8;
+  --media-cat-web: #a3a6ff;
+  --media-cat-mobile: #62d5a0;
+  --media-cat-experiments: #e9bb5c;
   --shadow-ink: #151934;
   --glow: color-mix(in srgb, var(--accent-fill) 10%, transparent);
   --rim: transparent;
@@ -55,7 +60,6 @@
   --star-alpha: 0.16;
   --ring: color-mix(in srgb, var(--text) 54%, transparent);
   --ring-faint: color-mix(in srgb, var(--text) 22%, transparent);
-  --bezel: color-mix(in srgb, var(--accent-fill) 30%, transparent);
   --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
   --body-fill: var(--surface);
 
@@ -67,7 +71,6 @@
   --text-xl: 1.5rem;
   --text-title: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
   --text-display: clamp(2rem, 1.2rem + 3.2vw, 3.25rem);
-  --text-hero: clamp(2.75rem, 0.5rem + 4.8vw, 5.5rem);
   --text-year: clamp(2.5rem, 2rem + 2vw, 3.75rem);
   --weight-body: 400;
   --weight-ui: 500;
@@ -135,6 +138,10 @@
   --cat-web: #a3a6ff;
   --cat-mobile: #62d5a0;
   --cat-experiments: #e9bb5c;
+  --media-cat-games: var(--cat-games);
+  --media-cat-web: var(--cat-web);
+  --media-cat-mobile: var(--cat-mobile);
+  --media-cat-experiments: var(--cat-experiments);
   --shadow-ink: #05061a;
   --glow: color-mix(in srgb, var(--accent-fill) 7%, transparent);
   --rim: color-mix(in srgb, var(--text) 7%, transparent);
@@ -146,7 +153,6 @@
   --star-alpha: 1;
   --ring: color-mix(in srgb, var(--accent) 52%, transparent);
   --ring-faint: color-mix(in srgb, var(--accent) 20%, transparent);
-  --bezel: color-mix(in srgb, var(--accent) 9%, transparent);
   --rim-light: color-mix(in srgb, var(--text) 22%, transparent);
   --body-fill: color-mix(in srgb, var(--accent) 14%, var(--bg));
   color-scheme: dark;
@@ -403,7 +409,39 @@ video {
   justify-content: space-between;
   gap: var(--space-5);
 }
-/* The maker's mark: a ring with one body on it, the instrument in miniature. */
+/* The maker's mark and the wordmark: a ring with one body on it, the
+   instrument in miniature, then the name set the way the footer sets it
+   (light first name, heavy surname) over what the person does. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.wordmark-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+  font-variation-settings: "opsz" 32;
+  text-wrap: balance;
+}
+.wordmark-name span:first-child {
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.wordmark-role {
+  font-size: var(--text-sm);
+  line-height: var(--leading-small);
+  color: var(--muted);
+  text-wrap: pretty;
+}
 .mark {
   display: inline-grid;
   place-items: center;
@@ -486,7 +524,7 @@ video {
 
 /* ---------- The fold: night sky ---------- */
 /* The hero is inside main; the sky reaches up behind the header so the fold
-   stays full-bleed. Horizontal spill from the orbit rings is clipped here. */
+   stays full-bleed. The meteor's travel is clipped here. */
 .fold {
   position: relative;
   isolation: isolate;
@@ -524,21 +562,13 @@ video {
   opacity: 0.95;
 }
 /* One meteor, rarely, in the dark. It travels head first along its own axis
-   through the clear sky above the orbit's top-left, passing over the first
-   body and the start of the main orbit, and dies in the gap between the name
-   and the porthole. Its start is measured from the orbit's centre (the same
-   numbers as the .hero grid: --orbit, the 200px label room, --site-pad) so it
-   holds at every two-column width; the stacked layout has no clear band, so
-   it stays still there. */
-.sky {
-  --orbit-r: calc(clamp(360px, 40vw, 580px) / 2);
-  --orbit-cx: calc(50% + min(50%, 720px) - var(--site-pad) - 200px - var(--orbit-r));
-  --orbit-cy: calc(var(--header-h) + 12px + var(--orbit-r));
-}
+   through the band of clear sky between the wordmark and the links, from
+   right of centre down and to the left, and dies behind the stage. Narrow
+   layouts have no clear band, so it stays still there. */
 .sky-meteor {
   position: absolute;
-  top: calc(var(--orbit-cy) - 1.25 * var(--orbit-r));
-  left: calc(var(--orbit-cx) + 0.35 * var(--orbit-r) - 150px);
+  top: 10px;
+  left: calc(50% + 120px);
   width: 150px;
   height: 1px;
   opacity: 0;
@@ -568,152 +598,43 @@ video {
   }
 }
 
-/* ---------- Hero: identity and the orrery ---------- */
+/* ---------- Hero: the stage and the instrument ---------- */
+/* The featured project fills a wide stage. Under it the orrery's bezel is
+   unrolled into a straight tick rail, and a shallow brass arc below carries
+   the bodies, one per project, with the transport at the arc's right end.
+   Every position is a share of the width, set in the markup (--body-a and
+   --body-step for the hand, --x and --y for each body), so the hand on the
+   rail and the bodies on the arc agree at any width. The rail runs the full
+   width; the arc stops --console-room short of the right edge, where the
+   controls sit. */
 .hero {
-  --orbit: clamp(360px, 40vw, 580px);
-  --label-room: 200px;
-  --orbit-scale: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) calc(var(--orbit) + var(--label-room));
-  grid-template-rows: auto 1fr;
-  column-gap: var(--space-7);
-  padding: 12px 0 72px;
+  --rail-h: 26px;
+  --arc-h: 112px;
+  --console-room: 144px;
+  --hand-x: calc(var(--body-a, 0.5) + var(--reel-index, 0) * var(--body-step, 0));
+  padding: 12px 0 40px;
 }
-.identity {
-  grid-column: 1;
-  grid-row: 1;
-  padding-top: 20px;
-}
-.hero-name {
-  font-size: var(--text-hero);
-  font-weight: var(--weight-display);
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-  font-variation-settings: "opsz" 96;
-}
-.hero-name span {
-  display: block;
-}
-/* Light first name over a heavy surname: one variable face, two weights. */
-.hero-name span:first-child {
-  font-weight: 300;
-  letter-spacing: -0.02em;
-}
-.hero-lede {
-  margin-top: var(--space-5);
-  font-size: var(--text-lg);
-  line-height: 1.4;
-  color: var(--secondary);
-  max-width: 26ch;
-  text-wrap: pretty;
-}
-/* The carousel region has no box of its own; its parts sit in the hero grid. */
-.reel {
-  display: contents;
-}
-.orbit {
-  grid-column: 2;
-  grid-row: 1 / 3;
+.stage {
   position: relative;
-  width: var(--orbit);
-  max-width: 100%;
-}
-.orbit-window {
-  position: relative;
-  aspect-ratio: 1;
-}
-.orbit-rings {
-  position: absolute;
-  inset: -20%;
-  width: 140%;
-  height: 140%;
-  overflow: visible;
-  pointer-events: none;
-  fill: none;
-  transform: scale(var(--orbit-scale));
-}
-.ring {
-  stroke: var(--ring);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-.ring-outer {
-  stroke: var(--ring-faint);
-}
-/* Each orbit's group pivots on the porthole's centre (its box is kept round by
-   the unpainted extent circle) so the arrival can turn it into place. */
-.ring-set {
-  transform-box: fill-box;
-  transform-origin: 50% 50%;
-}
-.ring-extent {
-  fill: none;
-  stroke: none;
-}
-.bezel-band {
-  fill: var(--bezel);
-}
-/* The dial turns so the hand points at the active body on the orbit. It pivots
-   on its own bounding box (kept symmetric by the unpainted extent circle, which
-   matches the hand's reach) because browsers disagree on where a view-box
-   origin sits when the viewBox does not start at 0 0. */
-.bezel-dial {
-  transform: rotate(calc(var(--reel-index, 0) * var(--body-step, 40deg)));
-  transform-box: fill-box;
-  transform-origin: 50% 50%;
-  transition: transform var(--dur-slow) var(--ease-out);
-}
-.bezel-dial-extent {
-  fill: none;
-  stroke: none;
-}
-.bezel-ticks {
-  stroke: var(--ring);
-  stroke-width: 1.3;
-}
-.bezel-ticks--major {
-  stroke: var(--accent);
-  stroke-width: 2.2;
-}
-.bezel-hand {
-  fill: var(--accent);
-}
-.bezel-rim {
-  stroke: var(--rim-light);
-}
-/* The slide timer is a brass sweep around the bezel. */
-.reel-sweep {
-  stroke: var(--accent);
-  stroke-width: 0.4;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-.is-playing .reel-sweep {
-  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
-}
-@keyframes reel-sweep {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.reel-stage {
-  position: absolute;
-  inset: calc(50% - 36% * var(--orbit-scale));
-  border-radius: 50%;
+  aspect-ratio: 3 / 1;
+  border-radius: var(--radius-frame);
   overflow: hidden;
   isolation: isolate;
   background: var(--scrim);
   box-shadow: var(--shadow-frame);
   transform: translateZ(0);
+  /* Text on the stage sits on the artwork, which is dark in both themes, so
+     the category colors here are the night set. */
+  --cat-games: var(--media-cat-games);
+  --cat-web: var(--media-cat-web);
+  --cat-mobile: var(--media-cat-mobile);
+  --cat-experiments: var(--media-cat-experiments);
 }
 /* Turning the reel: the outgoing slide recedes (fades and draws back a touch)
    under the incoming one, which lands at full size at once and then settles
    from a slight zoom to rest over the length of its stay. The crossfade runs
-   at the base pace, in step with the readout below, so image and text turn
-   as one; the dial's hand and the recede take the slow pace and finish after. */
+   at the base pace, in step with the caption, so image and text turn as one;
+   the hand's slide and the recede take the slow pace and finish after. */
 .reel-slide {
   position: absolute;
   inset: 0;
@@ -769,210 +690,46 @@ video {
 .reel-slide--contain > video {
   object-fit: contain;
 }
-/* Glass: the porthole darkens toward its rim, clearest around the focal point. */
-.reel-slide::after {
-  content: "";
+/* The scrim rises from the bottom edge so the caption reads on any artwork;
+   the top of the stage stays clear. */
+.stage-scrim {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at calc(50% + (var(--fx, 50%) - 50%) / 2) calc(50% + (var(--fy, 44%) - 50%) / 2),
-    transparent 56%,
-    color-mix(in srgb, var(--scrim) 58%, transparent)
-  );
-  pointer-events: none;
-}
-.orbit-bodies {
-  position: absolute;
-  inset: 0;
-}
-/* Body positions come from the 100-unit orrery box; --orbit-scale enlarges the
-   whole instrument on small screens without redrawing it. */
-.orbit-body {
-  position: absolute;
-  left: calc(50% + (var(--x) - 50%) * var(--orbit-scale));
-  top: calc(50% + (var(--y) - 50%) * var(--orbit-scale));
-  transform: translate(-7px, -50%);
   z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    color-mix(in srgb, var(--scrim) 42%, transparent) 70%,
+    color-mix(in srgb, var(--scrim) 88%, transparent)
+  );
+}
+
+/* ---------- Hero: the caption on the stage ---------- */
+/* Bottom left, the kicker (category in its color, then the status lamp) and
+   the title as the display face; bottom right, the one thing to press. */
+.stage-caption {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 28px;
+  z-index: 3;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 4px 10px 4px 0;
-  border: 0;
-  background: none;
-  color: var(--secondary);
-  text-align: left;
-  white-space: nowrap;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out);
+  justify-content: space-between;
+  align-items: end;
+  gap: var(--space-5);
+  color: var(--on-media);
 }
-.orbit-body::before {
-  content: "";
-  flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1.5px solid var(--ring);
-  background: var(--body-fill);
-  transition:
-    background var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out),
-    box-shadow var(--dur-base) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
-}
-.orbit-body-title {
-  display: block;
-  font-size: var(--text-sm);
-  font-weight: var(--weight-strong);
-  line-height: 1.25;
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-.orbit-body-meta {
-  display: block;
-  font-size: var(--text-xs);
-  line-height: var(--leading-small);
-  letter-spacing: var(--track-small);
-  color: var(--muted);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-/* Hover: the body catches light and its title brightens and leans in. */
-.orbit-body:hover {
-  color: var(--text);
-}
-.orbit-body:hover::before {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-fill) 20%, transparent);
-  transform: scale(1.2);
-}
-.orbit-body:hover .orbit-body-title {
-  transform: translateX(2px);
-}
-.orbit-body:hover .orbit-body-meta {
-  color: var(--secondary);
-}
-/* Press: the body sinks and takes on brass. */
-.orbit-body:active::before {
-  background: color-mix(in srgb, var(--accent-fill) 50%, var(--body-fill));
-  border-color: var(--accent-fill);
-  transform: scale(0.9);
-}
-.orbit-body[aria-pressed="true"] {
-  color: var(--text);
-}
-.orbit-body[aria-pressed="true"]::before,
-.orbit-body[aria-pressed="true"]:hover::before {
-  background: var(--accent-fill);
-  border-color: var(--accent-fill);
-  box-shadow:
-    0 0 0 4px color-mix(in srgb, var(--accent-fill) 22%, transparent),
-    0 0 24px color-mix(in srgb, var(--accent-fill) 55%, transparent);
-}
-.orbit-body:focus-visible {
-  outline-offset: 2px;
-}
-.orbit-body[aria-pressed="true"] .orbit-body-meta {
-  color: var(--accent);
-}
-/* The engraved titles only appear on phones, where the bodies are bare points
-   (see "Phones: a compact orrery"); wider layouts set each title beside its body. */
-.orbit-labels {
-  display: none;
-}
-.orbit-label-path {
-  fill: none;
-  stroke: none;
-}
-
-/* ---------- Arrival: the instrument winds up ---------- */
-/* The one moment on first paint belongs to the orrery. The porthole and its
-   bezel are there from the first frame; the main orbit turns clockwise into
-   alignment as it comes up, the outer ring turns the other way behind it
-   (rings meshing), the bodies take their places in orbit order, and the dial
-   turns up from past its last tick to point at the first project. Everything
-   else (name, readout, stars) is still and readable from the first frame.
-   Only transform and opacity move. The html class is set in the head before
-   first paint and taken off by the carousel script once the dial settles, or
-   at the first pointer or key on the instrument; only then does the slide
-   timer's sweep begin. Under reduced motion the class is never set. Timing,
-   from first paint: main orbit 0 to 800, outer ring 140 to 940, bodies from
-   300 at 100 apart, dial 300 to 1100. */
-.is-arriving .ring-set--main {
-  animation: ring-align var(--dur-slow) var(--ease-out) both;
-}
-.is-arriving .ring-set--outer {
-  animation: ring-align-back var(--dur-slow) var(--ease-out) var(--dur-fast) both;
-}
-.is-arriving .bezel-dial {
-  animation: dial-set var(--dur-slow) var(--ease-out) var(--dur-base) both;
-}
-.is-arriving .orbit-body {
-  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 100ms) both;
-}
-.is-arriving .orbit-body::before {
-  animation: body-place var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 100ms) both;
-}
-.orbit-body:nth-child(2) {
-  --turn: 1;
-}
-.orbit-body:nth-child(3) {
-  --turn: 2;
-}
-.orbit-body:nth-child(4) {
-  --turn: 3;
-}
-.orbit-body:nth-child(5) {
-  --turn: 4;
-}
-.orbit-body:nth-child(n + 6) {
-  --turn: 5;
-}
-@keyframes ring-align {
-  from {
-    opacity: 0;
-    transform: rotate(-26deg);
-  }
-}
-@keyframes ring-align-back {
-  from {
-    opacity: 0;
-    transform: rotate(16deg);
-  }
-}
-@keyframes dial-set {
-  from {
-    transform: rotate(-70deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-@keyframes body-arrive {
-  from {
-    opacity: 0;
-  }
-}
-@keyframes body-place {
-  from {
-    transform: scale(0);
-  }
-}
-
-/* ---------- Hero: the active project readout ---------- */
-/* The readout follows the lede at a measured gap so the left column reads as
-   one stack; its CTA lands on the porthole's bottom edge at 1440. */
-.reel-readout-area {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: start;
-  padding-top: var(--space-7);
-}
-/* Every readout sits in the same grid cell, so the column holds the height of
-   the tallest one and the console under it never moves as the reel turns. */
+/* Every readout sits in the same grid cell, anchored to the bottom, so the
+   caption holds its place as the reel turns. */
 .reel-readouts {
   display: grid;
+  align-items: end;
+  min-width: 0;
 }
 .reel-readout {
   grid-area: 1 / 1;
+  min-width: 0;
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
@@ -986,7 +743,7 @@ video {
 }
 /* Turning the reel: the outgoing readout fades where it stands while the
    incoming one fades in over it and settles up the last few pixels, so the
-   column never sits empty. Only after the fade does the outgoing one hide and
+   caption never sits empty. Only after the fade does the outgoing one hide and
    drop back to its waiting offset. The first readout is simply there on load
    (has-turned comes on with the first turn), and reduced motion swaps at once. */
 .has-turned .reel-readout {
@@ -1007,30 +764,22 @@ video {
   gap: var(--space-3);
   font-size: var(--text-sm);
   font-weight: var(--weight-ui);
-  color: var(--muted);
+  color: color-mix(in srgb, var(--on-media) 82%, transparent);
+}
+.reel-category {
+  color: var(--cat, var(--accent));
 }
 .reel-kicker .status {
   color: inherit;
 }
 .reel-readout h2 {
   margin-top: var(--space-2);
-  font-size: var(--text-title);
-  letter-spacing: var(--track-title);
-  line-height: var(--leading-title);
-  font-variation-settings: "opsz" 48;
-}
-.reel-blurb {
-  margin-top: var(--space-3);
-  color: var(--secondary);
-  max-width: 44ch;
-  text-wrap: pretty;
-}
-.reel-console {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  margin-top: var(--space-5);
+  font-size: var(--text-display);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-display);
+  font-variation-settings: "opsz" 96;
+  text-shadow: 0 2px 24px color-mix(in srgb, var(--scrim) 60%, transparent);
 }
 .reel-open {
   display: inline-flex;
@@ -1052,13 +801,18 @@ video {
   opacity: 0.85;
 }
 .reel-open:hover {
-  background: color-mix(in srgb, var(--accent-fill) 86%, var(--text));
+  background: color-mix(in srgb, var(--accent-fill) 86%, var(--on-media));
 }
-/* The CTAs share one cell too, sized to the widest, so the prev/pause/next
-   controls keep their place. The incoming pill fades in on top of the outgoing
-   one (same fill, so the pill itself never dims); the outgoing hides after. */
+/* Brass on brass would hide the focus ring, so on the stage it is starlight. */
+.reel-open:focus-visible {
+  outline-color: var(--on-media);
+}
+/* The CTAs share one cell too, sized to the widest. The incoming pill fades
+   in on top of the outgoing one (same fill, so the pill itself never dims);
+   the outgoing hides after. */
 .reel-cta {
   display: grid;
+  flex-shrink: 0;
 }
 .reel-cta .reel-open {
   grid-area: 1 / 1;
@@ -1087,7 +841,205 @@ video {
     opacity var(--dur-base) var(--ease-out),
     visibility 0s;
 }
+
+/* ---------- Hero: the instrument ---------- */
+.instrument {
+  position: relative;
+}
+/* The rail: fine ticks every eight pixels and a brass major every eighth,
+   hanging from the stage's bottom edge like the bezel's engraving. */
+.rail {
+  position: relative;
+  height: var(--rail-h);
+  background:
+    repeating-linear-gradient(90deg, var(--accent) 0 1px, transparent 1px 64px) 0 0 / 100% 12px no-repeat,
+    repeating-linear-gradient(90deg, var(--ring) 0 1px, transparent 1px 8px) 0 0 / 100% 6px no-repeat;
+}
+/* The slide timer is a brass line that runs the length of the rail. */
+.reel-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.is-playing .reel-sweep {
+  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
+}
+@keyframes reel-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+/* The hand: a brass point on the rail's lower edge that slides to sit over
+   the active body. It is as wide as the rail so its travel can be a share of
+   that width (the arc's width, since the controls' room is taken off). */
+.rail-hand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--rail-h);
+  pointer-events: none;
+  transform: translateX(calc(var(--hand-x) * (100% - var(--console-room))));
+  transition: transform var(--dur-slow) var(--ease-in-out);
+}
+.rail-hand::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 1px;
+  width: 12px;
+  height: 8px;
+  transform: translateX(-50%);
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+/* The arc: one shallow orbit, drawn edge to edge in a box that stretches to
+   the arc's width. Its box is a size container so titles can be capped at
+   the spacing between bodies. */
+.arc {
+  position: relative;
+  height: var(--arc-h);
+  margin-right: var(--console-room);
+  container-type: inline-size;
+}
+.arc-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+}
+.ring {
+  stroke: var(--ring);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.arc-bodies {
+  position: absolute;
+  inset: 0;
+}
+/* A body sits on the arc at its share of the width, title and category
+   beneath it, each capped at the spacing so neighbours never touch. */
+.orbit-body {
+  position: absolute;
+  left: var(--x);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -7px);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: max(140px, calc(var(--body-step) * 100cqw - 16px));
+  padding: 0 4px 4px;
+  border: 0;
+  background: none;
+  color: var(--secondary);
+  text-align: center;
+  white-space: nowrap;
+  border-radius: var(--radius-tag);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.orbit-body::before {
+  content: "";
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring);
+  background: var(--body-fill);
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.orbit-body-title {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  line-height: 1.25;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.orbit-body-meta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: -6px;
+  font-size: var(--text-xs);
+  line-height: var(--leading-small);
+  letter-spacing: var(--track-small);
+  color: var(--muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+/* Hover: the body catches light and its title brightens and lifts. */
+.orbit-body:hover {
+  color: var(--text);
+}
+.orbit-body:hover::before {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-fill) 20%, transparent);
+  transform: scale(1.2);
+}
+.orbit-body:hover .orbit-body-title {
+  transform: translateY(-1px);
+}
+.orbit-body:hover .orbit-body-meta {
+  color: var(--secondary);
+}
+/* Press: the body sinks and takes on brass. */
+.orbit-body:active::before {
+  background: color-mix(in srgb, var(--accent-fill) 50%, var(--body-fill));
+  border-color: var(--accent-fill);
+  transform: scale(0.9);
+}
+.orbit-body[aria-pressed="true"] {
+  color: var(--text);
+}
+.orbit-body[aria-pressed="true"]::before,
+.orbit-body[aria-pressed="true"]:hover::before {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-fill) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--accent-fill) 55%, transparent);
+}
+.orbit-body:focus-visible {
+  outline-offset: 2px;
+}
+.orbit-body[aria-pressed="true"] .orbit-body-meta {
+  color: var(--accent);
+}
+/* A crowded arc (more than seven bodies) names only the active body and its
+   two neighbours; the others keep their title for screen readers. */
+.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-title,
+.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-meta {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+/* The transport sits at the arc's right end, centred on its height there. */
 .reel-actions {
+  position: absolute;
+  top: calc(var(--rail-h) + var(--arc-end, 0.18) * var(--arc-h) - 20px);
+  right: 0;
   display: flex;
   gap: var(--space-1);
 }
@@ -1122,6 +1074,82 @@ video {
   display: block;
 }
 
+/* ---------- Arrival: the instrument winds up ---------- */
+/* The one moment on first paint belongs to the instrument. The stage settles
+   in from a touch small, the arc draws itself from the left, the bodies take
+   their places in order, the hand travels along the rail from its left end
+   to the first body, and the transport comes up last. Only transform, opacity
+   and the arc's dash move. The html class is set in the head before first
+   paint and taken off by the carousel script once the hand settles, or at
+   the first pointer or key on the instrument; only then does the slide
+   timer's sweep begin. Under reduced motion the class is never set. Timing,
+   from first paint: stage 0 to 600, arc 140 to 940, bodies from 300 at 90
+   apart, hand 300 to 1100, transport from 750. */
+.is-arriving .stage {
+  animation: stage-settle calc(var(--dur-slow) * 0.75) var(--ease-out) both;
+}
+.is-arriving .arc-path {
+  stroke-dasharray: 1;
+  animation: arc-draw var(--dur-slow) var(--ease-out) var(--dur-fast) both;
+}
+.is-arriving .rail-hand {
+  animation: hand-set var(--dur-slow) var(--ease-in-out) var(--dur-base) both;
+}
+.is-arriving .orbit-body {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 90ms) both;
+}
+.is-arriving .orbit-body::before {
+  animation: body-place var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 90ms) both;
+}
+.is-arriving .reel-actions {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + 5 * 90ms) both;
+}
+.orbit-body:nth-child(2) {
+  --turn: 1;
+}
+.orbit-body:nth-child(3) {
+  --turn: 2;
+}
+.orbit-body:nth-child(4) {
+  --turn: 3;
+}
+.orbit-body:nth-child(5) {
+  --turn: 4;
+}
+.orbit-body:nth-child(n + 6) {
+  --turn: 5;
+}
+@keyframes stage-settle {
+  from {
+    opacity: 0;
+    transform: translateZ(0) scale(0.985);
+  }
+}
+@keyframes arc-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hand-set {
+  from {
+    transform: translateX(0);
+  }
+}
+@keyframes body-arrive {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes body-place {
+  from {
+    transform: scale(0);
+  }
+}
+
+
 /* ---------- Work heading and toolbar ---------- */
 .work-area {
   padding-top: var(--space-5);
@@ -1152,7 +1180,7 @@ video {
   view-transition-name: toolbar;
 }
 /* Category filter: a row of ring pills in the hero's control language. The
-   pressed one is lit brass, the way the active orbit ring brightens. */
+   pressed one is lit brass, the way the active body on the arc is. */
 .category-filter {
   display: flex;
   gap: var(--space-2);
@@ -2264,28 +2292,30 @@ video {
     grid-column: 6 / -1;
   }
 }
+/* Tablet: the stage grows taller, the arc takes the full width with the
+   transport on its own row beneath, and titles drop a size so five still
+   fit between the bodies. */
 @media (max-width: 1040px) {
   .hero {
-    --orbit: min(100%, 440px);
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    row-gap: var(--space-6);
-    padding-bottom: 56px;
+    --console-room: 0px;
+    --arc-h: 104px;
+    padding-bottom: 32px;
   }
-  .identity,
-  .orbit,
-  .reel-readout-area {
-    grid-column: 1;
-    grid-row: auto;
+  .stage {
+    aspect-ratio: 2 / 1;
   }
-  .identity {
-    padding-top: 8px;
+  .stage-caption {
+    left: 26px;
+    right: 26px;
+    bottom: 24px;
   }
-  .orbit {
+  .orbit-body-title {
+    font-size: var(--text-xs);
+  }
+  .reel-actions {
+    position: static;
+    justify-content: flex-end;
     margin-top: var(--space-2);
-  }
-  .reel-readout-area {
-    padding-top: 0;
   }
 }
 /* Below the ledger width the entry stacks into one text column beside the
@@ -2349,6 +2379,12 @@ video {
   .header-links {
     gap: var(--space-4);
     font-size: var(--text-xs);
+  }
+  .wordmark-name {
+    font-size: var(--text-md);
+  }
+  .wordmark-role {
+    display: none;
   }
   .work-heading {
     padding-top: 25px;
@@ -2512,51 +2548,49 @@ video {
     gap: 0;
   }
 }
-/* Phones: a compact orrery. The bezel grows to wrap a larger porthole, the main
-   orbit stays as a short arc, and the five bodies become bare brass points on
-   it (their titles remain for screen readers; the readout below names the
-   active one). The active body's title is engraved along the orbit beside its
-   point, centred on it, so the lit point and the name read as one; titles on
-   the lower half run the other way so none is upside down. The engraving is
-   held back until the instrument has arrived. Title and CTA sit directly
-   under the porthole. */
+/* Phones: a compact instrument. The stage turns to 4:3 with the title
+   smaller over it and the pill beneath it; the rail keeps its
+   ticks and hand; the bodies become bare brass points with 44px targets,
+   and only the active one shows its title, hung from its point and pulled
+   inward at either end so it stays inside the frame. The transport takes
+   its own row. */
 @media (max-width: 720px) {
-  .orbit-labels {
-    display: block;
-  }
-  .orbit-label {
-    font-family: var(--font);
-    font-size: 3.5px;
-    font-weight: var(--weight-strong);
-    letter-spacing: 0.01em;
-    fill: var(--text);
-    text-anchor: middle;
-    opacity: 0;
-    transition: opacity var(--dur-base) var(--ease-out);
-  }
-  .orbit-label.is-active {
-    opacity: 1;
-  }
-  .is-arriving .orbit-label.is-active {
-    opacity: 0;
-  }
   .hero {
-    --orbit: min(100%, 300px);
-    --orbit-scale: 1.15;
-    /* Room below the ring for a title engraved under the lowest body; the
-       orbit's own margin gives back most of it above. */
-    row-gap: var(--space-7);
-    padding-bottom: 44px;
+    --rail-h: 22px;
+    --arc-h: 84px;
+    padding: 8px 0 28px;
   }
-  .ring-outer {
-    display: none;
+  .stage {
+    aspect-ratio: 4 / 3;
   }
-  .orbit {
-    margin-top: var(--space-2);
+  .stage-caption {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .reel-kicker {
+    font-size: var(--text-xs);
+    gap: 10px;
+  }
+  .reel-readout h2 {
+    font-size: 1.875rem;
+    text-wrap: pretty;
+  }
+  .reel-open {
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: var(--text-xs);
+  }
+  .rail {
+    background-size: 100% 10px, 100% 5px;
   }
   .orbit-body {
-    width: 44px;
+    width: min(44px, calc(var(--body-step) * 100cqw));
     height: 44px;
+    max-width: none;
     padding: 0;
     gap: 0;
     justify-content: center;
@@ -2571,25 +2605,23 @@ video {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
   }
+  /* The active title hangs from one line just under the arc's lowest point,
+     whatever the height of its own body, so it never crosses the arc. */
+  .orbit-body[aria-pressed="true"] .orbit-body-title {
+    top: calc((var(--arc-dip, 0.52) - var(--y) / 100) * var(--arc-h) + 38px);
+    left: 50%;
+    width: auto;
+    height: auto;
+    max-width: none;
+    clip: auto;
+    transform: translateX(calc(var(--share, 0.5) * -100%));
+    font-size: var(--text-xs);
+  }
   .orbit-body:focus-visible {
     outline-offset: -6px;
   }
-  .reel-kicker {
-    font-size: var(--text-xs);
-    gap: 10px;
-  }
-  .reel-readout h2 {
-    text-wrap: pretty;
-  }
-  /* The blurb would push the CTA under the fold; the card below carries it. */
-  .reel-blurb {
-    display: none;
-  }
-  .reel-console {
-    margin-top: var(--space-4);
-  }
-  .reel-open {
-    padding: 10px 16px;
+  .orbit-body:hover .orbit-body-title {
+    transform: translateX(calc(var(--share, 0.5) * -100%));
   }
   /* Touch targets: the round controls grow to the 44px minimum. */
   .reel-actions button,

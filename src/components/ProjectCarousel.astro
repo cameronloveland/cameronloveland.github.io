@@ -8,94 +8,76 @@ const rank = (id: string) => order.includes(id) ? order.indexOf(id) : order.leng
 projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
 const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
 const count = projects.length;
+// Past seven bodies the arc is crowded: only the active body and its two
+// neighbours show their titles; the rest name themselves to screen readers.
+const dense = count > 7;
 
-// Orrery geometry in a 100-unit box centred on the porthole. Bodies sit on the
-// main orbit (radius 47) spread across the right-hand sweep from the top (0deg)
-// to just short of the bottom (160deg), so every title reads outward to the right.
-const R = 47;
-const step = count > 1 ? 160 / (count - 1) : 0;
-const at = (r: number, deg: number) => { const a = deg * Math.PI / 180; return [50 + r * Math.sin(a), 50 - r * Math.cos(a)]; };
-const pt = (r: number, deg: number) => at(r, deg).map(v => v.toFixed(2)).join(' ');
-const arc = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${pt(r, to)}`;
-// The same arc drawn the other way round, for text that has to read the other way.
-const arcBack = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r} 0 ${from - to > 180 ? 1 : 0} 0 ${pt(r, to)}`;
-const ring = (r: number) => `M50 ${50 - r} A${r} ${r} 0 1 1 50 ${50 + r} A${r} ${r} 0 1 1 50 ${50 - r} Z`;
-const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
-const bodies = projects.map((project, index) => { const [x, y] = at(R, index * step); return { project, index, deg: index * step, x: x.toFixed(2), y: y.toFixed(2) }; });
-// Phones engrave the active body's title along the orbit (see "Phones: a compact
-// orrery" in portfolio.css). The label paths run 30deg past the body sweep at
-// each end so a centred title has room; bodies past 90deg use the reversed path
-// so no title reads upside down. Each title's offset is its body's share of the path.
-const labelSweep = [-30, 190];
-const labelOffset = (deg: number, back: boolean) => `${((back ? labelSweep[1] - deg : deg - labelSweep[0]) / (labelSweep[1] - labelSweep[0]) * 100).toFixed(2)}%`;
-// Each slide carries its focal point so the crop, the glass and the settle-in zoom agree.
+// Instrument geometry. The arc is drawn in a 1000 by 100 box that stretches to
+// the arc's real width (the stroke stays one pixel), so every position is a
+// share of the box: bodies sit evenly from bodyA to bodyB of the width, and
+// each one's height (--y, a share of the arc's height) is where the arc
+// passes. The arc runs from arcEnd at both edges down to arcDip in the
+// middle; the hand on the rail takes the same shares, so it always sits over
+// the active body. --share is the body's place along the run, 0 to 1.
+const bodyA = 9, bodyB = 91, arcEnd = 18, arcDip = 52;
+const step = count > 1 ? (bodyB - bodyA) / (count - 1) : 0;
+const sagitta = arcDip - arcEnd;
+const radius = (500 * 500 + sagitta * sagitta) / (2 * sagitta);
+const arcY = (x: number) => arcDip - (radius - Math.sqrt(radius * radius - (x - 500) ** 2));
+const bodies = projects.map((project, index) => {
+  const x = count > 1 ? bodyA + index * step : 50;
+  return { project, index, x: x.toFixed(2), y: arcY(x * 10).toFixed(2), share: count > 1 ? (index / (count - 1)).toFixed(3) : '0.5' };
+});
+// The arc itself, as an arc command from edge to edge (an ellipse once the box is stretched).
+const arcPath = `M0 ${arcEnd} A${radius.toFixed(1)} ${radius.toFixed(1)} 0 0 0 1000 ${arcEnd}`;
+// Each slide carries its focal point so the crop and the settle-in zoom agree.
 const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' '); return `--fx:${x};--fy:${y}`; };
 // A contained slide letterboxes over a blurred copy of its own image.
-const stage = (project: typeof projects[number]) => project.data.stageFit === 'contain' ? `;--stage-image:url("${project.data.image}")` : '';
+const stageImage = (project: typeof projects[number]) => project.data.stageFit === 'contain' ? `;--stage-image:url("${project.data.image}")` : '';
 ---
-{count > 0 && <section class="hero" aria-labelledby="hero-name" style={`--body-step:${step}deg`}>
-  <div class="identity">
-    <h1 class="hero-name" id="hero-name"><span>Cameron</span><span>Loveland</span></h1>
-    <p class="hero-lede">Software engineer making games, apps and experiments.</p>
-  </div>
-  <div class="reel" role="region" aria-label="Featured projects" aria-roledescription="carousel">
-    <div class="orbit">
-      <div class="orbit-window">
-        <svg class="orbit-rings" viewBox="-20 -20 140 140" aria-hidden="true" focusable="false">
-          {/* Each orbit sits in a group with an unpainted full circle, so the group's box is centred on the porthole and the arrival can turn it into place (the same trick as the dial). */}
-          <g class="ring-set ring-set--outer"><circle class="ring-extent" cx="50" cy="50" r="60" /><path class="ring ring-outer" d={arc(60, 95, 250)} vector-effect="non-scaling-stroke" /></g>
-          <g class="ring-set ring-set--main"><circle class="ring-extent" cx="50" cy="50" r={R} /><path class="ring ring-main" d={arc(R, -25, 185)} vector-effect="non-scaling-stroke" /></g>
-          <path class="bezel-band" fill-rule="evenodd" d={ring(39.2) + ring(36)} />
-          <g class="bezel-dial">
-            <circle class="bezel-dial-extent" cx="50" cy="50" r="41.7" />
-            <circle class="bezel-ticks" cx="50" cy="50" r="37.6" stroke-dasharray="0.22 3.0612" stroke-dashoffset="0.11" />
-            <circle class="bezel-ticks bezel-ticks--major" cx="50" cy="50" r="37.6" stroke-dasharray="0.32 29.21" stroke-dashoffset="0.16" />
-            <path class="bezel-hand" d="M50 8.3 48.4 10.9h3.2Z" />
-          </g>
-          <circle class="ring bezel-rim" cx="50" cy="50" r="36.15" vector-effect="non-scaling-stroke" />
-          <circle class="ring bezel-edge" cx="50" cy="50" r="39.2" vector-effect="non-scaling-stroke" />
-          <circle class="reel-sweep" cx="50" cy="50" r="39.2" pathLength="1" transform="rotate(-90 50 50)" />
-          <g class="orbit-labels">
-            <path id="orbit-label-path" class="orbit-label-path" d={arc(R + 3.2, labelSweep[0], labelSweep[1])} />
-            <path id="orbit-label-path-back" class="orbit-label-path" d={arcBack(R + 6, labelSweep[1], labelSweep[0])} />
-            {bodies.map(({project,index,deg}) => { const back = deg > 90; return <text class:list={['orbit-label', {'is-active': index === 0}]} data-label={index}><textPath href={back ? '#orbit-label-path-back' : '#orbit-label-path'} startOffset={labelOffset(deg, back)}>{project.data.title}</textPath></text>; })}
-          </g>
-        </svg>
-        <div class="reel-stage">
-          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0, 'reel-slide--contain': project.data.stageFit === 'contain'}]} style={focus(project.data.imageFocus) + stage(project)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
-            {project.data.video
-              ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
-              : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
-          </div>)}
-        </div>
-      </div>
-      <div class="orbit-bodies" role="group" aria-label="Choose featured project" hidden>
-        {bodies.map(({project,index,x,y}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y}%`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{categories[project.data.section]}</span></button>)}
-      </div>
-    </div>
-    <div class="reel-readout-area">
-      {/* Every readout sits in the same grid cell, so the column is always as tall as the tallest one and the console below never moves; the script crossfades them. */}
+{count > 0 && <section class:list={['hero', 'reel', {'reel--dense': dense}]} role="region" aria-label="Featured projects" aria-roledescription="carousel" style={`--body-a:${bodyA / 100};--body-step:${(step / 100).toFixed(4)};--arc-end:${arcEnd / 100};--arc-dip:${arcDip / 100}`}>
+  <div class="stage">
+    {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0, 'reel-slide--contain': project.data.stageFit === 'contain'}]} style={focus(project.data.imageFocus) + stageImage(project)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
+      {project.data.video
+        ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
+        : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
+    </div>)}
+    <div class="stage-scrim" aria-hidden="true"></div>
+    <div class="stage-caption">
+      {/* Every readout sits in the same grid cell, anchored to the stage's bottom edge, so the caption never moves as the reel turns; the script crossfades them. */}
       <div class="reel-readouts">
-        {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0}>
-          <p class="reel-kicker"><span>{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
+        {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} data-project-category={project.data.section} aria-hidden={index !== 0} inert={index !== 0}>
+          <p class="reel-kicker"><span class="reel-category">{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
           <h2>{project.data.title}</h2>
-          <p class="reel-blurb">{firstSentence(project.data.description)}</p>
         </div>)}
       </div>
-      <div class="reel-console">
-        <div class="reel-cta">
-          {projects.map((project,index) => {
-            const link = project.data.links.find(link => link.primary) || project.data.links[0];
-            const cta = ctaLabel(project.data.section);
-            return link && <a class:list={['reel-open', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
-          })}
-        </div>
-        <div class="reel-actions" hidden>
-          <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
-          <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
-          <button type="button" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
-        </div>
+      <div class="reel-cta">
+        {projects.map((project,index) => {
+          const link = project.data.links.find(link => link.primary) || project.data.links[0];
+          const cta = ctaLabel(project.data.section);
+          return link && <a class:list={['reel-open', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
+        })}
       </div>
+    </div>
+  </div>
+  <div class="instrument" hidden>
+    {/* The bezel unrolled: a tick rail under the stage, the slide timer's sweep along its top edge, and the hand that slides to the active body. */}
+    <div class="rail" aria-hidden="true">
+      <span class="reel-sweep"></span>
+      <span class="rail-hand"></span>
+    </div>
+    <div class="arc">
+      <svg class="arc-line" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path class="ring arc-path" d={arcPath} pathLength="1" vector-effect="non-scaling-stroke" />
+      </svg>
+      <div class="arc-bodies" role="group" aria-label="Choose featured project">
+        {bodies.map(({project,index,x,y,share}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y};--share:${share}`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{categories[project.data.section]}</span></button>)}
+      </div>
+    </div>
+    <div class="reel-actions">
+      <button type="button" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+      <button type="button" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
+      <button type="button" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
     </div>
   </div>
 </section>}
@@ -104,7 +86,6 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
   if (reel) {
     const slides = Array.from(reel.querySelectorAll<HTMLElement>('[data-slide]'));
     const selectors = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-slide-to]'));
-    const labels = Array.from(reel.querySelectorAll<SVGTextElement>('[data-label]'));
     const readouts = Array.from(reel.querySelectorAll<HTMLElement>('[data-readout]'));
     const play = reel.querySelector<HTMLButtonElement>('[data-reel-play]')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -119,8 +100,8 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
       reel!.classList.remove('is-playing');
       // The sweep waits for the arrival (the instrument winding up) to finish.
       if (paused || hovering || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
-      // Restart the bezel sweep with the slide timer (the region itself has no box).
-      void reel!.querySelector<HTMLElement>('.orbit')!.offsetWidth;
+      // Restart the rail sweep with the slide timer.
+      void reel!.offsetWidth;
       // A video slide holds long enough to finish one loop.
       const video = slides[current].querySelector('video');
       if (video && !video.duration) video.addEventListener('loadedmetadata', schedule, { once: true });
@@ -136,9 +117,11 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
         slide.inert = i !== current;
         slide.setAttribute('aria-hidden', String(i !== current));
       });
-      selectors.forEach((button,i) => button.setAttribute('aria-pressed', String(i === current)));
-      // The engraved title on phones follows the active body (decorative; the button text names it).
-      labels.forEach((label,i) => label.classList.toggle('is-active', i === current));
+      selectors.forEach((button,i) => {
+        button.setAttribute('aria-pressed', String(i === current));
+        // On a crowded arc only the active body and its neighbours show their titles.
+        button.classList.toggle('is-near', Math.abs(i - current) === 1);
+      });
       // Readouts and CTAs stay in flow so they can crossfade; only the active one is exposed.
       readouts.forEach(readout => {
         const active = Number(readout.dataset.readout) === current;
@@ -148,7 +131,7 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
       });
       // After the first turn the readout crossfades as it changes; on load it is simply there.
       if (started) reel!.classList.add('has-turned');
-      // The bezel hand turns to point at the active body on the orbit.
+      // The hand slides along the rail to sit over the active body.
       reel!.style.setProperty('--reel-index', String(current));
       // Only the visible slide's video plays; reduced-motion users get the poster.
       slides.forEach((slide,i) => {
@@ -171,40 +154,36 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
     let pausedBeforePointer = paused;
     play.addEventListener('pointerdown', () => { pausedBeforePointer = paused; });
     play.addEventListener('click', event => setPaused(event.detail > 0 ? !pausedBeforePointer : !paused));
-    // The region has no box of its own (display: contents), so hover is tracked on its parts.
-    reel.querySelectorAll<HTMLElement>('.orbit, .reel-readout-area').forEach(part => {
-      part.addEventListener('mouseenter', () => { hovering = true; schedule(); });
-      part.addEventListener('mouseleave', () => { hovering = false; schedule(); });
-    });
+    reel.addEventListener('mouseenter', () => { hovering = true; schedule(); });
+    reel.addEventListener('mouseleave', () => { hovering = false; schedule(); });
     // Keyboard interaction stops rotation until explicitly restarted.
     reel.addEventListener('focusin', () => setPaused(true));
     document.addEventListener('visibilitychange', schedule);
     reduced.addEventListener('change', () => { if (reduced.matches) setPaused(true); });
-    reel.querySelector<HTMLElement>('.orbit-bodies')!.hidden = slides.length < 2;
-    reel.querySelector<HTMLElement>('.reel-actions')!.hidden = slides.length < 2;
+    reel.querySelector<HTMLElement>('.instrument')!.hidden = slides.length < 2;
     setPaused(paused);
     show(current);
     started = true;
     // The arrival (see "Arrival" in portfolio.css): the head sets is-arriving
-    // before first paint. It comes off when the dial settles, or at the first
+    // before first paint. It comes off when the hand settles, or at the first
     // pointer or key on the instrument so a person is never made to wait; the
     // hand then eases from wherever it was. Either way the sweep starts here.
-    const dial = reel.querySelector<SVGGElement>('.bezel-dial');
+    const hand = reel.querySelector<HTMLElement>('.rail-hand');
     function arrive() {
       if (!root.classList.contains('is-arriving')) return;
       // A transition does not pick up where a cancelled animation left off, so
-      // the dial's current angle is held inline for one style pass and the
+      // the hand's current position is held inline for one style pass and the
       // transition to wherever the reel points starts from there.
-      if (dial) {
-        const m = getComputedStyle(dial).transform.match(/matrix\(([^)]+)\)/);
-        if (m) { const [a, b] = m[1].split(',').map(Number); dial.style.transform = `rotate(${Math.atan2(b, a) * 180 / Math.PI}deg)`; }
+      if (hand) {
+        const m = getComputedStyle(hand).transform.match(/matrix\(([^)]+)\)/);
+        if (m) hand.style.transform = `translateX(${Number(m[1].split(',')[4])}px)`;
       }
       root.classList.remove('is-arriving');
-      if (dial) { void dial.getBoundingClientRect(); dial.style.transform = ''; }
+      if (hand) { void hand.getBoundingClientRect(); hand.style.transform = ''; }
       schedule();
     }
     if (root.classList.contains('is-arriving')) {
-      dial?.addEventListener('animationend', event => { if (event.target === dial) arrive(); });
+      hand?.addEventListener('animationend', event => { if (event.target === hand) arrive(); });
       reel.addEventListener('pointerdown', arrive, { capture: true });
       reel.addEventListener('keydown', arrive, { capture: true });
       setTimeout(arrive, 1600);
