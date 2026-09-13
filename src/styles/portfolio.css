@@ -649,7 +649,7 @@ video {
   --terminal: 40px;
   --hand-x: calc(var(--body-a, 0.5) + var(--reel-index, 0) * var(--body-step, 0));
   --sweep-len: calc(min(var(--body-step, 1), 1 - var(--hand-x)) * var(--arc-len, 1000) * 1px);
-  padding: 12px 0 64px;
+  padding: 12px 0 28px;
 }
 .stage {
   position: relative;
@@ -1247,7 +1247,7 @@ video {
 
 /* ---------- Work heading and toolbar ---------- */
 .work-area {
-  padding-top: var(--space-8);
+  padding-top: var(--space-6);
   scroll-margin-top: var(--space-5);
 }
 .work-heading {
