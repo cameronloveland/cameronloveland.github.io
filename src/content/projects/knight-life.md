@@ -1,7 +1,7 @@
 ---
 title: "Knight Life"
 description: "Third-person fantasy vertical slice and a first test of GPT-6 Astra: hand it a concept-art brief and let it build toward the target. Character armor, cape, and cottage assets are authored in Blender through a script bridge, then assembled into a walkable meadow in the browser."
-section: "experiments"
+section: "prototypes"
 startDate: 2026-09-05
 updatedDate: 2026-09-07
 unpublished: true

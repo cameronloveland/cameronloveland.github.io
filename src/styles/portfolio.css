@@ -32,11 +32,13 @@
   --signal-fill: #79d5ef;
   /* Category colors, git-graph style: one per kind of project, used by its
      rod, its lamp and the category word. Each reads as text on Daylight at
-     5.6:1 or better. Bronze stays with experiments, the instrument's metal. */
+     5.6:1 or better. Bronze stays with experiments, the instrument's metal;
+     prototypes take a rust orange, warmer and redder than the brass chrome. */
   --cat-games: #b3266e;
   --cat-web: #4b4fd6;
   --cat-mobile: #1a6f4e;
   --cat-experiments: #0b6a84;
+  --cat-prototypes: #9c400a;
   /* Media overlays sit on project screenshots, which are dark in both themes,
      so text on them uses the night text and the night category colors. */
   --scrim: #0e1128;
@@ -45,6 +47,7 @@
   --media-cat-web: #a3a6ff;
   --media-cat-mobile: #62d5a0;
   --media-cat-experiments: #79d5ef;
+  --media-cat-prototypes: #f5a66a;
   --shadow-ink: #151934;
   --glow: color-mix(in srgb, var(--accent-fill) 10%, transparent);
   --rim: transparent;
@@ -138,10 +141,12 @@
   --cat-web: #a3a6ff;
   --cat-mobile: #62d5a0;
   --cat-experiments: #79d5ef;
+  --cat-prototypes: #f5a66a;
   --media-cat-games: var(--cat-games);
   --media-cat-web: var(--cat-web);
   --media-cat-mobile: var(--cat-mobile);
   --media-cat-experiments: var(--cat-experiments);
+  --media-cat-prototypes: var(--cat-prototypes);
   --shadow-ink: #05061a;
   --glow: color-mix(in srgb, var(--accent-fill) 7%, transparent);
   --rim: color-mix(in srgb, var(--text) 7%, transparent);
@@ -319,6 +324,10 @@ video {
 [data-project-category="experiments"],
 [data-legend="experiments"] {
   --cat: var(--cat-experiments);
+}
+[data-project-category="prototypes"],
+[data-legend="prototypes"] {
+  --cat: var(--cat-prototypes);
 }
 /* Status: a filled lamp means you can use it now, a hollow lamp means it is
    still being built. Both take the project's category color; in progress is
@@ -885,6 +894,7 @@ video {
   --cat-web: var(--media-cat-web);
   --cat-mobile: var(--media-cat-mobile);
   --cat-experiments: var(--media-cat-experiments);
+  --cat-prototypes: var(--media-cat-prototypes);
 }
 /* The rim: a brass hairline just inside the edge, the glass of the instrument
    in the same metal as the arc. It sits above the artwork and under nothing
@@ -1947,7 +1957,7 @@ video {
   max-width: 60ch;
   text-wrap: pretty;
 }
-/* The legend names the four category colors once, in the label rhythm of the
+/* The legend names the five category colors once, in the label rhythm of the
    plate. It is a hint beside the scale, not a control: the filter row above
    already filters, so nothing here is pressable. */
 .timeline-legend {

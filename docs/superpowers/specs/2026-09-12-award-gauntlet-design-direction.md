@@ -59,6 +59,7 @@ Dark theme:
 | Rose | #f088b8 | category: games |
 | Periwinkle | #a3a6ff | category: web |
 | Verdigris | #62d5a0 | category: mobile apps |
+| Ember | #f5a66a | category: prototypes (redder than Brass so chrome and category stay apart) |
 
 Light theme:
 
@@ -73,6 +74,7 @@ Light theme:
 | Deep Rose | #b3266e | category: games |
 | Indigo | #4b4fd6 | category: web |
 | Deep Verdigris | #1a6f4e | category: mobile apps |
+| Rust | #9c400a | category: prototypes (6.2:1 on Daylight) |
 
 Brass (#e9bb5c) is also the fill color in light mode, with Ink text on it.
 Supporting tokens (secondary and muted text, borders) are derived in the same hue

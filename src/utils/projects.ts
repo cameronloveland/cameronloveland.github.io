@@ -1,6 +1,6 @@
 // Shared project vocabulary and ordering, so the hero, the cards and the
 // timeline never drift apart on what a section is called.
-export const sectionLabels = { games: 'Game', web: 'Web', 'mobile-apps': 'Mobile app', experiments: 'Experiment' } as const;
+export const sectionLabels = { games: 'Game', web: 'Web', 'mobile-apps': 'Mobile app', experiments: 'Experiment', prototypes: 'Prototype' } as const;
 export type Section = keyof typeof sectionLabels;
 export const sectionLabel = (section: string): string => sectionLabels[section as Section] ?? section;
 

@@ -6,7 +6,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    section: z.enum(['web', 'games', 'mobile-apps', 'experiments']),
+    section: z.enum(['web', 'games', 'mobile-apps', 'experiments', 'prototypes']),
     startDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     links: z
