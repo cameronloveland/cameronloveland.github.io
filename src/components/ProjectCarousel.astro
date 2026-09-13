@@ -107,14 +107,22 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
     const root = document.documentElement;
     let current = 0;
     let paused = reduced.matches;
-    let hovering = false;
+    let held = false;
     let started = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    // The slide's stay is a deadline, so a hold can stop the clock and start it
+    // again with whatever was left rather than from the top.
+    let due = 0;
+    let remaining = 0;
+    function arm(ms: number) {
+      due = performance.now() + ms;
+      timer = setTimeout(() => show(current + 1), ms);
+    }
     function schedule() {
       clearTimeout(timer);
       reel!.classList.remove('is-playing');
       // The sweep waits for the arrival (the instrument winding up) to finish.
-      if (paused || hovering || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
+      if (paused || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
       // Restart the sweep along the arc with the slide timer.
       void reel!.offsetWidth;
       // A video slide holds long enough to finish one loop.
@@ -124,7 +132,17 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       const delay = video ? Math.round(video.duration * 1000) + 300 : 6500;
       reel!.style.setProperty('--reel-delay', `${delay}ms`);
       reel!.classList.add('is-playing');
-      timer = setTimeout(() => show(current + 1), delay);
+      remaining = delay;
+      if (!held) arm(remaining);
+    }
+    // A hold stops the clock where it is (the sweep freezes with it, see
+    // .is-held) and lets it run on from there when released.
+    function hold(value: boolean) {
+      if (held === value) return;
+      held = value;
+      reel!.classList.toggle('is-held', held);
+      if (!reel!.classList.contains('is-playing')) return;
+      if (held) { clearTimeout(timer); remaining = Math.max(0, due - performance.now()); } else arm(remaining);
     }
     function show(index: number) {
       current = (index + slides.length) % slides.length;
@@ -197,10 +215,15 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       show(dx < 0 ? current + 1 : current - 1);
     });
     stage.addEventListener('pointercancel', () => { swipe = undefined; });
-    // The hover hold is for pointers that hover; a tap must not leave the reel held.
+    // A mouse crossing the reel does not touch the clock: the reel keeps its
+    // rhythm under a resting pointer. Only the open link holds it, so the
+    // project does not change under a cursor that is about to click. Mouse
+    // only: a tap must not leave the reel held.
     if (matchMedia('(hover: hover)').matches) {
-      reel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; schedule(); } });
-      reel.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { hovering = false; schedule(); } });
+      reel.querySelectorAll<HTMLElement>('.reel-open').forEach(link => {
+        link.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') hold(true); });
+        link.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') hold(false); });
+      });
     }
     // Keyboard interaction stops rotation until explicitly restarted.
     reel.addEventListener('focusin', () => setPaused(true));

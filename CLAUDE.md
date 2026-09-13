@@ -53,7 +53,7 @@ projects with an image, in the order set at the top of `ProjectCarousel.astro`.
   the instrument under it: a brass arc carrying one body per featured project, with
   ticks, a sliding hand and a sweep that times the slideshow. Phones swap the arc for
   a scroll-snap strip of chips and put prev/next on the stage. Its script owns play,
-  pause, hover hold, keyboard pause, swipe, the arrival animation and the
+  pause, the hold while the open link is hovered, keyboard pause, swipe, the arrival animation and the
   `--reel-index` custom property that also turns the maker's mark in the header.
 - `SkyField.astro` - the starfield and three meteors behind the fold (dark theme).
 - `Card.astro` - a gallery card (kicker with category and status, title, description,

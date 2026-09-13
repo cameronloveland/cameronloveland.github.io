@@ -1004,6 +1004,11 @@ video {
 .is-playing .arc-sweep {
   animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
 }
+/* Held (the pointer is on the open link): the sweep stops where it is, as the clock does. */
+.is-held .arc-sweep,
+.is-held .reel-chip[aria-pressed="true"]::before {
+  animation-play-state: paused;
+}
 @keyframes reel-sweep {
   from {
     stroke-dasharray: 0px calc(var(--arc-len, 1000) * 1px);
