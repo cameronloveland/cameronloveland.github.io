@@ -1,23 +1,51 @@
 ---
 import { getCollection } from 'astro:content';
 import { featured, bodyStep } from '../utils/projects';
-// The maker's mark: the instrument in miniature. A ring (the arc), a core (the
-// stage) and one body (the active project) that turns about the ring as the
-// reel advances (.mark-body in portfolio.css rotates it by --reel-index steps).
-// The graduations are the featured projects' places on the arc, one step
-// apart clockwise from the body's home at the top right, so the body sits on
-// a graduation whenever a slide is up.
+// The maker's mark: the instrument in miniature, drawn as a small dial. The
+// limb (the ring) is graduated all the way round, with one major per featured
+// project one step apart clockwise from the top right, the same share of a
+// turn as the bodies' share of the arc. The rete (the hand and its body)
+// turns about the core to the active project's major (.mark-rete in
+// portfolio.css rotates it by --reel-index steps). Round the outside runs the
+// meter, a broad band that fills from the first major to the active one and
+// then, over the slide's stay, on toward the next, as the arc's sweep does
+// (.mark-sweep); it empties when the reel comes round to the first again.
+// The face is a star chart, a few stars that turn with the minors, slowly.
 interface Props { class?: string; }
 const { class: className } = Astro.props;
 const count = featured(await getCollection('projects')).length;
 const home = -50;
 const stepDeg = bodyStep(count) / 100 * 360;
 const point = (r: number, deg: number) => { const a = deg * Math.PI / 180; return { x: (14 + r * Math.cos(a)).toFixed(2), y: (14 + r * Math.sin(a)).toFixed(2) }; };
-const ticks = Array.from({ length: count }, (_, i) => ({ from: point(8.2, home + i * stepDeg), to: point(10.2, home + i * stepDeg) }));
+const majors = Array.from({ length: count }, (_, i) => ({ from: point(7.4, home + i * stepDeg), to: point(9.8, home + i * stepDeg) }));
+// The minor graduations: a dashed ring just inside the limb, so many short
+// radial strokes. One every 10 degrees, each a hair wide.
+const minorR = 9.3;
+const minorGap = (2 * Math.PI * minorR / 36 - 0.35).toFixed(3);
+// The stars on the face: radius and bearing, in the field inside the minors.
+const stars = [[5.6, 20], [4.2, 150], [6.4, 205], [3.1, 300], [6.6, 95]].map(([r, deg]) => point(r, deg));
+// The hand is a clock hand: a long tapered pointer from the core out over
+// the limb to the meter's edge, with a bead riding it (the body, as on the
+// Antikythera pointers) and a short counterweight past the core.
+const pt = (r: number, deg: number) => { const p = point(r, deg); return `${p.x},${p.y}`; };
+const handShape = `${pt(2.4, home - 22)} ${pt(11.2, home)} ${pt(2.4, home + 22)}`;
+const tailShape = `${pt(2.4, home + 180 - 30)} ${pt(5.2, home + 180)} ${pt(2.4, home + 180 + 30)}`;
+const body = point(7.6, home);
 ---
-<svg class={className} viewBox="0 0 28 28" aria-hidden="true" focusable="false">
-  <circle cx="14" cy="14" r="11"/>
-  {ticks.map(tick => <line class="mark-tick" x1={tick.from.x} y1={tick.from.y} x2={tick.to.x} y2={tick.to.y}/>)}
-  <circle class="mark-core" cx="14" cy="14" r="2.6"/>
-  <circle class="mark-body" cx="21.07" cy="5.57" r="2"/>
+<svg class={className} viewBox="-1.5 -1.5 31 31" aria-hidden="true" focusable="false" style={`--mark-home: ${home}deg`}>
+  <circle class="mark-track" cx="14" cy="14" r="12.7" pathLength="100"/>
+  <circle class="mark-sweep" cx="14" cy="14" r="12.7" pathLength="100"/>
+  <circle class="mark-limb" cx="14" cy="14" r="10.6"/>
+  <g class="mark-sky">
+    <circle class="mark-minors" cx="14" cy="14" r={minorR} stroke-dasharray={`0.35 ${minorGap}`} pathLength={2 * Math.PI * minorR}/>
+    {stars.map(star => <circle class="mark-star" cx={star.x} cy={star.y} r="0.55"/>)}
+  </g>
+  {majors.map(major => <line class="mark-tick" x1={major.from.x} y1={major.from.y} x2={major.to.x} y2={major.to.y}/>)}
+  <g class="mark-rete">
+    <polygon class="mark-hand" points={handShape}/>
+    <polygon class="mark-hand mark-hand-tail" points={tailShape}/>
+    <circle class="mark-halo" cx={body.x} cy={body.y} r="2.9"/>
+    <circle class="mark-body" cx={body.x} cy={body.y} r="1.5"/>
+  </g>
+  <circle class="mark-core" cx="14" cy="14" r="2.3"/>
 </svg>

@@ -444,9 +444,9 @@ video {
 .mark {
   display: inline-grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-left: -8px;
+  width: 52px;
+  height: 52px;
+  margin-left: -6px;
   color: var(--accent);
   border-radius: var(--radius-pill);
   transition:
@@ -454,29 +454,102 @@ video {
     transform var(--dur-fast) var(--ease-out);
 }
 .mark svg {
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.25;
 }
 .mark-core,
-.mark-body {
+.mark-body,
+.mark-hand,
+.mark-star {
   fill: currentColor;
   stroke: none;
 }
-/* The graduations: one per featured project, facing in like a gauge's. */
+.mark-limb {
+  stroke-width: 1.1;
+}
+/* The graduations: one major per featured project, facing in like a
+   gauge's, and a minor every ten degrees round the limb (a dashed ring, each
+   dash a hair of a tick). The minors are faint so the majors read first. */
 .mark-tick {
   stroke-linecap: round;
 }
-/* The mark is the instrument in miniature: its body turns about the ring's
-   centre by the share of the arc the hand has travelled (--reel-index and
-   --reel-step are set on the page by the carousel script), at the hand's
-   pace. Under reduced motion it is simply at its angle. */
-.mark-body {
-  transform: rotate(calc(var(--reel-index, 0) * var(--reel-step, 0) * 360deg));
+.mark-minors {
+  stroke-width: 0.9;
+  opacity: 0.5;
+}
+.mark-star {
+  opacity: 0.7;
+}
+/* The face is a star chart: the minors and the stars drift round together,
+   slowly, the way the sky turns: a whole turn every four minutes, too slow
+   to catch but never quite still. */
+.mark-sky {
   transform-origin: 14px 14px;
-  transition: transform var(--dur-slow) var(--ease-in-out);
+  animation: mark-sky 240s linear infinite;
+}
+@keyframes mark-sky {
+  to { transform: rotate(360deg); }
+}
+/* The mark is the instrument in miniature: its rete (the hand and its body)
+   turns about the core by the share of the arc the hand has travelled
+   (--reel-index and --reel-step are set on the page by the carousel script),
+   at the hand's pace, and lands with a little overshoot, as a needle does.
+   --mark-turn (the script) counts whole laps as well, so from the last
+   project the needle goes on round to the first instead of unwinding. Under
+   reduced motion it is simply at its angle. */
+.mark-rete {
+  transform: rotate(calc(var(--mark-turn, calc(var(--reel-index, 0) * var(--reel-step, 0))) * 360deg));
+  transform-origin: 14px 14px;
+  transition: transform var(--dur-slow) cubic-bezier(0.34, 1.35, 0.64, 1);
+}
+.mark-hand-tail {
+  opacity: 0.7;
+}
+/* The bead's halo: the same soft ring the arc's active body wears. */
+.mark-halo {
+  fill: color-mix(in srgb, var(--accent-fill) 22%, transparent);
+  stroke: none;
+}
+/* The meter: a broad band round the outside of the limb, on a faint track
+   that runs the whole way round. It is a chronology of the featured set:
+   filled (--mark-done, the turn so far) from the first major to the active
+   one, and over the slide's stay it draws on toward the next major (the page
+   carries the reel's playing and held states and --reel-delay for it), as
+   the arc's sweep does. From the last major it runs the rest of the turn, so
+   the band closes just as the reel comes round, and empties for the first.
+   --mark-sweep is the running length as a share of the turn; the circles are
+   turned so the dash starts at the first major. */
+.mark-track,
+.mark-sweep {
+  stroke-width: 3;
+  stroke-linecap: butt;
+  transform: rotate(var(--mark-home, 0deg));
+  transform-origin: 14px 14px;
+}
+.mark-track {
+  opacity: 0.22;
+}
+.mark-sweep {
+  --mark-done: calc(var(--reel-index, 0) * var(--reel-step, 0));
+  --mark-sweep: min(var(--reel-step, 0), 1 - var(--mark-done));
+  stroke-dasharray: calc(var(--mark-done) * 100px) 100px;
+}
+.is-reel-playing .mark-sweep {
+  animation: mark-sweep var(--reel-delay, 6.5s) linear forwards;
+}
+.is-reel-held .mark-sweep {
+  animation-play-state: paused;
+}
+@keyframes mark-sweep {
+  from {
+    stroke-dasharray: calc(var(--mark-done) * 100px) 100px;
+  }
+  to {
+    stroke-dasharray: calc((var(--mark-done) + var(--mark-sweep)) * 100px) 100px;
+  }
 }
 .mark:hover {
   color: var(--text);
@@ -2184,8 +2257,8 @@ video {
   color: var(--text);
 }
 .footer-mark {
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
   fill: none;
   stroke: var(--accent);
