@@ -45,7 +45,7 @@ To add a project, add a markdown file to `src/content/projects/` and a WebP imag
 (1600px wide is plenty; keep PNG sources out of `public/`). The homepage
 (`src/pages/index.astro`) reads the collection with `getCollection('projects')` and
 renders the gallery and the timeline from the same data; the hero reel shows the
-projects with an image, in the order set at the top of `ProjectCarousel.astro`.
+projects with an image, in the order set by `featuredOrder` in `src/utils/projects.ts`.
 
 ## Components (`src/components/`)
 
@@ -63,6 +63,9 @@ projects with an image, in the order set at the top of `ProjectCarousel.astro`.
 - `Timeline.astro` - the chronological view: a month scale, one lane per project in
   start-date order, rods in category color, dashed to Now while in progress.
 - `ThemeToggle.astro` - the dark/light toggle (crossfades via a view transition).
+- `MakerMark.astro` - the maker's mark in the header and footer: the instrument in
+  miniature, a dial with one graduation per featured project and a body that turns
+  to the active one with the reel.
 - `ExternalLinkIcon.astro` - the shared new-tab glyph.
 
 `src/layouts/Layout.astro` holds the `<head>` (theme init, font preload, Open Graph

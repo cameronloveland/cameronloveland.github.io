@@ -1,11 +1,10 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import { ctaLabel } from '../utils/linkLabel';
-import { sectionLabel, sortByOrder } from '../utils/projects';
+import { sectionLabel, featured, arcBodies, bodyStep } from '../utils/projects';
 import { getCollection } from 'astro:content';
-// The featured set, in the order the reel shows them.
-const order = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hud-portfolio'];
-const projects = sortByOrder((await getCollection('projects')).filter(p => p.data.image), order);
+// The featured set, in the order the reel shows them (see utils/projects.ts).
+const projects = featured(await getCollection('projects'));
 const count = projects.length;
 // Past seven bodies the arc is crowded: only the active body and its two
 // neighbours show their titles; the rest name themselves to screen readers.
@@ -13,13 +12,13 @@ const dense = count > 7;
 
 // Instrument geometry. The arc is modelled in a 1000 by 100 box that
 // stretches to the arc's real width and height, so every position is a share
-// of the box: bodies sit evenly from bodyA to bodyB of the width, and each
+// of the box: bodies sit evenly across the width (arcBodies in utils/projects.ts) and each
 // one's height (--y, a share of the arc's height) is where the arc passes.
 // The arc runs from arcEnd at both edges down to arcDip in the middle. The
 // script redraws the same curve in pixels once the width is known, so the
 // ticks, the sweep and the hand's motion path all follow the drawn line.
-const bodyA = 9, bodyB = 91, arcEnd = 18, arcDip = 52;
-const step = count > 1 ? (bodyB - bodyA) / (count - 1) : 0;
+const bodyA = arcBodies.a, arcEnd = 18, arcDip = 52;
+const step = bodyStep(count);
 const sagitta = arcDip - arcEnd;
 const radius = (500 * 500 + sagitta * sagitta) / (2 * sagitta);
 const arcY = (x: number) => arcDip - (radius - Math.sqrt(radius * radius - (x - 500) ** 2));

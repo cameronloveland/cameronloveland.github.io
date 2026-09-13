@@ -408,9 +408,10 @@ video {
   justify-content: space-between;
   gap: var(--space-5);
 }
-/* The maker's mark and the wordmark: a ring with one body on it, the
-   instrument in miniature, then the name set the way the footer sets it
-   (light first name, heavy surname) over what the person does. */
+/* The maker's mark and the wordmark: a dial with one body on it, the
+   instrument in miniature (see MakerMark.astro), then the name set the way
+   the footer sets it (light first name, heavy surname) over what the person
+   does. */
 .brand {
   display: flex;
   align-items: center;
@@ -463,6 +464,10 @@ video {
 .mark-body {
   fill: currentColor;
   stroke: none;
+}
+/* The graduations: one per featured project, facing in like a gauge's. */
+.mark-tick {
+  stroke-linecap: round;
 }
 /* The mark is the instrument in miniature: its body turns about the ring's
    centre by the share of the arc the hand has travelled (--reel-index and
