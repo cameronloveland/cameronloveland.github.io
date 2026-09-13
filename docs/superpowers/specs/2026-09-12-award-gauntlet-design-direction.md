@@ -54,8 +54,11 @@ Dark theme:
 | Nightfall | #181c3a | raised surface (cards, controls) |
 | Dusk | #242a55 | second raise (active selector, chips) |
 | Starlight | #eef0fb | primary text |
-| Brass | #e9bb5c | accent: links, live status, active states, fills |
-| Ion | #79d5ef | secondary: in-progress status, text selection |
+| Brass | #e9bb5c | accent: links, active states, fills, experiments category |
+| Ion | #79d5ef | text selection, sky zenith |
+| Rose | #f088b8 | category: games |
+| Periwinkle | #a3a6ff | category: web |
+| Verdigris | #62d5a0 | category: mobile apps (Brass is experiments) |
 
 Light theme:
 
@@ -66,7 +69,10 @@ Light theme:
 | Haze | #e3e6f3 | second raise |
 | Ink | #151934 | primary text (same hue family as Night) |
 | Bronze | #855810 | accent for text and links (5.6:1 on Daylight) |
-| Deep Ion | #0b6a84 | secondary: in-progress status |
+| Deep Ion | #0b6a84 | sky zenith |
+| Deep Rose | #b3266e | category: games |
+| Indigo | #4b4fd6 | category: web |
+| Deep Verdigris | #1a6f4e | category: mobile apps (Bronze is experiments) |
 
 Brass (#e9bb5c) is also the fill color in light mode, with Ink text on it.
 Supporting tokens (secondary and muted text, borders) are derived in the same hue
@@ -127,8 +133,10 @@ and timeline keep their current structure and dimensions in this piece.
 
 1. Labels carry information or they go. A card shows its category and whether
    it is live or in progress. It never shows "01 / PROJECT".
-2. One accent, spent on one thing at a time. Brass marks what is live and what
-   is active. Ion marks only what is still in progress.
+2. One accent, spent on one thing at a time. Brass marks what is active and
+   what can be pressed. Each category owns one color (`--cat-*`), read on the
+   timeline rods, the status lamps and the category word; in progress is a
+   state, not a color: a hollow lamp and a dashed rod end.
 3. Both themes are finished. Light mode has its own ground, its own accent
    contrast, and its own elevation model.
 4. The instrument, not the template. Round forms (rings, dials, pills), warm

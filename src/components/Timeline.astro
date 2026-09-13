@@ -18,18 +18,17 @@ const lastMonth = Math.max(nowMonth, ...sorted.map(p => monthIndex(p.data.update
 const rows = monthsInclusive(firstMonth, lastMonth);
 
 // Each project is a rod from its start month to the month it was last updated,
-// or to now while it is still in progress. Rods that overlap in time take
-// separate lanes (first free lane wins), so concurrent work sits side by side.
-const laneEnds: number[] = [];
-const entries = sorted.map(project => {
+// or to now while it is still in progress. Every project has a lane of its
+// own, oldest start leftmost, like branches in a git graph: rods never share
+// a lane, so nothing overlaps and a hidden rod leaves its lane empty.
+const entries = sorted.map((project, lane) => {
   const { startDate, updatedDate, unpublished } = project.data;
   const start = monthIndex(startDate);
   const end = unpublished ? nowMonth : Math.max(start, monthIndex(updatedDate ?? startDate));
-  let lane = laneEnds.findIndex(laneEnd => laneEnd < start);
-  if (lane === -1) { lane = laneEnds.length; laneEnds.push(end); } else { laneEnds[lane] = end; }
   return { project, start, end, lane, row: start - firstMonth + 1, rodRows: monthsInclusive(start, end), label: 0, labelSm: 0 };
 });
-const lanes = laneEnds.length;
+const lanes = entries.length;
+const categories = ['games', 'web', 'mobile-apps', 'experiments'] as const;
 
 // Labels sit at their start month unless an earlier entry already holds that
 // row; then they slide down the rod, one row per entry on wide screens and two
@@ -47,7 +46,11 @@ const ticks = Array.from({ length: rows }, (_, i) => {
 });
 ---
 <div id="timeline-panel" class="project-timeline" data-view-panel="timeline" aria-label="Projects by start date" hidden>
-  <p class="timeline-intro">{rows} months on one scale, oldest first. Each rod runs from the month a project started to the month it was last updated, or to now while it is still in progress.</p>
+  <p class="timeline-intro">{rows} months on one scale, oldest first. Each project has its own rod, in its category's color, from the month it started to the month it was last updated, or dashed on to now while it is still in progress.</p>
+  {/* The legend is a hint, not a control: the filter row above already filters. */}
+  <ul class="timeline-legend" aria-label="Rod colors by category">
+    {categories.map(section => <li data-legend={section}><span class="legend-rod" aria-hidden="true"></span>{labels[section]}</li>)}
+  </ul>
   <div class="timeline-scale" style={`--rows:${rows};--lanes:${lanes}`}>
     <span class="scale-spine" aria-hidden="true"></span>
     {ticks.map(tick => <>
