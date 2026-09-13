@@ -11,7 +11,7 @@ const ordered = sortByOrder(projects, ['antikythera', 'cosmic-drift', 'strength-
 const sections = [{id:'all',label:'All projects'},{id:'games',label:'Games'},{id:'web',label:'Web'},{id:'mobile-apps',label:'Apps'},{id:'experiments',label:'Experiments'}]
   .map(section => { const count = section.id === 'all' ? projects.length : projects.filter(p => p.data.section === section.id).length; return { ...section, count, name: `${section.label}, ${count} ${count === 1 ? 'project' : 'projects'}` }; });
 ---
-<Layout title="Cameron Loveland, project showcase" description="Side projects by software engineer Cameron Loveland, finished and in progress: games, apps and experiments. Browse the gallery or follow the project timeline.">
+<Layout title="Cameron Loveland, project showcase" description="Side projects by software engineer Cameron Loveland, shipped and experimental: games, apps and experiments. Browse the gallery or follow the project timeline.">
   <div class="work-heading"><h2 class="collection-title">Projects</h2></div>
   <div class="work-toolbar">
     <div class="category-filter" role="group" aria-label="Project category">{sections.map(({id,label,count,name}) => <button type="button" data-category={id} aria-pressed={id === 'all'} aria-label={name} disabled>{label}<span aria-hidden="true">{count}</span></button>)}</div>
