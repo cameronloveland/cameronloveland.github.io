@@ -30,14 +30,19 @@ const entries = sorted.map((project, lane) => {
 const lanes = entries.length;
 const categories = ['games', 'web', 'mobile-apps', 'experiments'] as const;
 
-// Labels sit at their start month unless an earlier entry already holds that
-// row; then they slide down the rod, one row per entry on wide screens and two
-// on narrow ones where the entry stacks. Rows are fixed height so the scale
-// stays true, which is why the label windows are worked out here.
-let taken = 0;
-entries.forEach(entry => { entry.label = Math.max(entry.row, taken + 1); taken = entry.label; });
-taken = -1;
-entries.forEach(entry => { entry.labelSm = Math.max(entry.row, taken + 2); taken = entry.labelSm; });
+// Every month row is the same height, so the scale stays one scale. A label
+// needs a window of whole months: two on wide screens, three on narrow ones
+// where the entry stacks into one column (the pitch, with --month-h in the
+// CSS). A label sits at its start month unless an earlier label's window
+// still covers it; then it moves down its rod a month at a time until it is
+// clear, and a spur ties it back to the rod. So consecutive labels are never
+// closer than a pitch, whether or not they share a start month. The CSS moves
+// a label back to its month when the filter hides everything above it.
+const windows = { wide: 2, narrow: 3 };
+let taken = 1 - windows.wide;
+entries.forEach(entry => { entry.label = Math.max(entry.row, taken + windows.wide); taken = entry.label; });
+taken = 1 - windows.narrow;
+entries.forEach(entry => { entry.labelSm = Math.max(entry.row, taken + windows.narrow); taken = entry.labelSm; });
 
 const ticks = Array.from({ length: rows }, (_, i) => {
   const index = firstMonth + i;
@@ -70,13 +75,12 @@ const ticks = Array.from({ length: rows }, (_, i) => {
           unpublished ? `${span} so far` : months > 1 ? span : '',
           commits ? `${commits} commits` : '',
         ].filter(Boolean).join(', ');
-        const rowEnd = Math.max(row + rodRows, label + 1);
-        const rowEndSm = Math.max(row + rodRows, labelSm + 2);
-        const style = `--r0:${row};--r1:${rowEnd};--r1-sm:${rowEndSm};--rod-rows:${rodRows};--lane:${lane};--lrow:${label - row + 1};--lrow-sm:${labelSm - row + 1}`;
-        return <li class:list={['timeline-entry', { 'timeline-entry--progress': unpublished, 'timeline-entry--offset': label !== row }]} data-project-category={section} style={style}>
+        // --kn and --kn-sm: how many months the label sits below its start.
+        const style = `--r0:${row};--r1:${row + rodRows};--rod-rows:${rodRows};--lane:${lane};--kn:${label - row};--kn-sm:${labelSm - row}`;
+        return <li class:list={['timeline-entry', { 'timeline-entry--progress': unpublished }]} data-project-category={section} style={style}>
           <span class="entry-band" aria-hidden="true"></span>
           <span class="entry-rod" aria-hidden="true"><span class="entry-rod-end"></span></span>
-          {label !== row && <span class="entry-spur" aria-hidden="true"></span>}
+          {(label !== row || labelSm !== row) && <span class="entry-spur" aria-hidden="true"></span>}
           <div class="entry-text">
             <div class="entry-name">
               <h3>{title}</h3>

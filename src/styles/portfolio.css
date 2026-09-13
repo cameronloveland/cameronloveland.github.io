@@ -1610,7 +1610,8 @@ video {
 /* One grid row per month, oldest at the top, so time runs down the page and
    every rod grows toward the Now line at the foot. The ticks column is the
    bezel's scale laid flat: a tick per month, a longer brass tick and a numeral
-   where a year begins. Each project is a body at its start month and a rod to
+   where a year begins. Every month is the same height, so rod lengths read
+   month for month. Each project is a body at its start month and a rod to
    the month it was last updated (dashed through the current month into Now
    while it is still in progress), in its category's color. Every project has
    its own lane, oldest start leftmost, like branches in a git graph, so rods
@@ -1672,7 +1673,7 @@ video {
   transform: translateY(-50%);
 }
 .timeline-scale {
-  --month-h: 48px;
+  --month-h: 36px;
   --year-w: 155px;
   --ticks-w: 72px;
   --lane-w: 22px;
@@ -1777,7 +1778,11 @@ video {
 /* Entries share the scale's rows and columns through subgrid, so a rod lands
    on its months and the text lands in the ledger columns without any math in
    the markup beyond row numbers. The list item itself is inert; only the rod
-   and the text answer the pointer, so empty scale never lights an entry. */
+   and the text answer the pointer, so empty scale never lights an entry.
+   A label takes a window of two months (three where the entry stacks), the
+   pitch; a label whose month is still inside the window above sits that many
+   months down its rod (--k, worked out in the markup), so consecutive labels
+   keep one rhythm whether or not they share a start month. */
 .timeline-entries {
   list-style: none;
   padding: 0;
@@ -1790,12 +1795,13 @@ video {
 }
 .timeline-entry {
   --rod-color: var(--cat, var(--accent));
+  --k: var(--kn, 0);
+  --stack-y: calc(var(--k) * var(--month-h));
   grid-column: 1 / -1;
   grid-row: var(--r0) / var(--r1);
   display: grid;
   grid-template-columns: subgrid;
-  grid-auto-rows: var(--month-h);
-  align-content: start;
+  grid-template-rows: subgrid;
   min-width: 0;
   pointer-events: none;
 }
@@ -1876,18 +1882,20 @@ video {
   background: repeating-linear-gradient(to bottom, transparent 0 4px, var(--rod-color) 4px 8px);
   transition: width var(--dur-fast) var(--ease-out);
 }
-/* When two projects share a start month, the second label slides down its rod
-   and a spur ties the label back to the metal: a branch in the rod's own
-   colour and weight, so there is no doubt which rod the label belongs to. */
+/* When a label sits below its start month, a spur ties it back to the metal:
+   a branch in the rod's own colour and weight, so there is no doubt which rod
+   the label belongs to. It shows only while the label is displaced (a label
+   may be displaced at one width and on its month at another). */
 .entry-spur {
   position: relative;
   grid-column: calc(3 + var(--lane)) / -4;
-  grid-row: var(--label-row, var(--lrow));
+  grid-row: 1;
+  opacity: min(1, var(--k));
 }
 .entry-spur::before {
   content: "";
   position: absolute;
-  top: 1px;
+  top: calc(var(--stack-y) + 1px);
   left: 50%;
   right: calc(var(--space-2) - var(--space-6));
   height: 2px;
@@ -1898,10 +1906,7 @@ video {
 /* Whatever the filter hides, the first entry left has nothing above it, so
    its label returns to its start month and the spur goes. */
 .timeline-entry:nth-child(1 of :not([hidden])) {
-  --label-row: 1;
-}
-.timeline-entry:nth-child(1 of :not([hidden])) .entry-spur {
-  display: none;
+  --k: 0;
 }
 .entry-text {
   display: contents;
@@ -1909,13 +1914,14 @@ video {
 .entry-name,
 .entry-when,
 .entry-open {
-  grid-row: var(--label-row, var(--lrow));
+  grid-row: 1;
+  align-self: start;
   pointer-events: auto;
 }
 .entry-name {
   grid-column: -4 / -3;
   min-width: 0;
-  margin-top: -10px;
+  margin-top: calc(var(--stack-y) - 10px);
   padding: 0 var(--space-5) 0 var(--space-6);
 }
 .entry-name h3 {
@@ -1942,7 +1948,7 @@ video {
 .entry-when {
   grid-column: -3 / -2;
   min-width: 0;
-  margin-top: -9px;
+  margin-top: calc(var(--stack-y) - 9px);
   padding-right: var(--space-5);
   font-size: var(--text-sm);
   font-weight: var(--weight-ui);
@@ -1965,12 +1971,11 @@ video {
 .entry-open {
   grid-column: -2 / -1;
   justify-self: end;
-  align-self: start;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  margin-top: -20px;
+  margin-top: calc(var(--stack-y) - 20px);
   padding: 0 2px;
   color: var(--accent);
   font-size: var(--text-sm);
@@ -2319,31 +2324,30 @@ video {
   }
 }
 /* Below the ledger width the entry stacks into one text column beside the
-   scale, taking two months of height, so labels use the wider windows worked
-   out in the markup. The two trailing columns collapse to keep subgrid lines
-   in step with the wide layout. */
+   scale, so the label window grows to three months (--kn-sm, worked out in
+   the markup) and the last label may run a way past the last month. The two
+   trailing columns collapse to keep subgrid lines in step with the wide
+   layout. */
 @media (max-width: 960px) {
   .timeline-scale {
-    --month-h: 60px;
+    --month-h: 38px;
     grid-template-columns:
       var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), var(--lane-w)) minmax(0, 1fr) 0 0;
-    padding-bottom: calc(var(--month-h) + 20px);
+    padding-bottom: calc(var(--month-h) + 32px);
   }
   .timeline-entry {
-    grid-row-end: var(--r1-sm);
-  }
-  .entry-spur {
-    grid-row: var(--label-row, var(--lrow-sm));
+    --k: var(--kn-sm, 0);
   }
   .entry-text {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     column-gap: var(--space-3);
     align-items: end;
+    align-self: start;
     grid-column: -4 / -1;
-    grid-row: var(--label-row, var(--lrow-sm));
+    grid-row: 1;
     min-width: 0;
-    margin-top: -10px;
+    margin-top: calc(var(--stack-y) - 10px);
     padding-left: var(--space-6);
   }
   .entry-name,
@@ -2460,7 +2464,7 @@ video {
      edge; lanes and bodies shrink to match. Past a handful of lanes the
      lanes give first, down to 10px each, before the text column narrows. */
   .timeline-scale {
-    --month-h: 60px;
+    --month-h: 44px;
     --year-w: 0px;
     --ticks-w: 54px;
     --lane-w: 14px;
@@ -2469,7 +2473,6 @@ video {
     --tick-inset: 16px;
     grid-template-columns:
       var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), minmax(10px, var(--lane-w))) minmax(150px, 1fr) 0 0;
-    padding-bottom: calc(var(--month-h) + 20px);
   }
   .scale-year {
     grid-column: 2;
@@ -2498,7 +2501,7 @@ video {
   .entry-open {
     grid-column: 1;
   }
-  /* Two-row label windows at the shorter month, so the block is held tight. */
+  /* Three-month label windows at the shorter month, so the block is held tight. */
   .entry-when {
     margin-top: 4px;
   }
