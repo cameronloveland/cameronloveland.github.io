@@ -32,6 +32,10 @@ const projects = defineCollection({
     // Where the hero porthole crop should centre, as a CSS object-position pair
     // like "50% 40%". Defaults to the centre when omitted.
     imageFocus: z.string().regex(/^\d{1,3}% \d{1,3}%$/, 'Use two percentages, e.g. "50% 40%"').optional(),
+    // How the porthole holds the image: "cover" fills the circle with the crop
+    // centred on imageFocus; "contain" shows the whole image letterboxed over a
+    // blurred copy of itself, for artwork whose copy any crop would cut through.
+    stageFit: z.enum(['cover', 'contain']).default('cover'),
     video: z.string().optional(),
     unpublished: z.boolean().default(false),
   }),

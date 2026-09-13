@@ -16,11 +16,21 @@ const step = count > 1 ? 160 / (count - 1) : 0;
 const at = (r: number, deg: number) => { const a = deg * Math.PI / 180; return [50 + r * Math.sin(a), 50 - r * Math.cos(a)]; };
 const pt = (r: number, deg: number) => at(r, deg).map(v => v.toFixed(2)).join(' ');
 const arc = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${pt(r, to)}`;
+// The same arc drawn the other way round, for text that has to read the other way.
+const arcBack = (r: number, from: number, to: number) => `M${pt(r, from)} A${r} ${r} 0 ${from - to > 180 ? 1 : 0} 0 ${pt(r, to)}`;
 const ring = (r: number) => `M50 ${50 - r} A${r} ${r} 0 1 1 50 ${50 + r} A${r} ${r} 0 1 1 50 ${50 - r} Z`;
 const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
-const bodies = projects.map((project, index) => { const [x, y] = at(R, index * step); return { project, index, x: x.toFixed(2), y: y.toFixed(2) }; });
+const bodies = projects.map((project, index) => { const [x, y] = at(R, index * step); return { project, index, deg: index * step, x: x.toFixed(2), y: y.toFixed(2) }; });
+// Phones engrave the active body's title along the orbit (see "Phones: a compact
+// orrery" in portfolio.css). The label paths run 30deg past the body sweep at
+// each end so a centred title has room; bodies past 90deg use the reversed path
+// so no title reads upside down. Each title's offset is its body's share of the path.
+const labelSweep = [-30, 190];
+const labelOffset = (deg: number, back: boolean) => `${((back ? labelSweep[1] - deg : deg - labelSweep[0]) / (labelSweep[1] - labelSweep[0]) * 100).toFixed(2)}%`;
 // Each slide carries its focal point so the crop, the glass and the settle-in zoom agree.
 const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' '); return `--fx:${x};--fy:${y}`; };
+// A contained slide letterboxes over a blurred copy of its own image.
+const stage = (project: typeof projects[number]) => project.data.stageFit === 'contain' ? `;--stage-image:url("${project.data.image}")` : '';
 ---
 {count > 0 && <section class="hero" aria-labelledby="hero-name" style={`--body-step:${step}deg`}>
   <div class="identity">
@@ -44,9 +54,14 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
           <circle class="ring bezel-rim" cx="50" cy="50" r="36.15" vector-effect="non-scaling-stroke" />
           <circle class="ring bezel-edge" cx="50" cy="50" r="39.2" vector-effect="non-scaling-stroke" />
           <circle class="reel-sweep" cx="50" cy="50" r="39.2" pathLength="1" transform="rotate(-90 50 50)" />
+          <g class="orbit-labels">
+            <path id="orbit-label-path" class="orbit-label-path" d={arc(R + 3.2, labelSweep[0], labelSweep[1])} />
+            <path id="orbit-label-path-back" class="orbit-label-path" d={arcBack(R + 6, labelSweep[1], labelSweep[0])} />
+            {bodies.map(({project,index,deg}) => { const back = deg > 90; return <text class:list={['orbit-label', {'is-active': index === 0}]} data-label={index}><textPath href={back ? '#orbit-label-path-back' : '#orbit-label-path'} startOffset={labelOffset(deg, back)}>{project.data.title}</textPath></text>; })}
+          </g>
         </svg>
         <div class="reel-stage">
-          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0}]} style={focus(project.data.imageFocus)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
+          {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0, 'reel-slide--contain': project.data.stageFit === 'contain'}]} style={focus(project.data.imageFocus) + stage(project)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
             {project.data.video
               ? <video src={project.data.video} poster={project.data.image} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
               : <img src={project.data.image} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
@@ -88,6 +103,7 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
   if (reel) {
     const slides = Array.from(reel.querySelectorAll<HTMLElement>('[data-slide]'));
     const selectors = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-slide-to]'));
+    const labels = Array.from(reel.querySelectorAll<SVGTextElement>('[data-label]'));
     const readouts = Array.from(reel.querySelectorAll<HTMLElement>('[data-readout]'));
     const play = reel.querySelector<HTMLButtonElement>('[data-reel-play]')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -120,6 +136,8 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
         slide.setAttribute('aria-hidden', String(i !== current));
       });
       selectors.forEach((button,i) => button.setAttribute('aria-pressed', String(i === current)));
+      // The engraved title on phones follows the active body (decorative; the button text names it).
+      labels.forEach((label,i) => label.classList.toggle('is-active', i === current));
       // Readouts and CTAs stay in flow so they can crossfade; only the active one is exposed.
       readouts.forEach(readout => {
         const active = Number(readout.dataset.readout) === current;

@@ -46,9 +46,9 @@
   /* The fold: a daytime sky with ink-line rings, like an engraving plate. */
   --sky-zenith: color-mix(in srgb, var(--signal-fill) 26%, var(--bg));
   --star-alpha: 0.16;
-  --ring: color-mix(in srgb, var(--text) 42%, transparent);
-  --ring-faint: color-mix(in srgb, var(--text) 16%, transparent);
-  --bezel: color-mix(in srgb, var(--text) 6%, transparent);
+  --ring: color-mix(in srgb, var(--text) 54%, transparent);
+  --ring-faint: color-mix(in srgb, var(--text) 22%, transparent);
+  --bezel: color-mix(in srgb, var(--accent-fill) 30%, transparent);
   --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
   --body-fill: var(--surface);
 
@@ -674,8 +674,9 @@ video {
 }
 /* Turning the reel: the outgoing slide recedes (fades and draws back a touch)
    under the incoming one, which lands at full size at once and then settles
-   from a slight zoom to rest over the length of its stay. The dial's hand and
-   the bodies move on the same easing, so the whole instrument turns as one. */
+   from a slight zoom to rest over the length of its stay. The crossfade runs
+   at the base pace, in step with the readout below, so image and text turn
+   as one; the dial's hand and the recede take the slow pace and finish after. */
 .reel-slide {
   position: absolute;
   inset: 0;
@@ -683,8 +684,8 @@ video {
   visibility: hidden;
   transform: scale(0.96);
   transition:
-    opacity var(--dur-slow) var(--ease-in-out),
-    visibility var(--dur-slow),
+    opacity var(--dur-base) var(--ease-in-out),
+    visibility var(--dur-base),
     transform var(--dur-slow) var(--ease-out);
   pointer-events: none;
 }
@@ -692,7 +693,8 @@ video {
   opacity: 1;
   visibility: visible;
   transform: none;
-  transition-duration: var(--dur-slow), var(--dur-slow), 0s;
+  transition-duration: var(--dur-base), var(--dur-base), 0s;
+  transition-timing-function: var(--ease-out), linear, var(--ease-out);
   pointer-events: auto;
   z-index: 1;
 }
@@ -713,6 +715,22 @@ video {
 }
 .reel-slide.is-active > img {
   transform: scale(1);
+}
+/* A poster whose copy any crop would cut through (stageFit: contain in the
+   content) is shown whole, letterboxed over a blurred, darkened copy of
+   itself, so the bands read as the same artwork out of focus, not empty glass. */
+.reel-slide--contain::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background:
+    linear-gradient(color-mix(in srgb, var(--scrim) 40%, transparent), color-mix(in srgb, var(--scrim) 40%, transparent)),
+    var(--stage-image) center / cover no-repeat;
+  filter: blur(20px) saturate(1.4);
+}
+.reel-slide--contain > img,
+.reel-slide--contain > video {
+  object-fit: contain;
 }
 /* Glass: the porthole darkens toward its rim, clearest around the focal point. */
 .reel-slide::after {
@@ -817,6 +835,15 @@ video {
 }
 .orbit-body[aria-pressed="true"] .orbit-body-meta {
   color: var(--accent);
+}
+/* The engraved titles only appear on phones, where the bodies are bare points
+   (see "Phones: a compact orrery"); wider layouts set each title beside its body. */
+.orbit-labels {
+  display: none;
+}
+.orbit-label-path {
+  fill: none;
+  stroke: none;
 }
 
 /* ---------- Arrival: the instrument winds up ---------- */
@@ -972,6 +999,7 @@ video {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  min-height: 44px;
   padding: 12px 20px;
   border-radius: var(--radius-pill);
   background: var(--accent-fill);
@@ -1083,6 +1111,8 @@ video {
   justify-content: space-between;
   gap: var(--space-5);
   padding: 25px 0 34px;
+  /* Its own group in a view transition, so its labels never crossfade with the page (see the view transitions block). */
+  view-transition-name: toolbar;
 }
 /* Category filter: a row of ring pills in the hero's control language. The
    pressed one is lit brass, the way the active orbit ring brightens. */
@@ -1246,11 +1276,12 @@ video {
   transition: box-shadow var(--dur-base) var(--ease-out);
 }
 /* Strength Path's artwork is a poster with a headline beside the phone; a
-   landscape crop would cut the headline, so the gallery zooms to the phone. */
+   landscape crop would cut the headline, so the gallery zooms to the phone,
+   held high enough that its header stays in frame. */
 .project-strength-path .project-media img {
   object-position: 100% 50%;
-  transform: scale(2);
-  transform-origin: 92% 50%;
+  transform: scale(1.7);
+  transform-origin: 108% 30%;
 }
 .image-fallback {
   position: absolute;
@@ -1654,14 +1685,19 @@ video {
 .timeline-entry--progress {
   --rod-color: var(--signal);
 }
+/* The wash covers the rod's own lane and its months only (from just above
+   the body to just past the end cap), never the lane beside it. */
 .entry-band {
-  grid-column: 2 / -4;
+  grid-column: calc(3 + var(--lane));
   grid-row: 1 / span var(--rod-rows);
-  margin-left: var(--space-3);
-  border-radius: var(--radius-tag);
-  background: color-mix(in srgb, var(--rod-color) 9%, transparent);
+  margin: -12px -2px calc(var(--month-h) / 2 - 8px);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--rod-color) 11%, transparent);
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
+}
+.timeline-entry--progress .entry-band {
+  margin-bottom: 0;
 }
 .entry-rod {
   position: relative;
@@ -1718,7 +1754,8 @@ video {
   display: none;
 }
 /* When two projects share a start month, the second label slides down its rod
-   and a spur ties the label back to the metal. */
+   and a spur ties the label back to the metal: a branch in the rod's own
+   colour and weight, so there is no doubt which rod the label belongs to. */
 .entry-spur {
   position: relative;
   grid-column: calc(3 + var(--lane)) / -4;
@@ -1727,12 +1764,13 @@ video {
 .entry-spur::before {
   content: "";
   position: absolute;
-  top: 2px;
+  top: 1px;
   left: 50%;
   right: calc(var(--space-2) - var(--space-6));
-  height: 1px;
-  background: var(--ring);
-  transition: background var(--dur-fast) var(--ease-out);
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rod-color);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 /* Whatever the filter hides, the first entry left has nothing above it, so
    its label returns to its start month and the spur goes. */
@@ -1838,7 +1876,7 @@ video {
     0 0 18px color-mix(in srgb, var(--rod-color) 55%, transparent);
 }
 .timeline-entry:is(:hover, :focus-within) .entry-spur::before {
-  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rod-color) 22%, transparent);
 }
 .timeline-entry:is(:hover, :focus-within) .entry-name h3 {
   transform: translateX(2px);
@@ -1893,9 +1931,11 @@ video {
    time and the one way to get in touch. The heading and the plate share the
    gallery's column lines (4 of 12 and 8 of 12), so the plate's labels sit on
    the same edge as the second card in the bottom row. */
+/* The closing and the footer read as one block: one step of the scale
+   between the plate and the footer band, and one more to the wordmark. */
 .closing {
   margin-top: var(--space-9);
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
 }
 .closing-now {
   display: flex;
@@ -2003,7 +2043,7 @@ video {
    the site is made of. */
 .site-footer {
   background: linear-gradient(180deg, var(--bg), var(--sky-zenith));
-  padding: 56px 0 var(--space-8);
+  padding: var(--space-6) 0 var(--space-8);
   color: var(--secondary);
 }
 .footer-grid {
@@ -2215,19 +2255,45 @@ video {
     padding-top: 25px;
     align-items: center;
   }
+  /* Phones: the filter is one row that scrolls sideways to the page edges and
+     snaps pill by pill (counts drop; the pressed pill says which is on), with
+     the view switch as a full-width segmented control beneath it. The row
+     carries its own vertical room so focus rings are not clipped by the scroll box. */
   .work-toolbar {
-    gap: var(--space-4);
-    padding: 18px 0 24px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: 12px 0 24px;
   }
   .category-filter {
     gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    margin: -6px calc(-1 * var(--site-pad));
+    padding: 6px var(--site-pad);
+  }
+  .category-filter::-webkit-scrollbar {
+    display: none;
   }
   .category-filter button,
   .view-toggle button {
     min-height: 44px;
   }
   .category-filter button {
-    padding: 8px 14px;
+    flex-shrink: 0;
+    padding: 8px 16px;
+    scroll-snap-align: start;
+    scroll-margin-left: var(--site-pad);
+  }
+  .category-filter button span {
+    display: none;
+  }
+  .view-toggle button {
+    flex: 1;
+    justify-content: center;
   }
   /* Phones: one column, every card the same shape, media cut to 3:2. */
   .gallery {
@@ -2254,7 +2320,7 @@ video {
      under the month label where a year begins) and the scale hugs the left
      edge; lanes and bodies shrink to match. */
   .timeline-scale {
-    --month-h: 72px;
+    --month-h: 60px;
     --year-w: 0px;
     --ticks-w: 54px;
     --lane-w: 18px;
@@ -2289,9 +2355,13 @@ video {
   .entry-open {
     grid-column: 1;
   }
+  /* Two-row label windows at the shorter month, so the block is held tight. */
+  .entry-when {
+    margin-top: 4px;
+  }
   .entry-open {
     justify-self: start;
-    margin: -6px 0 -10px;
+    margin: -10px 0 -14px;
   }
   .entry-spur::before {
     right: calc(var(--space-2) - var(--space-4));
@@ -2299,7 +2369,7 @@ video {
   /* Phones: the closing and footer stack into one column on the left edge. */
   .closing {
     margin-top: var(--space-8);
-    padding-bottom: var(--space-7);
+    padding-bottom: var(--space-5);
   }
   .closing-grid {
     row-gap: var(--space-6);
@@ -2321,7 +2391,7 @@ video {
     grid-row: auto;
   }
   .site-footer {
-    padding: var(--space-7) 0 var(--space-7);
+    padding: var(--space-5) 0 var(--space-7);
   }
   .footer-grid {
     row-gap: var(--space-6);
@@ -2329,26 +2399,53 @@ video {
   .footer-links {
     grid-template-columns: 6rem minmax(0, 1fr);
   }
+  /* Each labelled row stacks its links, one 44px line each, so nothing wraps alone. */
   .footer-links ul {
-    gap: 0 var(--space-5);
+    flex-direction: column;
+    gap: 0;
   }
 }
 /* Phones: a compact orrery. The bezel grows to wrap a larger porthole, the main
    orbit stays as a short arc, and the five bodies become bare brass points on
    it (their titles remain for screen readers; the readout below names the
-   active one). Title and CTA sit directly under the porthole. */
+   active one). The active body's title is engraved along the orbit beside its
+   point, centred on it, so the lit point and the name read as one; titles on
+   the lower half run the other way so none is upside down. The engraving is
+   held back until the instrument has arrived. Title and CTA sit directly
+   under the porthole. */
 @media (max-width: 720px) {
+  .orbit-labels {
+    display: block;
+  }
+  .orbit-label {
+    font-family: var(--font);
+    font-size: 3.5px;
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.01em;
+    fill: var(--text);
+    text-anchor: middle;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .orbit-label.is-active {
+    opacity: 1;
+  }
+  .is-arriving .orbit-label.is-active {
+    opacity: 0;
+  }
   .hero {
     --orbit: min(100%, 300px);
     --orbit-scale: 1.15;
-    row-gap: var(--space-5);
+    /* Room below the ring for a title engraved under the lowest body; the
+       orbit's own margin gives back most of it above. */
+    row-gap: var(--space-7);
     padding-bottom: 44px;
   }
   .ring-outer {
     display: none;
   }
   .orbit {
-    margin-top: var(--space-6);
+    margin-top: var(--space-2);
   }
   .orbit-body {
     width: 44px;
@@ -2387,6 +2484,12 @@ video {
   .reel-open {
     padding: 10px 16px;
   }
+  /* Touch targets: the round controls grow to the 44px minimum. */
+  .reel-actions button,
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
+  }
 }
 @media (max-width: 420px) {
   :root {
@@ -2394,10 +2497,6 @@ video {
   }
   .header-links {
     gap: 10px;
-  }
-  .theme-toggle {
-    width: 36px;
-    height: 36px;
   }
 }
 
@@ -2408,9 +2507,11 @@ video {
    goes clears first (two thirds of the base), what arrives starts a third in,
    so a frame mid-way shows one thing, not two half-things: a card that goes
    recedes, a card that arrives settles in, a panel sinks away and rises into
-   place. A card that stays glides to its new slot; its snapshots crop rather
-   than stretch as the slot changes shape, and the old one clears in half the
-   time so a single image travels. */
+   place. A card that stays glides to its new slot: its snapshots keep the
+   size they were taken at, pinned to the slot's top-left corner, so the
+   group's change of shape never scales or re-crops them mid-flight (only the
+   glide shows), and the old one clears in half the time so a single image
+   travels. */
 ::view-transition-group(*) {
   animation-duration: var(--dur-base);
   animation-timing-function: var(--ease-out);
@@ -2422,11 +2523,33 @@ video {
 }
 ::view-transition-old(.card),
 ::view-transition-new(.card) {
-  object-fit: cover;
-  object-position: top;
+  inline-size: auto;
+  block-size: auto;
+  inset-inline-start: 0;
 }
 ::view-transition-old(.card) {
   animation-duration: calc(var(--dur-base) / 2);
+}
+/* A card that glides travels above one that goes: the script marks a leaving
+   card before its old state is captured, and its group sits under the rest. */
+.project-card.is-leaving {
+  view-transition-class: card leaving;
+}
+::view-transition-group(.card) {
+  z-index: 1;
+}
+::view-transition-group(.leaving) {
+  z-index: 0;
+}
+/* The toolbar is its own group and never crossfades: its old snapshot is not
+   shown and its new one is live, so the pressed pill and segment change on
+   the page itself and their labels never dip. */
+::view-transition-group(toolbar),
+::view-transition-new(toolbar) {
+  animation: none;
+}
+::view-transition-old(toolbar) {
+  display: none;
 }
 ::view-transition-old(.card):only-child {
   animation: vt-recede calc(var(--dur-base) * 2 / 3) var(--ease-in-out) both;

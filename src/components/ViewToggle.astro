@@ -16,6 +16,7 @@
       panel.hidden = panel.dataset.viewPanel !== view;
       panel.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => {
         project.hidden = category !== 'all' && project.dataset.projectCategory !== category;
+        project.classList.remove('is-leaving');
         if (!panel.hidden && !project.hidden) count++;
       });
     });
@@ -25,9 +26,6 @@
     if (empty) empty.hidden = count > 0;
     const status = document.getElementById('results-status');
     if (status) status.textContent = `${count} ${count === 1 ? 'project' : 'projects'} in ${view === 'grid' ? 'gallery' : 'timeline'} view.`;
-    document.querySelectorAll<HTMLElement>('.timeline-year').forEach(group => {
-      group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-project-category]')).some(project => !project.hidden);
-    });
   }
   // A change runs inside a view transition where the browser has one (cards glide
   // to their new slots, panels rise and sink; see portfolio.css), and applies at
@@ -38,6 +36,12 @@
     document.startViewTransition(update);
   }
   viewButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { change(() => { view = button.dataset.view!; render(); }); }); });
-  categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { change(() => { category = button.dataset.category!; render(); }); }); });
+  // A card about to leave is marked before its old state is captured, so its
+  // snapshot recedes beneath the cards gliding to new slots (see portfolio.css).
+  categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => {
+    const next = button.dataset.category!;
+    document.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => project.classList.toggle('is-leaving', !project.hidden && next !== 'all' && project.dataset.projectCategory !== next));
+    change(() => { category = next; render(); });
+  }); });
   document.querySelector('[data-reset]')?.addEventListener('click', () => { change(() => { category = 'all'; render(); }); categoryButtons[0]?.focus(); });
 </script>
