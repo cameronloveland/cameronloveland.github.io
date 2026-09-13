@@ -135,7 +135,7 @@ and timeline keep their current structure and dimensions in this piece.
    metal on night, and a display face with character are the identity. Grey
    hairlines, mono captions, and eyebrow labels are not.
 5. Restraint in copy. Sentence case, plain verbs, and names that say what a thing
-   does ("Play project", "Open project", "Back to top").
+   does ("Play now", "Open website", "Visit website", "Open project", "Back to top"; the primary link is named by category in src/utils/linkLabel.ts).
 
 ## The one memorable thing
 

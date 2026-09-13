@@ -1,5 +1,6 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
+import { ctaLabel } from '../utils/linkLabel';
 import { getCollection } from 'astro:content';
 const order = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hud-portfolio'];
 const projects = (await getCollection('projects')).filter(p => p.data.image);
@@ -85,7 +86,7 @@ const stage = (project: typeof projects[number]) => project.data.stageFit === 'c
         <div class="reel-cta">
           {projects.map((project,index) => {
             const link = project.data.links.find(link => link.primary) || project.data.links[0];
-            const cta = project.data.section === 'games' ? 'Play project' : 'Open project';
+            const cta = ctaLabel(project.data.section);
             return link && <a class:list={['reel-open', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
           })}
         </div>
