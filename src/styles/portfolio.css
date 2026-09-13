@@ -36,7 +36,7 @@
   --cat-games: #b3266e;
   --cat-web: #4b4fd6;
   --cat-mobile: #1a6f4e;
-  --cat-experiments: #855810;
+  --cat-experiments: #0b6a84;
   /* Media overlays sit on project screenshots, which are dark in both themes,
      so text on them uses the night text and the night category colors. */
   --scrim: #0e1128;
@@ -44,7 +44,7 @@
   --media-cat-games: #f088b8;
   --media-cat-web: #a3a6ff;
   --media-cat-mobile: #62d5a0;
-  --media-cat-experiments: #e9bb5c;
+  --media-cat-experiments: #79d5ef;
   --shadow-ink: #151934;
   --glow: color-mix(in srgb, var(--accent-fill) 10%, transparent);
   --rim: transparent;
@@ -137,7 +137,7 @@
   --cat-games: #f088b8;
   --cat-web: #a3a6ff;
   --cat-mobile: #62d5a0;
-  --cat-experiments: #e9bb5c;
+  --cat-experiments: #79d5ef;
   --media-cat-games: var(--cat-games);
   --media-cat-web: var(--cat-web);
   --media-cat-mobile: var(--cat-mobile);

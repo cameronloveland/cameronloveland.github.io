@@ -54,11 +54,11 @@ Dark theme:
 | Nightfall | #181c3a | raised surface (cards, controls) |
 | Dusk | #242a55 | second raise (active selector, chips) |
 | Starlight | #eef0fb | primary text |
-| Brass | #e9bb5c | accent: links, active states, fills, experiments category |
-| Ion | #79d5ef | text selection, sky zenith |
+| Brass | #e9bb5c | accent: links, active states, fills; never a category, so chrome and category never share a hue |
+| Ion | #79d5ef | category: experiments; text selection, sky zenith |
 | Rose | #f088b8 | category: games |
 | Periwinkle | #a3a6ff | category: web |
-| Verdigris | #62d5a0 | category: mobile apps (Brass is experiments) |
+| Verdigris | #62d5a0 | category: mobile apps |
 
 Light theme:
 
@@ -69,10 +69,10 @@ Light theme:
 | Haze | #e3e6f3 | second raise |
 | Ink | #151934 | primary text (same hue family as Night) |
 | Bronze | #855810 | accent for text and links (5.6:1 on Daylight) |
-| Deep Ion | #0b6a84 | sky zenith |
+| Deep Ion | #0b6a84 | category: experiments; sky zenith |
 | Deep Rose | #b3266e | category: games |
 | Indigo | #4b4fd6 | category: web |
-| Deep Verdigris | #1a6f4e | category: mobile apps (Bronze is experiments) |
+| Deep Verdigris | #1a6f4e | category: mobile apps |
 
 Brass (#e9bb5c) is also the fill color in light mode, with Ink text on it.
 Supporting tokens (secondary and muted text, borders) are derived in the same hue
