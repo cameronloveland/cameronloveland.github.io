@@ -901,6 +901,9 @@ video {
   align-items: flex-start;
   margin-top: 20px;
 }
+.reel-chip-thumb {
+  object-fit: cover;
+}
 .stage-nav,
 .reel-chips {
   display: none;
@@ -2816,7 +2819,6 @@ video {
     width: 56px;
     height: 36px;
     border-radius: var(--radius-tag);
-    object-fit: cover;
     object-position: var(--fx, 50%) var(--fy, 44%);
     background: var(--scrim);
   }

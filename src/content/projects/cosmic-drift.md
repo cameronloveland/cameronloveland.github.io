@@ -15,6 +15,6 @@ languages:
     color: "#e34c26"
 stack: ["Three.js", "Vite"]
 commits: 94
-image: "/images/cosmic-drift.png"
+image: "/images/cosmic-drift.webp"
 imageFocus: "50% 64%"
 ---

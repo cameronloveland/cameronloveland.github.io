@@ -5,8 +5,8 @@ section: "mobile-apps"
 startDate: 2026-02-01
 unpublished: true
 stack: ["React Native"]
-image: "/images/strength-path.png"
-stageImage: "/images/strength-path-hero.png"
+image: "/images/strength-path.webp"
+stageImage: "/images/strength-path-hero.webp"
 imageFocus: "70% 45%"
 links:
   - label: "preview"

@@ -14,7 +14,7 @@ languages:
     color: "#3178c6"
 stack: ["Three.js", "React", "Next.js", "Blender"]
 commits: 28
-image: "/images/antikythera.png"
+image: "/images/antikythera.webp"
 imageFocus: "48% 46%"
 video: "/videos/antikythera.mp4"
 ---

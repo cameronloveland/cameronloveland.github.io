@@ -17,6 +17,6 @@ languages:
     color: "#563d7c"
 stack: ["React", "Three.js", "Vite", "Supabase", "Tailwind"]
 commits: 434
-image: "/images/tavernborn.png"
+image: "/images/tavernborn.webp"
 imageFocus: "50% 42%"
 ---

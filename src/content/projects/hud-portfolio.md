@@ -17,6 +17,6 @@ languages:
     color: "#563d7c"
 stack: ["Next.js", "Three.js", "Tailwind", "Framer Motion"]
 commits: 329
-image: "/images/space-portfolio.png"
+image: "/images/space-portfolio.webp"
 imageFocus: "50% 40%"
 ---
