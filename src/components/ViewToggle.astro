@@ -1,0 +1,47 @@
+---
+---
+<div class="view-toggle" role="group" aria-label="Project view">
+  <button type="button" data-view="grid" aria-pressed="true" aria-controls="gallery-panel" disabled><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="12" y="3" width="5" height="5" rx="1"/><rect x="3" y="12" width="5" height="5" rx="1"/><rect x="12" y="12" width="5" height="5" rx="1"/></svg>Gallery</button>
+  <button type="button" data-view="timeline" aria-pressed="false" aria-controls="timeline-panel" disabled><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 3v14M10 5h7M10 10h7M10 15h7"/><circle cx="5" cy="5" r="1.5"/><circle cx="5" cy="10" r="1.5"/><circle cx="5" cy="15" r="1.5"/></svg>Timeline</button>
+</div>
+<script>
+  const viewButtons = document.querySelectorAll<HTMLButtonElement>('[data-view]');
+  const categoryButtons = document.querySelectorAll<HTMLButtonElement>('[data-category]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-view-panel]');
+  let view = 'grid';
+  let category = 'all';
+  function render() {
+    let count = 0;
+    panels.forEach(panel => {
+      panel.hidden = panel.dataset.viewPanel !== view;
+      panel.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => {
+        project.hidden = category !== 'all' && project.dataset.projectCategory !== category;
+        project.classList.remove('is-leaving');
+        if (!panel.hidden && !project.hidden) count++;
+      });
+    });
+    viewButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
+    categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === category)));
+    const empty = document.querySelector<HTMLElement>('.empty-state');
+    if (empty) empty.hidden = count > 0;
+    const status = document.getElementById('results-status');
+    if (status) status.textContent = `${count} ${count === 1 ? 'project' : 'projects'} in ${view === 'grid' ? 'gallery' : 'timeline'} view.`;
+  }
+  // A change runs inside a view transition where the browser has one (cards glide
+  // to their new slots, panels rise and sink; see portfolio.css), and applies at
+  // once where it does not or where motion is reduced. The hidden toggling and
+  // aria updates in render() are the same either way.
+  function change(update: () => void) {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { update(); return; }
+    document.startViewTransition(update);
+  }
+  viewButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => { change(() => { view = button.dataset.view!; render(); }); }); });
+  // A card about to leave is marked before its old state is captured, so its
+  // snapshot recedes beneath the cards gliding to new slots (see portfolio.css).
+  categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => {
+    const next = button.dataset.category!;
+    panels.forEach(panel => panel.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => project.classList.toggle('is-leaving', !project.hidden && next !== 'all' && project.dataset.projectCategory !== next)));
+    change(() => { category = next; render(); });
+  }); });
+  document.querySelector('[data-reset]')?.addEventListener('click', () => { change(() => { category = 'all'; render(); }); categoryButtons[0]?.focus(); });
+</script>

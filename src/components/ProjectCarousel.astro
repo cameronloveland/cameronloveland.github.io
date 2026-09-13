@@ -1,0 +1,293 @@
+---
+import ExternalLinkIcon from './ExternalLinkIcon.astro';
+import { ctaLabel } from '../utils/linkLabel';
+import { sectionLabel, featured, arcBodies, bodyStep } from '../utils/projects';
+import { getCollection } from 'astro:content';
+// The featured set, in the order the reel shows them (see utils/projects.ts).
+const projects = featured(await getCollection('projects'));
+const count = projects.length;
+// Past seven bodies the arc is crowded: only the active body and its two
+// neighbours show their titles; the rest name themselves to screen readers.
+const dense = count > 7;
+
+// Instrument geometry. The arc is modelled in a 1000 by 100 box that
+// stretches to the arc's real width and height, so every position is a share
+// of the box: bodies sit evenly across the width (arcBodies in utils/projects.ts) and each
+// one's height (--y, a share of the arc's height) is where the arc passes.
+// The arc runs from arcEnd at both edges down to arcDip in the middle. The
+// script redraws the same curve in pixels once the width is known, so the
+// ticks, the sweep and the hand's motion path all follow the drawn line.
+const bodyA = arcBodies.a, arcEnd = 18, arcDip = 52;
+const step = bodyStep(count);
+const sagitta = arcDip - arcEnd;
+const radius = (500 * 500 + sagitta * sagitta) / (2 * sagitta);
+const arcY = (x: number) => arcDip - (radius - Math.sqrt(radius * radius - (x - 500) ** 2));
+const bodies = projects.map((project, index) => {
+  const x = count > 1 ? bodyA + index * step : 50;
+  return { project, index, x: x.toFixed(2), y: arcY(x * 10).toFixed(2) };
+});
+// The arc itself, as an arc command from edge to edge (an ellipse once the box is stretched).
+const arcPath = `M0 ${arcEnd} A${radius.toFixed(1)} ${radius.toFixed(1)} 0 0 0 1000 ${arcEnd}`;
+// Each slide carries its focal point so the crop and the settle-in zoom agree.
+const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' '); return `--fx:${x};--fy:${y}`; };
+// A contained slide letterboxes over a blurred copy of its own image.
+// The stage shows stageImage when a project has one (a picture that suits the wide crop), else its card image.
+const picture = (project: typeof projects[number]) => project.data.stageImage ?? project.data.image;
+const stageImage = (project: typeof projects[number]) => project.data.stageFit === 'contain' ? `;--stage-image:url("${picture(project)}")` : '';
+---
+{count > 0 && <section class:list={['hero', 'reel', {'reel--dense': dense}]} role="region" aria-label="Featured projects" aria-roledescription="carousel" style={`--body-a:${bodyA / 100};--body-step:${(step / 100).toFixed(4)};--arc-end:${arcEnd / 100};--arc-dip:${arcDip / 100};--arc-r:${radius.toFixed(1)}`}>
+  <div class="stage">
+    {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0, 'reel-slide--contain': project.data.stageFit === 'contain'}]} style={focus(project.data.imageFocus) + stageImage(project)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
+      {project.data.video
+        ? <video src={project.data.video} poster={picture(project)} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
+        : <img src={picture(project)} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
+    </div>)}
+    <div class="stage-scrim" aria-hidden="true"></div>
+    <div class="stage-caption">
+      {/* Every readout sits in the same grid cell, anchored to the stage's bottom edge, so the caption never moves as the reel turns; the script crossfades them. */}
+      <div class="reel-readouts">
+        {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} data-project-category={project.data.section} aria-hidden={index !== 0} inert={index !== 0}>
+          <p class="reel-kicker"><span class="reel-category">{sectionLabel(project.data.section)}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
+          <h2>{project.data.title}</h2>
+        </div>)}
+      </div>
+      <div class="reel-cta">
+        {projects.map((project,index) => {
+          const link = project.data.links.find(link => link.primary) || project.data.links[0];
+          const cta = ctaLabel(project.data.section);
+          return link && <a class:list={['reel-open', {'is-active': index === 0}]} data-readout={index} aria-hidden={index !== 0} inert={index !== 0} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${cta}: ${project.data.title} (opens in a new tab)`}>{cta} <ExternalLinkIcon /></a>;
+        })}
+      </div>
+    </div>
+    {/* Phones only (see "Responsive" in portfolio.css): previous and next sit on the stage at mid height, pause in its top right corner; the stage itself takes a swipe. */}
+    <div class="stage-nav">
+      <button type="button" class="stage-step stage-step--prev" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+      <button type="button" class="stage-step stage-step--next" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+      <button type="button" class="stage-pause" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
+    </div>
+  </div>
+  {/* The instrument: one row under the stage, from tablet width up. The arc runs from the previous terminal to the next one, engraved with ticks (fine minors, a major at each body); the bodies sit on it, the hand rides it to the active body, and the slide timer's sweep draws along it from the active body toward the next. Pause sits at the right terminal's side. The three engraved copies of the arc take their path from the script, in pixels, once the width is known. */}
+  <div class="instrument" hidden>
+    <button type="button" class="terminal" data-reel-prev aria-label="Previous project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+    <div class="arc">
+      <svg class="arc-line" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path class="arc-ticks" />
+        <path class="arc-majors" />
+        <path class="ring arc-path" d={arcPath} pathLength="1" vector-effect="non-scaling-stroke" />
+        <path class="arc-sweep" />
+      </svg>
+      <div class="arc-bodies" role="group" aria-label="Choose featured project">
+        {bodies.map(({project,index,x,y}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y}`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{sectionLabel(project.data.section)}</span></button>)}
+      </div>
+      <span class="arc-hand" aria-hidden="true"></span>
+    </div>
+    <button type="button" class="terminal" data-reel-next aria-label="Next project"><svg class="ui-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+    <button type="button" class="reel-pause" data-reel-play aria-label="Pause slideshow"><svg class="ui-icon icon-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/></svg><svg class="ui-icon icon-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8a.6.6 0 0 0 .9.5l8.4-5.4a.6.6 0 0 0 0-1L7.4 4.1a.6.6 0 0 0-.9.5Z"/></svg></button>
+  </div>
+  {/* Phones: the selector is a strip of chips that scrolls sideways and snaps, one per project with its thumbnail, title and category. Only one selector is displayed at a time (the stylesheet hides the other), so assistive technology meets one. */}
+  <div class="reel-chips" hidden role="group" aria-label="Choose featured project">
+    {projects.map((project,index) => <button type="button" class="reel-chip" style={focus(project.data.imageFocus)} data-slide-to={index} data-project-category={project.data.section} aria-pressed={index === 0}><img class="reel-chip-thumb" src={project.data.image} alt="" loading="lazy" width="56" height="36" /><span class="reel-chip-text"><span class="reel-chip-title">{project.data.title}</span><span class="reel-chip-meta">{sectionLabel(project.data.section)}</span></span></button>)}
+  </div>
+</section>}
+<script>
+  const reel = document.querySelector<HTMLElement>('.reel');
+  if (reel) {
+    const slides = Array.from(reel.querySelectorAll<HTMLElement>('[data-slide]'));
+    const selectors = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-slide-to]'));
+    const titles = Array.from(reel.querySelectorAll<HTMLElement>('.orbit-body-title'));
+    const readouts = Array.from(reel.querySelectorAll<HTMLElement>('[data-readout]'));
+    // Two transports (the terminals under the arc, the buttons on the stage
+    // for phones) and two selectors (the bodies, the chips) drive one reel.
+    const plays = Array.from(reel.querySelectorAll<HTMLButtonElement>('[data-reel-play]'));
+    const chips = Array.from(reel.querySelectorAll<HTMLElement>('.reel-chip'));
+    const strip = reel.querySelector<HTMLElement>('.reel-chips');
+    const stage = reel.querySelector<HTMLElement>('.stage')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.documentElement;
+    let current = 0;
+    let paused = reduced.matches;
+    let held = false;
+    let started = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    // The slide's stay is a deadline, so a hold can stop the clock and start it
+    // again with whatever was left rather than from the top.
+    let due = 0;
+    let remaining = 0;
+    function arm(ms: number) {
+      due = performance.now() + ms;
+      timer = setTimeout(() => show(current + 1), ms);
+    }
+    function schedule() {
+      clearTimeout(timer);
+      reel!.classList.remove('is-playing');
+      // The sweep waits for the arrival (the instrument winding up) to finish.
+      if (paused || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
+      // Restart the sweep along the arc with the slide timer.
+      void reel!.offsetWidth;
+      // A video slide holds long enough to finish one loop.
+      const video = slides[current].querySelector('video');
+      // Until its length is known the timer and the sweep wait, so neither restarts mid-flight.
+      if (video && !video.duration) { video.addEventListener('loadedmetadata', schedule, { once: true }); return; }
+      const delay = video ? Math.round(video.duration * 1000) + 300 : 6500;
+      reel!.style.setProperty('--reel-delay', `${delay}ms`);
+      reel!.classList.add('is-playing');
+      remaining = delay;
+      if (!held) arm(remaining);
+    }
+    // A hold stops the clock where it is (the sweep freezes with it, see
+    // .is-held) and lets it run on from there when released.
+    function hold(value: boolean) {
+      if (held === value) return;
+      held = value;
+      reel!.classList.toggle('is-held', held);
+      if (!reel!.classList.contains('is-playing')) return;
+      if (held) { clearTimeout(timer); remaining = Math.max(0, due - performance.now()); } else arm(remaining);
+    }
+    function show(index: number) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide,i) => {
+        slide.classList.toggle('is-active', i === current);
+        slide.inert = i !== current;
+        slide.setAttribute('aria-hidden', String(i !== current));
+      });
+      selectors.forEach(button => {
+        const i = Number(button.dataset.slideTo);
+        button.setAttribute('aria-pressed', String(i === current));
+        // On a crowded arc only the active body and its neighbours show their titles.
+        button.classList.toggle('is-near', Math.abs(i - current) === 1);
+      });
+      // Readouts and CTAs stay in flow so they can crossfade; only the active one is exposed.
+      readouts.forEach(readout => {
+        const active = Number(readout.dataset.readout) === current;
+        readout.classList.toggle('is-active', active);
+        readout.inert = !active;
+        readout.setAttribute('aria-hidden', String(!active));
+      });
+      // After the first turn the readout crossfades as it changes; on load it is simply there.
+      if (started) reel!.classList.add('has-turned');
+      // The hand rides the arc to the active body, and the maker's mark in the
+      // header turns with it (see the header rules in portfolio.css), so the
+      // index is set on the page as well as the reel.
+      reel!.style.setProperty('--reel-index', String(current));
+      root.style.setProperty('--reel-index', String(current));
+      // On phones the active chip is brought to the centre of its strip. The
+      // strip scrolls itself rather than the page, so a turn never moves the
+      // page under a reader who has scrolled on.
+      const chip = chips[current];
+      if (chip && strip && strip.clientWidth) strip.scrollTo({ left: chip.offsetLeft + chip.offsetWidth / 2 - strip.clientWidth / 2, behavior: started && !reduced.matches ? 'smooth' : 'auto' });
+      // Only the visible slide's video plays; reduced-motion users get the poster.
+      slides.forEach((slide,i) => {
+        const video = slide.querySelector('video');
+        if (!video) return;
+        if (i === current && !reduced.matches) video.play().catch(() => {}); else video.pause();
+      });
+      schedule();
+    }
+    function setPaused(value: boolean) {
+      paused = value;
+      // The button holds both icons; the class decides which one shows.
+      plays.forEach(play => {
+        play.classList.toggle('is-paused', paused);
+        play.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
+      });
+      schedule();
+    }
+    selectors.forEach(button => button.addEventListener('click', () => { setPaused(true); show(Number(button.dataset.slideTo)); }));
+    reel.querySelectorAll('[data-reel-prev]').forEach(button => button.addEventListener('click', () => { setPaused(true); show(current - 1); }));
+    reel.querySelectorAll('[data-reel-next]').forEach(button => button.addEventListener('click', () => { setPaused(true); show(current + 1); }));
+    let pausedBeforePointer = paused;
+    plays.forEach(play => {
+      play.addEventListener('pointerdown', () => { pausedBeforePointer = paused; });
+      play.addEventListener('click', event => setPaused(event.detail > 0 ? !pausedBeforePointer : !paused));
+    });
+    // A swipe across the stage turns the reel (and pauses it, like a press
+    // does): a sideways travel of 40px or more, by touch or pen, that is not
+    // mostly vertical. The stage lets vertical pans through to the page.
+    let swipe: { id: number; x: number; y: number } | undefined;
+    stage.addEventListener('pointerdown', event => { if (event.pointerType !== 'mouse') swipe = { id: event.pointerId, x: event.clientX, y: event.clientY }; });
+    stage.addEventListener('pointerup', event => {
+      if (!swipe || event.pointerId !== swipe.id) return;
+      const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
+      swipe = undefined;
+      if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+      setPaused(true);
+      show(dx < 0 ? current + 1 : current - 1);
+    });
+    stage.addEventListener('pointercancel', () => { swipe = undefined; });
+    // A mouse crossing the reel does not touch the clock: the reel keeps its
+    // rhythm under a resting pointer. Only the open link holds it, so the
+    // project does not change under a cursor that is about to click. Mouse
+    // only: a tap must not leave the reel held.
+    if (matchMedia('(hover: hover)').matches) {
+      reel.querySelectorAll<HTMLElement>('.reel-open').forEach(link => {
+        link.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') hold(true); });
+        link.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') hold(false); });
+      });
+    }
+    // Keyboard interaction stops rotation until explicitly restarted.
+    reel.addEventListener('focusin', () => setPaused(true));
+    document.addEventListener('visibilitychange', schedule);
+    reduced.addEventListener('change', () => { if (reduced.matches) setPaused(true); });
+    reel.querySelectorAll<HTMLElement>('.instrument, .reel-chips').forEach(selector => { selector.hidden = slides.length < 2; });
+    root.style.setProperty('--reel-step', reel.style.getPropertyValue('--body-step'));
+
+    // The arc in pixels. The markup models the arc in a 1000 by 100 box that
+    // the SVG stretches to fit; here the same curve is drawn at the box's real
+    // size so the ticks keep their spacing, the sweep its length and the hand
+    // its motion path (--arc-d) whatever the width. --arc-len, the drawn
+    // length, lets the stylesheet place things along it in pixels. When the
+    // spacing between bodies is narrower than the widest title, only the
+    // active body is named (reel--tight), so neighbouring titles never touch.
+    const arc = reel.querySelector<HTMLElement>('.arc')!;
+    const line = arc.querySelector<SVGSVGElement>('.arc-line')!;
+    const paths = Array.from(line.querySelectorAll<SVGPathElement>('path'));
+    const share = (name: string) => parseFloat(reel!.style.getPropertyValue(name));
+    const arcEnd = share('--arc-end'), arcR = share('--arc-r'), stepShare = share('--body-step');
+    function measure() {
+      const w = arc.clientWidth, h = arc.clientHeight;
+      if (!w || !h) return;
+      const px = (n: number) => Number(n.toFixed(2));
+      const d = `M0 ${px(arcEnd * h)} A${px(arcR * w / 1000)} ${px(arcR * h / 100)} 0 0 0 ${w} ${px(arcEnd * h)}`;
+      line.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      paths.forEach(path => path.setAttribute('d', d));
+      reel!.style.setProperty('--arc-d', `"${d}"`);
+      reel!.style.setProperty('--arc-len', paths[0].getTotalLength().toFixed(1));
+      const widest = Math.max(0, ...titles.map(title => title.scrollWidth));
+      reel!.classList.toggle('reel--tight', slides.length > 1 && widest + 12 > stepShare * w);
+    }
+    measure();
+    if ('ResizeObserver' in window) new ResizeObserver(measure).observe(arc);
+    else addEventListener('resize', measure);
+    // Title widths change when the web font swaps in.
+    document.fonts?.ready.then(measure);
+
+    setPaused(paused);
+    show(current);
+    started = true;
+    // The arrival (see "Arrival" in portfolio.css): the head sets is-arriving
+    // before first paint. It comes off when the hand settles (on phones, where
+    // the arc is not shown, when the chip strip has come up), or at the first
+    // pointer or key on the instrument so a person is never made to wait; the
+    // hand then eases along the arc from wherever it was. Either way the
+    // sweep starts here.
+    const hand = reel.querySelector<HTMLElement>('.arc-hand');
+    // The last thing to settle: the hand where the arc is shown, else the stage controls.
+    const last = hand && getComputedStyle(hand).display !== 'none' ? hand : reel.querySelector<HTMLElement>('.stage-pause');
+    function arrive() {
+      if (!root.classList.contains('is-arriving')) return;
+      // A transition does not pick up where a cancelled animation left off, so
+      // the hand's place on the arc is held inline for one style pass and the
+      // transition to wherever the reel points starts from there.
+      if (hand) hand.style.setProperty('offset-distance', getComputedStyle(hand).getPropertyValue('offset-distance'));
+      root.classList.remove('is-arriving');
+      if (hand) { void hand.getBoundingClientRect(); hand.style.removeProperty('offset-distance'); }
+      schedule();
+    }
+    if (root.classList.contains('is-arriving')) {
+      last?.addEventListener('animationend', event => { if (event.target === last) arrive(); });
+      reel.addEventListener('pointerdown', arrive, { capture: true });
+      reel.addEventListener('keydown', arrive, { capture: true });
+      setTimeout(arrive, 1600);
+    }
+  }
+</script>

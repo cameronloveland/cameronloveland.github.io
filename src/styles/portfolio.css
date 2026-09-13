@@ -1,0 +1,2873 @@
+/* Design direction: docs/superpowers/specs/2026-09-12-award-gauntlet-design-direction.md
+   One family (Schibsted Grotesk, variable), brass on night, labels that carry
+   information. Tokens live in the two blocks below; nothing else declares a color. */
+
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src:
+    url("/fonts/schibsted-grotesk-latin.woff2") format("woff2") tech("variations"),
+    url("/fonts/schibsted-grotesk-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+/* ---------- Tokens: light theme (Daylight) ---------- */
+:root {
+  --bg: #f3f4fa;
+  --surface: #ffffff;
+  --surface-2: #e3e6f3;
+  --border: #d3d7e8;
+  --border-strong: #b4bad6;
+  --text: #151934;
+  --secondary: #414870;
+  --muted: #5b6284;
+  --accent: #855810;
+  --accent-fill: #e9bb5c;
+  --on-accent: #1a1400;
+  --signal: #0b6a84;
+  --signal-fill: #79d5ef;
+  /* Category colors, git-graph style: one per kind of project, used by its
+     rod, its lamp and the category word. Each reads as text on Daylight at
+     5.6:1 or better. Bronze stays with experiments, the instrument's metal. */
+  --cat-games: #b3266e;
+  --cat-web: #4b4fd6;
+  --cat-mobile: #1a6f4e;
+  --cat-experiments: #0b6a84;
+  /* Media overlays sit on project screenshots, which are dark in both themes,
+     so text on them uses the night text and the night category colors. */
+  --scrim: #0e1128;
+  --on-media: #eef0fb;
+  --media-cat-games: #f088b8;
+  --media-cat-web: #a3a6ff;
+  --media-cat-mobile: #62d5a0;
+  --media-cat-experiments: #79d5ef;
+  --shadow-ink: #151934;
+  --glow: color-mix(in srgb, var(--accent-fill) 10%, transparent);
+  --rim: transparent;
+  --shadow-card:
+    0 1px 2px color-mix(in srgb, var(--shadow-ink) 6%, transparent),
+    0 10px 28px color-mix(in srgb, var(--shadow-ink) 7%, transparent);
+  --shadow-card-hover:
+    0 2px 4px color-mix(in srgb, var(--shadow-ink) 8%, transparent),
+    0 18px 44px color-mix(in srgb, var(--shadow-ink) 12%, transparent);
+  --shadow-frame: 0 24px 64px color-mix(in srgb, var(--shadow-ink) 16%, transparent);
+  /* The fold: a daytime sky with ink-line rings, like an engraving plate. */
+  --sky-zenith: color-mix(in srgb, var(--signal-fill) 26%, var(--bg));
+  --star-alpha: 0;
+  --ring: color-mix(in srgb, var(--text) 54%, transparent);
+  --ring-faint: color-mix(in srgb, var(--text) 22%, transparent);
+  --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
+  --body-fill: var(--surface);
+
+  --font: "Schibsted Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-title: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
+  --text-display: clamp(2rem, 1.2rem + 3.2vw, 3.25rem);
+  --text-year: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+  --weight-body: 400;
+  --weight-ui: 500;
+  --weight-strong: 600;
+  --weight-heading: 700;
+  --weight-display: 700;
+  --track-display: -0.02em;
+  --track-title: -0.025em;
+  --track-heading: -0.02em;
+  --track-small: 0.005em;
+  --leading-display: 1;
+  --leading-title: 1.1;
+  --leading-body: 1.55;
+  --leading-small: 1.4;
+
+  --radius-frame: 24px;
+  --radius-card: 16px;
+  --radius-control: 12px;
+  --radius-tag: 6px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --header-h: 96px;
+  --site-pad: 64px;
+
+  /* Motion: two easings and three durations, used by everything that moves.
+     Out for anything that travels (hands, bodies, entering things), in-out for
+     anything that crossfades in place (slides, colors, the theme). */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-base: 300ms;
+  --dur-slow: 800ms;
+
+  color-scheme: light;
+}
+
+/* ---------- Tokens: dark theme (Night) ---------- */
+[data-theme="dark"] {
+  --bg: #0e1128;
+  --surface: #181c3a;
+  --surface-2: #242a55;
+  --border: #2e3462;
+  --border-strong: #414983;
+  --text: #eef0fb;
+  --secondary: #b6bad8;
+  --muted: #8d92b8;
+  --accent: #e9bb5c;
+  --accent-fill: #e9bb5c;
+  --on-accent: #1a1400;
+  --signal: #79d5ef;
+  --signal-fill: #79d5ef;
+  /* Category colors on Night: Rose, Periwinkle, Verdigris and Brass, each
+     7.9:1 or better as text on the ground and distinct at a 2px line. */
+  --cat-games: #f088b8;
+  --cat-web: #a3a6ff;
+  --cat-mobile: #62d5a0;
+  --cat-experiments: #79d5ef;
+  --media-cat-games: var(--cat-games);
+  --media-cat-web: var(--cat-web);
+  --media-cat-mobile: var(--cat-mobile);
+  --media-cat-experiments: var(--cat-experiments);
+  --shadow-ink: #05061a;
+  --glow: color-mix(in srgb, var(--accent-fill) 7%, transparent);
+  --rim: color-mix(in srgb, var(--text) 7%, transparent);
+  --shadow-card: 0 0 0 0 transparent;
+  --shadow-card-hover: 0 18px 44px color-mix(in srgb, var(--shadow-ink) 50%, transparent);
+  --shadow-frame: 0 28px 72px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+  /* The fold: night sky, brass rings. */
+  --sky-zenith: color-mix(in srgb, var(--shadow-ink) 45%, var(--bg));
+  --star-alpha: 1;
+  --ring: color-mix(in srgb, var(--accent) 52%, transparent);
+  --ring-faint: color-mix(in srgb, var(--accent) 20%, transparent);
+  --rim-light: color-mix(in srgb, var(--text) 22%, transparent);
+  --body-fill: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--border-strong) var(--bg);
+  scrollbar-width: thin;
+}
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-md);
+  font-weight: var(--weight-body);
+  line-height: var(--leading-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-heading);
+  line-height: var(--leading-title);
+  text-wrap: balance;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+button:disabled {
+  cursor: default;
+}
+/* One focus ring everywhere: brass, set off the shape it belongs to. Pills and
+   frames carry their own radius; a text link has none, so it takes the tag's. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.header-links a,
+.footer-links a,
+.project-links a,
+.project-more,
+.entry-open {
+  border-radius: var(--radius-tag);
+}
+/* One press everywhere: a pill or button sinks while held, a text link dips a
+   pixel. Each control lists transform in its own transition at the fast pace. */
+.mark:active,
+.theme-toggle:active,
+.reel-open:active,
+.terminal:active,
+.reel-pause:active,
+.category-filter button:active,
+.view-toggle button:active,
+.empty-state button:active {
+  transform: scale(0.96);
+}
+.header-links a:active,
+.footer-links a:active,
+.project-links a:active,
+.project-more:active,
+.entry-open:active {
+  transform: translateY(1px);
+}
+[hidden] {
+  display: none !important;
+}
+::selection {
+  background: var(--signal-fill);
+  color: var(--on-accent);
+}
+img,
+video {
+  max-width: 100%;
+}
+
+/* ---------- Shared pieces ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 10;
+  padding: 10px 16px;
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  font-weight: var(--weight-strong);
+  border-radius: var(--radius-pill);
+  transform: translateY(-150%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+.external-link-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+}
+.ui-icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+}
+/* Each project carries its category color as --cat, from the gallery card
+   and the timeline entry (data-project-category) and the legend swatch
+   (data-legend). Anything without one, like the hero readout, falls back to
+   brass. */
+[data-project-category="games"],
+[data-legend="games"] {
+  --cat: var(--cat-games);
+}
+[data-project-category="web"],
+[data-legend="web"] {
+  --cat: var(--cat-web);
+}
+[data-project-category="mobile-apps"],
+[data-legend="mobile-apps"] {
+  --cat: var(--cat-mobile);
+}
+[data-project-category="experiments"],
+[data-legend="experiments"] {
+  --cat: var(--cat-experiments);
+}
+/* Status: a filled lamp means you can use it now, a hollow lamp means it is
+   still being built. Both take the project's category color; in progress is
+   a state, not a color. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--secondary);
+  white-space: nowrap;
+}
+.status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cat, var(--accent));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cat, var(--accent)) 22%, transparent);
+}
+.status--progress::before {
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 1.5px var(--cat, var(--accent)),
+    0 0 0 3px color-mix(in srgb, var(--cat, var(--accent)) 22%, transparent);
+}
+.stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.stack-tags span {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-small);
+  letter-spacing: var(--track-small);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: var(--radius-tag);
+  padding: 3px 9px;
+}
+.stack-tags:empty {
+  display: none;
+}
+.project-links {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+}
+.project-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.project-links a:first-child {
+  color: var(--accent);
+}
+.project-links a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ---------- Frame and header ---------- */
+.site {
+  max-width: 1440px;
+  padding: 0 var(--site-pad);
+  margin: auto;
+}
+/* The header sits above the sky layer, which starts behind it. */
+.site-header-band {
+  position: relative;
+  z-index: 1;
+}
+.site-header {
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+/* The maker's mark and the wordmark: a dial with one body on it, the
+   instrument in miniature (see MakerMark.astro), then the name set the way
+   the footer sets it (light first name, heavy surname) over what the person
+   does. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.wordmark-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.wordmark-name span:first-child {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.wordmark-role {
+  font-size: var(--text-sm);
+  line-height: var(--leading-small);
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -8px;
+  color: var(--accent);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.mark svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+.mark-core,
+.mark-body {
+  fill: currentColor;
+  stroke: none;
+}
+/* The graduations: one per featured project, facing in like a gauge's. */
+.mark-tick {
+  stroke-linecap: round;
+}
+/* The mark is the instrument in miniature: its body turns about the ring's
+   centre by the share of the arc the hand has travelled (--reel-index and
+   --reel-step are set on the page by the carousel script), at the hand's
+   pace. Under reduced motion it is simply at its angle. */
+.mark-body {
+  transform: rotate(calc(var(--reel-index, 0) * var(--reel-step, 0) * 360deg));
+  transform-origin: 14px 14px;
+  transition: transform var(--dur-slow) var(--ease-in-out);
+}
+.mark:hover {
+  color: var(--text);
+}
+.header-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+}
+.header-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.header-links a:hover {
+  color: var(--accent);
+}
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 var(--rim);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.theme-toggle:hover {
+  border-color: var(--border-strong);
+  color: var(--accent);
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+.icon-sun,
+.icon-moon {
+  display: none;
+}
+[data-theme="dark"] .icon-moon {
+  display: block;
+}
+[data-theme="light"] .icon-sun {
+  display: block;
+}
+
+/* ---------- The fold: night sky ---------- */
+/* The hero is inside main; the sky reaches up behind the header so the fold
+   stays full-bleed. The meteor's travel is clipped here. */
+.fold {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+.sky {
+  position: absolute;
+  top: calc(-1 * var(--header-h));
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--sky-zenith), var(--bg));
+}
+.sky-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  opacity: var(--star-alpha);
+  /* The header band is clear sky: no star is painted in the top --header-h
+     plus 16px, so nothing lands beside the name; the field runs down behind
+     the stage and the instrument and only fades at the foot of the fold. */
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(var(--header-h) + 16px), var(--text) calc(var(--header-h) + 28px), var(--text) 86%, transparent);
+  mask-image: linear-gradient(180deg, transparent calc(var(--header-h) + 16px), var(--text) calc(var(--header-h) + 28px), var(--text) 86%, transparent);
+}
+.stars-far {
+  opacity: 0.38;
+}
+.stars-mid {
+  opacity: 0.62;
+}
+.stars-near {
+  opacity: 0.95;
+}
+/* Meteors, in the dark. Three of them, each on its own line and its own
+   clock: one through the clear band beside the name, one long fall from the
+   top right that shows in the gutter and dies behind the stage, and one low
+   across the instrument. Each travels head first along its own axis. Phones
+   have no clear band beside the name, so the sky stays still there. */
+.sky-meteor {
+  position: absolute;
+  width: 180px;
+  height: 1px;
+  opacity: 0;
+  transform-origin: 100% 50%;
+  background: linear-gradient(90deg, transparent, var(--text));
+  --meteor-angle: 160deg;
+  --meteor-run: 380px;
+}
+.sky-meteor--band {
+  top: 10px;
+  left: calc(50% + 120px);
+}
+.sky-meteor--long {
+  top: 24px;
+  left: calc(100% - 60px);
+  width: 260px;
+  --meteor-angle: 148deg;
+  --meteor-run: 720px;
+}
+.sky-meteor--low {
+  bottom: 96px;
+  left: 62%;
+  width: 220px;
+  --meteor-angle: 166deg;
+  --meteor-run: 520px;
+}
+@media (min-width: 721px) {
+  [data-theme="dark"] .sky-meteor--band {
+    animation: meteor 21s linear 5s infinite;
+  }
+  [data-theme="dark"] .sky-meteor--long {
+    animation: meteor 29s linear 13s infinite;
+  }
+  [data-theme="dark"] .sky-meteor--low {
+    animation: meteor 25s linear 19s infinite;
+  }
+}
+@keyframes meteor {
+  0% {
+    transform: rotate(var(--meteor-angle)) translateX(0);
+    opacity: 0;
+  }
+  0.8% {
+    opacity: 0.9;
+  }
+  4.5% {
+    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-run));
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-run));
+    opacity: 0;
+  }
+}
+
+/* ---------- Hero: the stage and the instrument ---------- */
+/* The featured project fills a wide stage. Under it sits the instrument, one
+   row: a shallow brass arc, engraved with ticks, that runs from the previous
+   terminal to the next and carries the bodies, one per project, with the hand
+   riding it to the active one. Every position is a share of the arc's width,
+   set in the markup (--body-a and --body-step for the hand and the majors,
+   --x and --y for each body), so the hand, the ticks and the bodies agree at
+   any width. --hand-x is the active body's share; the sweep runs from there
+   to the next body, or to the arc's end from the last one. */
+.hero {
+  --arc-h: 112px;
+  --terminal: 40px;
+  --hand-x: calc(var(--body-a, 0.5) + var(--reel-index, 0) * var(--body-step, 0));
+  --sweep-len: calc(min(var(--body-step, 1), 1 - var(--hand-x)) * var(--arc-len, 1000) * 1px);
+  padding: 12px 0 28px;
+}
+.stage {
+  position: relative;
+  aspect-ratio: 3 / 1;
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--scrim);
+  box-shadow: var(--shadow-frame);
+  transform: translateZ(0);
+  /* Text on the stage sits on the artwork, which is dark in both themes, so
+     the category colors here are the night set. */
+  --cat-games: var(--media-cat-games);
+  --cat-web: var(--media-cat-web);
+  --cat-mobile: var(--media-cat-mobile);
+  --cat-experiments: var(--media-cat-experiments);
+}
+/* The rim: a brass hairline just inside the edge, the glass of the instrument
+   in the same metal as the arc. It sits above the artwork and under nothing
+   a person presses. */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  z-index: 2;
+  border-radius: calc(var(--radius-frame) - 6px);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+}
+/* Turning the reel: the outgoing slide recedes (fades and draws back a touch)
+   under the incoming one, which lands at full size at once and then settles
+   from a slight zoom to rest over the length of its stay. The crossfade runs
+   at the base pace, in step with the caption, so image and text turn as one;
+   the hand's slide and the recede take the slow pace and finish after. */
+.reel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.96);
+  transition:
+    opacity var(--dur-base) var(--ease-in-out),
+    visibility var(--dur-base),
+    transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+.reel-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-duration: var(--dur-base), var(--dur-base), 0s;
+  transition-timing-function: var(--ease-out), linear, var(--ease-out);
+  pointer-events: auto;
+  z-index: 1;
+}
+.reel-slide > img,
+.reel-slide > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--fx, 50%) var(--fy, 44%);
+  display: block;
+  transform: scale(1.035);
+  transform-origin: var(--fx, 50%) var(--fy, 44%);
+  transition: transform calc(var(--dur-slow) * 8) var(--ease-out);
+}
+.reel-slide > video {
+  transform: none;
+  transition: none;
+}
+.reel-slide.is-active > img {
+  transform: scale(1);
+}
+/* A poster whose copy any crop would cut through (stageFit: contain in the
+   content) is shown whole, letterboxed over a blurred, darkened copy of
+   itself, so the bands read as the same artwork out of focus, not empty glass. */
+.reel-slide--contain::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background:
+    linear-gradient(color-mix(in srgb, var(--scrim) 40%, transparent), color-mix(in srgb, var(--scrim) 40%, transparent)),
+    var(--stage-image) center / cover no-repeat;
+  filter: blur(20px) saturate(1.4);
+}
+.reel-slide--contain > img,
+.reel-slide--contain > video {
+  object-fit: contain;
+}
+/* The scrim rises from the bottom edge so the caption reads on any artwork;
+   the top of the stage stays clear. */
+.stage-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    color-mix(in srgb, var(--scrim) 42%, transparent) 70%,
+    color-mix(in srgb, var(--scrim) 88%, transparent)
+  );
+}
+
+/* ---------- Hero: the caption on the stage ---------- */
+/* Bottom left, the kicker (category in its color, then the status lamp) and
+   the title as the display face; bottom right, the one thing to press. */
+.stage-caption {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 28px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: var(--space-5);
+  color: var(--on-media);
+}
+/* Every readout sits in the same grid cell, anchored to the bottom, so the
+   caption holds its place as the reel turns. */
+.reel-readouts {
+  display: grid;
+  align-items: end;
+  min-width: 0;
+}
+.reel-readout {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+.reel-readout.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+/* Turning the reel: the outgoing readout fades where it stands while the
+   incoming one fades in over it and settles up the last few pixels, so the
+   caption never sits empty. Only after the fade does the outgoing one hide and
+   drop back to its waiting offset. The first readout is simply there on load
+   (has-turned comes on with the first turn), and reduced motion swaps at once. */
+.has-turned .reel-readout {
+  transition:
+    opacity var(--dur-base) var(--ease-in-out),
+    visibility 0s linear var(--dur-base),
+    transform 0s linear var(--dur-base);
+}
+.has-turned .reel-readout.is-active {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    visibility 0s,
+    transform var(--dur-base) var(--ease-out);
+}
+.reel-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  color: color-mix(in srgb, var(--on-media) 82%, transparent);
+}
+.reel-category {
+  color: var(--cat, var(--accent));
+}
+.reel-kicker .status {
+  color: inherit;
+}
+.reel-readout h2 {
+  margin-top: var(--space-2);
+  font-size: var(--text-display);
+  font-weight: var(--weight-display);
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-display);
+  text-shadow: 0 2px 24px color-mix(in srgb, var(--scrim) 60%, transparent);
+}
+.reel-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.reel-open .external-link-icon {
+  opacity: 0.85;
+}
+.reel-open:hover {
+  background: color-mix(in srgb, var(--accent-fill) 86%, var(--on-media));
+}
+/* Brass on brass would hide the focus ring, so on the stage it is starlight. */
+.reel-open:focus-visible {
+  outline-color: var(--on-media);
+}
+/* The CTAs share one cell too, sized to the widest. The incoming pill fades
+   in on top of the outgoing one (same fill, so the pill itself never dims);
+   the outgoing hides after. */
+.reel-cta {
+  display: grid;
+  flex-shrink: 0;
+}
+.reel-cta .reel-open {
+  grid-area: 1 / 1;
+  justify-content: center;
+}
+.reel-open:not(.is-active) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.reel-open.is-active {
+  position: relative;
+  z-index: 1;
+}
+.has-turned .reel-open {
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    opacity 0s linear var(--dur-base),
+    visibility 0s linear var(--dur-base);
+}
+.has-turned .reel-open.is-active {
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out),
+    visibility 0s;
+}
+
+/* ---------- Hero: the instrument ---------- */
+/* One row: the previous terminal, the arc, the next terminal, then pause at
+   its side. The terminals sit exactly at the arc's two ends, centred on its
+   height there, so the arc runs from one to the other. Phones show none of
+   this; their selector and stage buttons (see "Responsive") stay out of the
+   way, and out of the accessibility tree, everywhere else. */
+.instrument {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+.reel-chip-thumb {
+  object-fit: cover;
+}
+.stage-nav,
+.reel-chips {
+  display: none;
+}
+.terminal,
+.reel-pause {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: var(--terminal);
+  height: var(--terminal);
+  margin-top: calc(var(--arc-end, 0.18) * var(--arc-h) - var(--terminal) / 2);
+  border: 1px solid var(--ring-faint);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--secondary);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.terminal:hover,
+.reel-pause:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* Pause is the one control that is not part of the arc: a bare icon at the
+   right terminal's side that takes its ring on hover. */
+.reel-pause {
+  margin-left: var(--space-2);
+  border-color: transparent;
+  color: var(--muted);
+}
+[data-reel-play] .icon-play,
+[data-reel-play] .icon-pause {
+  fill: currentColor;
+  stroke: none;
+}
+[data-reel-play] .icon-play,
+[data-reel-play].is-paused .icon-pause {
+  display: none;
+}
+[data-reel-play].is-paused .icon-play {
+  display: block;
+}
+/* The arc: one shallow orbit, drawn edge to edge of its box. The box is a
+   size container so titles can be capped at the spacing between bodies. */
+.arc {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: var(--arc-h);
+  container-type: inline-size;
+}
+.arc-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+}
+.ring {
+  stroke: var(--ring);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+/* The engraving: three more copies of the arc. A wide, finely dashed stroke
+   reads as ticks standing on the line, normal to the curve; each copy is
+   lifted by half its width so its ticks rise from the line toward the stage.
+   Minors every eight pixels; a heavier major at each body, set along the
+   drawn length (--arc-len, from the script) at the bodies' spacing. */
+.arc-ticks,
+.arc-majors {
+  stroke-linecap: butt;
+}
+.arc-ticks {
+  stroke: var(--ring-faint);
+  stroke-width: 5;
+  stroke-dasharray: 1 7;
+  transform: translateY(-2.5px);
+}
+.arc-majors {
+  stroke: var(--ring);
+  stroke-width: 14;
+  stroke-dasharray: 1.5px calc(var(--body-step, 1) * var(--arc-len, 1000) * 1px - 1.5px);
+  stroke-dashoffset: calc(0.75px - var(--body-a, 0.5) * var(--arc-len, 1000) * 1px);
+  transform: translateY(-7px);
+}
+/* The slide timer's sweep: a brass length of the arc that draws from the
+   active body toward the next one (or the arc's end, from the last body)
+   over the slide's stay. One dash, starting at the hand's place. */
+.arc-sweep {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-dasharray: 0px calc(var(--arc-len, 1000) * 1px);
+  stroke-dashoffset: calc(-1 * var(--hand-x) * var(--arc-len, 1000) * 1px);
+}
+.is-playing .arc-sweep {
+  animation: reel-sweep var(--reel-delay, 6.5s) linear forwards;
+}
+/* Held (the pointer is on the open link): the sweep stops where it is, as the clock does. */
+.is-held .arc-sweep,
+.is-held .reel-chip[aria-pressed="true"]::before {
+  animation-play-state: paused;
+}
+@keyframes reel-sweep {
+  from {
+    stroke-dasharray: 0px calc(var(--arc-len, 1000) * 1px);
+  }
+  to {
+    stroke-dasharray: var(--sweep-len) calc(var(--arc-len, 1000) * 1px);
+  }
+}
+/* The hand: a small brass pointer that rides the arc to the active body,
+   standing off the line so it clears the body and its glow, and turning with
+   the curve so it always points straight in at the line. */
+.arc-hand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 8px;
+  pointer-events: none;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  offset-path: path(var(--arc-d));
+  offset-distance: calc(var(--hand-x) * 100%);
+  offset-anchor: 50% 100%;
+  offset-rotate: auto;
+  transform-origin: 50% 100%;
+  transform: translateY(-15px);
+  transition: offset-distance var(--dur-slow) var(--ease-in-out);
+}
+.arc-bodies {
+  position: absolute;
+  inset: 0;
+}
+/* A body sits on the arc at its share of the width, title and category
+   beneath it, each capped at the spacing so neighbours never touch. */
+.orbit-body {
+  position: absolute;
+  left: var(--x);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -7px);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(var(--body-step) * 100cqw - 12px);
+  padding: 0 4px 4px;
+  border: 0;
+  background: none;
+  color: var(--secondary);
+  text-align: center;
+  white-space: nowrap;
+  border-radius: var(--radius-tag);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.orbit-body::before {
+  content: "";
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring);
+  background: var(--body-fill);
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.orbit-body-title {
+  display: block;
+  /* Only the body rides the curve: the title drops by however far its body
+     sits above the arc's lowest point, so every title shares one baseline. */
+  margin-top: calc((var(--arc-dip, 0.52) * 100 - var(--y)) * var(--arc-h) / 100);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  line-height: 1.25;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.orbit-body-meta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: -6px;
+  font-size: var(--text-xs);
+  line-height: var(--leading-small);
+  letter-spacing: var(--track-small);
+  color: var(--muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+/* Hover: the body catches light and its title brightens and lifts. */
+.orbit-body:hover {
+  color: var(--text);
+}
+.orbit-body:hover::before {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-fill) 20%, transparent);
+  transform: scale(1.2);
+}
+.orbit-body:hover .orbit-body-title {
+  transform: translateY(-1px);
+}
+.orbit-body:hover .orbit-body-meta {
+  color: var(--secondary);
+}
+/* Press: the body sinks and takes on brass. */
+.orbit-body:active::before {
+  background: color-mix(in srgb, var(--accent-fill) 50%, var(--body-fill));
+  border-color: var(--accent-fill);
+  transform: scale(0.9);
+}
+.orbit-body[aria-pressed="true"] {
+  color: var(--text);
+}
+.orbit-body[aria-pressed="true"]::before,
+.orbit-body[aria-pressed="true"]:hover::before {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-fill) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--accent-fill) 55%, transparent);
+}
+.orbit-body:focus-visible {
+  outline-offset: 2px;
+}
+.orbit-body[aria-pressed="true"] .orbit-body-meta {
+  color: var(--accent);
+}
+/* A crowded arc (more than seven bodies) names only the active body and its
+   two neighbours, and an arc whose spacing is narrower than its widest title
+   (reel--tight, measured by the script) names only the active body, which
+   then takes its full width. The others keep their names for screen readers. */
+.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-title,
+.reel--dense .orbit-body:not([aria-pressed="true"]):not(.is-near) .orbit-body-meta,
+.reel--tight .orbit-body:not([aria-pressed="true"]) .orbit-body-title,
+.reel--tight .orbit-body:not([aria-pressed="true"]) .orbit-body-meta {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.reel--tight .orbit-body[aria-pressed="true"] {
+  max-width: none;
+}
+
+/* ---------- Arrival: the instrument winds up ---------- */
+/* The one moment on first paint belongs to the instrument. The stage settles
+   in from a touch small, the arc draws itself from the previous terminal to
+   the next, its ticks come up, the bodies take their places in order, the
+   hand travels along the arc from its left end to the first body, and the
+   terminals come up last. Only transform, opacity, the hand's place on the
+   path and the arc's dash move. The html class is set in the head before
+   first paint and taken off by the carousel script once the hand settles, or
+   at the first pointer or key on the instrument; only then does the slide
+   timer's sweep begin. Under reduced motion the class is never set. Timing,
+   from first paint: stage 0 to 600, arc 140 to 940, ticks 600 to 900, bodies
+   from 300 at 90 apart, hand 300 to 1100, terminals from 750. On phones the
+   chip strip comes up at 300 and the stage buttons at 750. */
+.is-arriving .stage {
+  animation: stage-settle calc(var(--dur-slow) * 0.75) var(--ease-out) both;
+}
+.is-arriving .arc-path {
+  stroke-dasharray: 1;
+  animation: arc-draw var(--dur-slow) var(--ease-out) var(--dur-fast) both;
+}
+.is-arriving .arc-ticks,
+.is-arriving .arc-majors {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-slow) * 0.75) both;
+}
+.is-arriving .arc-hand {
+  animation: hand-set var(--dur-slow) var(--ease-in-out) var(--dur-base) both;
+}
+.is-arriving .orbit-body {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 90ms) both;
+}
+.is-arriving .orbit-body::before {
+  animation: body-place var(--dur-base) var(--ease-out) calc(var(--dur-base) + var(--turn, 0) * 90ms) both;
+}
+.is-arriving .terminal,
+.is-arriving .reel-pause,
+.is-arriving .stage-nav button {
+  animation: body-arrive var(--dur-base) var(--ease-out) calc(var(--dur-base) + 5 * 90ms) both;
+}
+.is-arriving .reel-chips {
+  animation: body-arrive var(--dur-base) var(--ease-out) var(--dur-base) both;
+}
+.orbit-body:nth-child(2) {
+  --turn: 1;
+}
+.orbit-body:nth-child(3) {
+  --turn: 2;
+}
+.orbit-body:nth-child(4) {
+  --turn: 3;
+}
+.orbit-body:nth-child(5) {
+  --turn: 4;
+}
+.orbit-body:nth-child(n + 6) {
+  --turn: 5;
+}
+@keyframes stage-settle {
+  from {
+    opacity: 0;
+    transform: translateZ(0) scale(0.985);
+  }
+}
+@keyframes arc-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hand-set {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+@keyframes body-arrive {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes body-place {
+  from {
+    transform: scale(0);
+  }
+}
+
+
+/* ---------- Work heading and toolbar ---------- */
+.work-area {
+  padding-top: var(--space-6);
+  scroll-margin-top: var(--space-5);
+}
+.work-heading {
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+.collection-title {
+  font-size: var(--text-title);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-title);
+  line-height: var(--leading-title);
+}
+.work-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: 25px 0 34px;
+  /* Its own group in a view transition, so its labels never crossfade with the page (see the view transitions block). */
+  view-transition-name: toolbar;
+}
+/* Category filter: a row of ring pills in the hero's control language. The
+   pressed one is lit brass, the way the active body on the arc is. */
+.category-filter {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.category-filter button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--ring-faint);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.category-filter button span {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.category-filter button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.category-filter button:hover span {
+  color: var(--accent);
+}
+.category-filter button[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent-fill) 14%, transparent);
+}
+.category-filter button[aria-pressed="true"] span {
+  color: var(--accent);
+}
+/* View toggle: one grouped control; the pressed segment is filled brass like
+   the hero's project pill. */
+.view-toggle {
+  display: flex;
+  flex-shrink: 0;
+  border: 1px solid var(--ring-faint);
+  padding: 4px;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 var(--rim);
+}
+.view-toggle button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  color: var(--secondary);
+  border: 0;
+  padding: 8px 14px;
+  min-height: 40px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  border-radius: calc(var(--radius-control) - 4px);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.view-toggle svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.view-toggle button:hover {
+  color: var(--accent);
+}
+.view-toggle button[aria-pressed="true"] {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+}
+.view-toggle button[aria-pressed="true"]:hover {
+  color: var(--on-accent);
+}
+
+/* ---------- Gallery ---------- */
+/* Five cards in two rows: a wide lead with a square companion beside it, then
+   three across. Roles follow the visible order, so a filtered set composes the
+   same way (two cards make a lead and companion; one card turns sideways).
+   Each card subgrids its media and body onto the row's tracks, so media edges
+   and body tops line up across a row without fixed heights. */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-7) var(--space-5);
+  view-transition-name: gallery;
+}
+/* Each card carries a stable view-transition-name (card-<id>, set in the
+   markup) so a filter moves it to its new slot instead of redrawing it. */
+.project-card {
+  position: relative;
+  grid-column: span 4;
+  grid-row: span 2;
+  display: grid;
+  grid-template-rows: subgrid;
+  row-gap: 20px;
+  min-width: 0;
+  border-radius: var(--radius-card);
+  view-transition-class: card;
+}
+.project-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--scrim);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.project-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50% 40%);
+}
+/* The warm wash: brass light falling in from the top of the frame, held back
+   until the card is hovered. */
+.project-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-fill) 22%, transparent), transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+/* The rim light: brass catching light along the top edge (dark theme only). */
+.project-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 var(--rim);
+  pointer-events: none;
+  transition: box-shadow var(--dur-base) var(--ease-out);
+}
+/* Strength Path's artwork is a poster with a headline beside the phone; a
+   landscape crop would cut the headline, so the gallery zooms to the phone,
+   held high enough that its header stays in frame. */
+.project-strength-path .project-media img {
+  object-position: 100% 50%;
+  transform: scale(1.7);
+  transform-origin: 108% 30%;
+}
+.image-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-heading);
+  color: var(--accent-fill);
+  padding: var(--space-6);
+  text-align: center;
+}
+.project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  padding: 0 2px;
+}
+/* Reading order: what kind of thing and whether it is live, its name, then
+   what it does. The kicker is the hero readout's kicker, one size down. */
+.project-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-small);
+  color: var(--muted);
+}
+.project-kicker .status {
+  color: inherit;
+}
+/* The category word speaks in its category's color, the same one its lamp
+   and its timeline rod use, so the gallery and the timeline share a language. */
+.project-kicker > span:first-child,
+.entry-kicker > span:first-child {
+  color: var(--cat, inherit);
+}
+.project-copy h3 {
+  margin-top: var(--space-2);
+  font-size: var(--text-xl);
+  letter-spacing: var(--track-title);
+  line-height: 1.15;
+}
+.project-copy > p:last-child {
+  margin-top: var(--space-3);
+  color: var(--secondary);
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+/* The plate: the facts engraved in two aligned columns, one label per fact.
+   Rows only exist where the data does, so an in-progress project reads as
+   exactly that. Languages carry their GitHub colors as a lamp beside the name. */
+.project-plate {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  column-gap: var(--space-4);
+  row-gap: 7px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-small);
+  letter-spacing: var(--track-small);
+}
+.project-plate dt {
+  color: var(--muted);
+}
+.project-plate dd {
+  color: var(--secondary);
+  min-width: 0;
+  text-wrap: pretty;
+}
+.project-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.project-lang + .project-lang {
+  margin-left: var(--space-4);
+}
+.project-lang::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lang-color, var(--muted));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 14%, transparent);
+}
+/* Actions: the open pill is the one way in; it stretches over the whole card
+   so the screenshot and title open the project too. Other links float above it. */
+.project-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.project-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.project-open .external-link-icon {
+  opacity: 0.85;
+}
+.project-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--radius-card);
+}
+.project-open:focus-visible {
+  border-radius: var(--radius-pill);
+  outline-offset: 3px;
+}
+.project-more {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 2px;
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.project-more:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+/* The one response: the pill fills brass and the media frame warms (its edge
+   turns brass, a glow rings it, light falls in from the top), whether the
+   pointer is anywhere on the card or the pill has focus. The image itself
+   never scales. */
+.project-open:hover,
+.project-open:focus-visible {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  border-color: var(--accent-fill);
+}
+.project-card:has(.project-open:hover) .project-media,
+.project-card:has(.project-open:focus-visible) .project-media {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 5px var(--glow),
+    var(--shadow-card-hover);
+}
+.project-card:has(.project-open:hover) .project-media::before,
+.project-card:has(.project-open:focus-visible) .project-media::before {
+  opacity: 1;
+}
+.project-card:has(.project-open:hover) .project-media::after,
+.project-card:has(.project-open:focus-visible) .project-media::after {
+  box-shadow: inset 0 1px 0 var(--rim-light);
+}
+/* Pressing: the frame sinks and the pill darkens. The pill itself never takes
+   a transform, because its stretched hit area is positioned by the card. */
+.project-open:active {
+  background: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+  border-color: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+}
+.project-card:has(.project-open:active) .project-media {
+  transform: scale(0.985);
+}
+
+/* Desktop composition: lead (8 of 12) and a companion that stretches to the
+   lead's media height, so the pair reads as one wide and one square. */
+@media (min-width: 1101px) {
+  .project-card:nth-child(1 of :not([hidden])) {
+    grid-column: span 8;
+  }
+  .project-card:nth-child(1 of :not([hidden])) .project-media {
+    aspect-ratio: 2 / 1;
+  }
+  .project-card:nth-child(1 of :not([hidden])) .project-copy h3 {
+    font-size: var(--text-title);
+  }
+  /* The lead has room for its plate beside the copy; its actions sit on the
+     row's bottom edge, level with the companion's. */
+  .project-card:nth-child(1 of :not([hidden])):not(:nth-last-child(1 of :not([hidden]))) .project-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.62fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--space-7);
+    align-items: start;
+  }
+  .project-card:nth-child(1 of :not([hidden])):not(:nth-last-child(1 of :not([hidden]))) .project-plate {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .project-card:nth-child(1 of :not([hidden])):not(:nth-last-child(1 of :not([hidden]))) .project-actions {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+  }
+  .project-card:nth-child(2 of :not([hidden])) .project-media {
+    aspect-ratio: auto;
+    align-self: stretch;
+  }
+}
+/* Tablet composition: the lead turns sideways across the row, the rest pair up. */
+@media (max-width: 1100px) {
+  .project-card {
+    grid-column: span 6;
+  }
+}
+@media (min-width: 721px) and (max-width: 1100px) {
+  .project-card:nth-child(1 of :not([hidden])):not(:nth-last-child(2 of :not([hidden]))) {
+    grid-column: 1 / -1;
+    grid-row: span 1;
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--space-6);
+    align-items: stretch;
+  }
+  .project-card:nth-child(1 of :not([hidden])):not(:nth-last-child(2 of :not([hidden]))) .project-media {
+    aspect-ratio: auto;
+    min-height: 320px;
+  }
+}
+/* A lone card (one project in the chosen category) turns sideways at any width
+   above phones so it does not sit in a slot cut for a row. */
+@media (min-width: 721px) {
+  .project-card:nth-child(1 of :not([hidden])):nth-last-child(1 of :not([hidden])) {
+    grid-column: 1 / -1;
+    grid-row: span 1;
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--space-7);
+    align-items: stretch;
+  }
+  .project-card:nth-child(1 of :not([hidden])):nth-last-child(1 of :not([hidden])) .project-media {
+    aspect-ratio: auto;
+    min-height: 360px;
+  }
+}
+
+/* ---------- Timeline: the calendar scale ---------- */
+/* One grid row per month, oldest at the top, so time runs down the page and
+   every rod grows toward the Now line at the foot. The ticks column is the
+   bezel's scale laid flat: a tick per month, a longer brass tick and a numeral
+   where a year begins. Every month is the same height, so rod lengths read
+   month for month. Each project is a body at its start month and a rod to
+   the month it was last updated (dashed through the current month into Now
+   while it is still in progress), in its category's color. Every project has
+   its own lane, oldest start leftmost, like branches in a git graph, so rods
+   never overlap; the lanes are thin so a dozen still fit beside the ledger.
+   The entries are the engraved legend beside the scale, in columns that line
+   up like the card plate; the scale carries the imagery. */
+.project-timeline {
+  view-transition-name: timeline;
+}
+.timeline-intro {
+  margin: 8px 0 20px;
+  font-size: var(--text-md);
+  color: var(--secondary);
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+/* The legend names the four category colors once, in the label rhythm of the
+   plate. It is a hint beside the scale, not a control: the filter row above
+   already filters, so nothing here is pressable. */
+.timeline-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--secondary);
+}
+.timeline-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+/* The swatch is the mark in miniature: a body on its rod, in the category
+   color, so the legend and the scale are drawn with the same pen. */
+.legend-rod {
+  position: relative;
+  flex-shrink: 0;
+  width: 22px;
+  height: 2px;
+  margin-left: 4px;
+  border-radius: 1px;
+  background: var(--cat);
+}
+.legend-rod::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cat);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cat) 22%, transparent);
+  transform: translateY(-50%);
+}
+.timeline-scale {
+  --month-h: 36px;
+  --year-w: 155px;
+  --ticks-w: 72px;
+  --lane-w: 22px;
+  --rod-w: 2px;
+  --body: 12px;
+  --tick-inset: 22px;
+  display: grid;
+  grid-template-columns:
+    var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), var(--lane-w)) max-content
+    minmax(0, 1fr) max-content;
+  grid-template-rows: repeat(var(--rows), var(--month-h));
+  padding-bottom: 44px;
+}
+/* The scale itself: spine, ticks, numerals, and the Now line. All of it is
+   decoration for the eye; the entries carry every date for the ear. */
+.scale-spine {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  justify-self: end;
+  width: 1px;
+  background: var(--ring-faint);
+}
+.scale-tick {
+  position: relative;
+  grid-column: 2;
+  grid-row: var(--row);
+  padding: 5px var(--tick-inset) 0 0;
+  text-align: right;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--muted);
+  pointer-events: none;
+}
+.scale-tick::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 1px;
+  background: var(--ring);
+}
+.scale-tick--major {
+  color: var(--secondary);
+}
+.scale-tick--major::before {
+  top: -1px;
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+}
+.scale-year {
+  grid-column: 1;
+  grid-row: var(--row);
+  margin-top: -0.1em;
+  font-size: var(--text-year);
+  font-weight: var(--weight-display);
+  letter-spacing: -0.04em;
+  line-height: var(--leading-display);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.scale-now {
+  position: relative;
+  grid-column: 2 / -4;
+  grid-row: var(--rows);
+  align-self: end;
+  height: 0;
+  pointer-events: none;
+}
+.scale-now::before {
+  content: "";
+  position: absolute;
+  left: var(--ticks-w);
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: var(--accent);
+}
+.scale-now-hand {
+  position: absolute;
+  left: calc(var(--ticks-w) - 9px);
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  fill: var(--accent);
+}
+.scale-now > span {
+  position: absolute;
+  top: 6px;
+  right: calc(100% - var(--ticks-w) + var(--tick-inset));
+  font-size: var(--text-xs);
+  font-weight: var(--weight-strong);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--accent);
+}
+/* Entries share the scale's rows and columns through subgrid, so a rod lands
+   on its months and the text lands in the ledger columns without any math in
+   the markup beyond row numbers. The list item itself is inert; only the rod
+   and the text answer the pointer, so empty scale never lights an entry.
+   A label takes a window of two months (three where the entry stacks), the
+   pitch; a label whose month is still inside the window above sits that many
+   months down its rod (--k, worked out in the markup), so consecutive labels
+   keep one rhythm whether or not they share a start month. */
+.timeline-entries {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+}
+.timeline-entry {
+  --rod-color: var(--cat, var(--accent));
+  --k: var(--kn, 0);
+  --stack-y: calc(var(--k) * var(--month-h));
+  grid-column: 1 / -1;
+  grid-row: var(--r0) / var(--r1);
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  pointer-events: none;
+}
+/* The wash covers the rod's own lane and its months only (from just above
+   the body to just past the end cap), never the lane beside it. */
+.entry-band {
+  grid-column: calc(3 + var(--lane));
+  grid-row: 1 / span var(--rod-rows);
+  margin: -12px -2px calc(var(--month-h) / 2 - 8px);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--rod-color) 11%, transparent);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.timeline-entry--progress .entry-band {
+  margin-bottom: 0;
+}
+.entry-rod {
+  position: relative;
+  grid-column: calc(3 + var(--lane));
+  grid-row: 1 / span var(--rod-rows);
+  pointer-events: auto;
+}
+/* A rod reaches the middle of its last month: updated sometime that month, so
+   a project that ends in September and one that starts in October never fuse
+   into one bar when they share a lane. */
+.entry-rod::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: calc(var(--month-h) / 2);
+  width: var(--rod-w);
+  margin-left: calc(var(--rod-w) / -2);
+  border-radius: calc(var(--rod-w) / 2);
+  background: var(--rod-color);
+  transition:
+    width var(--dur-fast) var(--ease-out),
+    margin-left var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+/* The body: the project on its orbit, sitting on the month it began. */
+.entry-rod::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--body);
+  height: var(--body);
+  border-radius: 50%;
+  background: var(--rod-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rod-color) 22%, transparent);
+  transform: translate(-50%, -50%);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+/* A live rod ends with a cap on its last month. An in-progress rod has no
+   cap: its metal runs solid up to the current month, then dashed through it
+   into the Now line, the stretch that is still being laid. In progress is a
+   state of the rod, not a color of its own. */
+.entry-rod-end {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--month-h) / 2 - 1px);
+  width: 10px;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--rod-color);
+}
+.timeline-entry--progress .entry-rod::before {
+  bottom: var(--month-h);
+}
+.timeline-entry--progress .entry-rod-end {
+  bottom: 0;
+  width: var(--rod-w);
+  height: var(--month-h);
+  background: repeating-linear-gradient(to bottom, transparent 0 4px, var(--rod-color) 4px 8px);
+  transition: width var(--dur-fast) var(--ease-out);
+}
+/* When a label sits below its start month, a spur ties it back to the metal:
+   a branch in the rod's own colour and weight, so there is no doubt which rod
+   the label belongs to. It shows only while the label is displaced (a label
+   may be displaced at one width and on its month at another). */
+.entry-spur {
+  position: relative;
+  grid-column: calc(3 + var(--lane)) / -4;
+  grid-row: 1;
+  opacity: min(1, var(--k));
+}
+.entry-spur::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--stack-y) + 1px);
+  left: 50%;
+  right: calc(var(--space-2) - var(--space-6));
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rod-color);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+/* Whatever the filter hides, the first entry left has nothing above it, so
+   its label returns to its start month and the spur goes. */
+.timeline-entry:nth-child(1 of :not([hidden])) {
+  --k: 0;
+}
+.entry-text {
+  display: contents;
+}
+.entry-name,
+.entry-when,
+.entry-open {
+  grid-row: 1;
+  align-self: start;
+  pointer-events: auto;
+}
+.entry-name {
+  grid-column: -4 / -3;
+  min-width: 0;
+  margin-top: calc(var(--stack-y) - 10px);
+  padding: 0 var(--space-5) 0 var(--space-6);
+}
+.entry-name h3 {
+  font-size: var(--text-lg);
+  letter-spacing: var(--track-heading);
+  line-height: 1.15;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.entry-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--muted);
+}
+.entry-kicker .status {
+  color: inherit;
+}
+.entry-when {
+  grid-column: -3 / -2;
+  min-width: 0;
+  margin-top: calc(var(--stack-y) - 9px);
+  padding-right: var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+  line-height: 1.5;
+  color: var(--secondary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.entry-range {
+  display: block;
+}
+.entry-note {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--muted);
+}
+.entry-open {
+  grid-column: -2 / -1;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: calc(var(--stack-y) - 20px);
+  padding: 0 2px;
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.entry-open .external-link-icon {
+  opacity: 0.85;
+}
+/* The one response: pointer or focus on either end lights both. The rod's
+   months wash its category color on the scale, the rod thickens and the body
+   catches light, and the dates read in full ink, so the scale and the ledger
+   point at each other. */
+.timeline-entry:is(:hover, :focus-within) {
+  --rod-w: 3px;
+}
+.timeline-entry:is(:hover, :focus-within) .entry-band {
+  opacity: 1;
+}
+.timeline-entry:is(:hover, :focus-within) .entry-rod::before {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rod-color) 22%, transparent);
+}
+.timeline-entry:is(:hover, :focus-within) .entry-rod::after {
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--rod-color) 25%, transparent),
+    0 0 18px color-mix(in srgb, var(--rod-color) 55%, transparent);
+}
+.timeline-entry:is(:hover, :focus-within) .entry-spur::before {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rod-color) 22%, transparent);
+}
+.timeline-entry:is(:hover, :focus-within) .entry-name h3 {
+  transform: translateX(2px);
+}
+.timeline-entry:is(:hover, :focus-within) .entry-when {
+  color: var(--text);
+}
+.timeline-entry:is(:hover, :focus-within) .entry-open {
+  text-decoration: underline;
+}
+
+/* ---------- Empty state, notes, footer ---------- */
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-card);
+  padding: 64px 24px;
+  text-align: center;
+}
+.empty-state h3 {
+  font-size: var(--text-title);
+  letter-spacing: var(--track-title);
+  margin: 8px 0;
+}
+.empty-state p {
+  color: var(--secondary);
+  max-width: 48ch;
+  margin: auto;
+}
+.empty-state button {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 11px 20px;
+  margin-top: var(--space-5);
+  font-weight: var(--weight-strong);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.empty-state button:hover {
+  background: color-mix(in srgb, var(--accent-fill) 86%, var(--text));
+}
+.no-script-note {
+  color: var(--muted);
+  margin-top: var(--space-5);
+}
+
+/* ---------- Footer: sinking back into the sky ---------- */
+/* One object on the gallery's column lines. The band deepens from the page
+   ground to the fold's zenith, so the page ends in the sky it began in. Left, the maker's mark and the name set the way the hero sets it (light
+   first name, heavy surname); right, the links in two labelled rows, then what
+   the site is made of. */
+.site-footer {
+  margin-top: var(--space-9);
+  background: linear-gradient(180deg, var(--bg), var(--sky-zenith));
+  padding: var(--space-6) 0 var(--space-8);
+  color: var(--secondary);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-7) var(--space-5);
+  align-items: start;
+}
+.footer-signature {
+  grid-column: span 4;
+  grid-row: 1 / span 2;
+}
+.footer-wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text);
+}
+.footer-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.25;
+  color: var(--accent);
+}
+.footer-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--track-heading);
+  line-height: 1.2;
+}
+.footer-name span:first-child {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.footer-role {
+  margin-top: var(--space-3);
+  max-width: 30ch;
+  text-wrap: pretty;
+}
+.footer-links {
+  grid-column: 5 / -1;
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-ui);
+}
+.footer-links-label {
+  color: var(--muted);
+  line-height: 44px;
+}
+.footer-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
+  list-style: none;
+  padding: 0;
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--text);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.footer-links a:hover {
+  color: var(--accent);
+}
+.footer-links a .ui-icon {
+  width: 15px;
+  height: 15px;
+}
+.footer-colophon {
+  grid-column: 5 / -1;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+.footer-copyright {
+  grid-column: 5 / -1;
+  margin-top: calc(-1 * var(--space-5));
+  font-size: var(--text-xs);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-small);
+  line-height: var(--leading-small);
+  color: var(--muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  :root {
+    --site-pad: 36px;
+  }
+  .work-toolbar {
+    flex-wrap: wrap;
+  }
+  .timeline-scale {
+    --year-w: 110px;
+    --ticks-w: 64px;
+  }
+  /* Tablet: the signature keeps 5 columns and the links take the rest. */
+  .footer-signature {
+    grid-column: span 5;
+  }
+  .footer-links,
+  .footer-colophon,
+  .footer-copyright {
+    grid-column: 6 / -1;
+  }
+}
+/* Body titles drop a size before the spacing between five bodies gets
+   narrower than the widest of them, so all five stay named as far down as
+   the arc allows; past that the script names only the active one. */
+@media (max-width: 1170px) {
+  .orbit-body-title {
+    font-size: var(--text-xs);
+  }
+}
+/* Tablet: the stage grows taller and the arc a touch shallower. */
+@media (max-width: 1040px) {
+  .hero {
+    --arc-h: 104px;
+    padding-bottom: 32px;
+  }
+  .stage {
+    aspect-ratio: 2 / 1;
+  }
+  .stage-caption {
+    left: 26px;
+    right: 26px;
+    bottom: 24px;
+  }
+}
+/* Below the ledger width the entry stacks into one text column beside the
+   scale, so the label window grows to three months (--kn-sm, worked out in
+   the markup) and the last label may run a way past the last month. The two
+   trailing columns collapse to keep subgrid lines in step with the wide
+   layout. */
+@media (max-width: 960px) {
+  .timeline-scale {
+    --month-h: 38px;
+    grid-template-columns:
+      var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), var(--lane-w)) minmax(0, 1fr) 0 0;
+    padding-bottom: calc(var(--month-h) + 32px);
+  }
+  .timeline-entry {
+    --k: var(--kn-sm, 0);
+  }
+  .entry-text {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-3);
+    align-items: end;
+    align-self: start;
+    grid-column: -4 / -1;
+    grid-row: 1;
+    min-width: 0;
+    margin-top: calc(var(--stack-y) - 10px);
+    padding-left: var(--space-6);
+  }
+  .entry-name,
+  .entry-when,
+  .entry-open {
+    grid-row: auto;
+    margin-top: 0;
+    padding: 0;
+  }
+  .entry-name {
+    grid-column: 1 / -1;
+  }
+  .entry-when {
+    grid-column: 1;
+    margin-top: 6px;
+  }
+  /* The action sits beside the dates, its baseline on the note line; the
+     44px target reaches up beside the range line where nothing else sits. */
+  .entry-open {
+    grid-column: 2;
+    align-self: end;
+    margin-bottom: -13px;
+  }
+}
+@media (max-width: 720px) {
+  :root {
+    --header-h: 88px;
+    --site-pad: 22px;
+  }
+  /* Phones: the name sits on one line beside the mark and the links (which
+     drop their new-tab glyphs to make the room), folding to two only where
+     even that is too wide, and the role line takes its own line under all
+     three, on the column's left edge. The band may grow rather than cut
+     anything off on the narrowest screens. */
+  .site-header {
+    height: auto;
+    min-height: var(--header-h);
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 2px var(--space-2);
+  }
+  .header-links {
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+  }
+  .header-links .external-link-icon {
+    display: none;
+  }
+  .brand,
+  .wordmark {
+    display: contents;
+  }
+  .wordmark-name {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: var(--text-md);
+  }
+  .wordmark-role {
+    flex-basis: 100%;
+    order: 1;
+    font-size: var(--text-xs);
+  }
+  .work-heading {
+    padding-top: 25px;
+    align-items: center;
+  }
+  /* Phones: the filter is one row that scrolls sideways to the page edges and
+     snaps pill by pill (counts drop; the pressed pill says which is on), with
+     the view switch as a full-width segmented control beneath it. The row
+     carries its own vertical room so focus rings are not clipped by the scroll box. */
+  .work-toolbar {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: 12px 0 24px;
+  }
+  .category-filter {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    margin: -6px calc(-1 * var(--site-pad));
+    padding: 6px var(--site-pad);
+    /* The row runs off the right edge on purpose; a fade there says so. */
+    -webkit-mask-image: linear-gradient(90deg, var(--text) calc(100% - 40px), transparent);
+    mask-image: linear-gradient(90deg, var(--text) calc(100% - 40px), transparent);
+  }
+  .category-filter::-webkit-scrollbar {
+    display: none;
+  }
+  .category-filter button,
+  .view-toggle button {
+    min-height: 44px;
+  }
+  .category-filter button {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    scroll-snap-align: start;
+    scroll-margin-left: var(--site-pad);
+  }
+  .category-filter button span {
+    display: none;
+  }
+  .view-toggle button {
+    flex: 1;
+    justify-content: center;
+  }
+  /* Phones: one column, every card the same shape, media cut to 3:2. */
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+  .project-card {
+    grid-column: 1;
+    row-gap: 18px;
+  }
+  .project-media {
+    aspect-ratio: 3 / 2;
+  }
+  .project-body {
+    gap: 18px;
+  }
+  .project-plate {
+    grid-template-columns: 5rem minmax(0, 1fr);
+  }
+  .timeline-intro {
+    margin-bottom: 16px;
+  }
+  .timeline-legend {
+    margin-bottom: 28px;
+    gap: 6px 18px;
+  }
+  /* Phones: the year column folds into the ticks column (the numeral sits
+     under the month label where a year begins) and the scale hugs the left
+     edge; lanes and bodies shrink to match. Past a handful of lanes the
+     lanes give first, down to 10px each, before the text column narrows. */
+  .timeline-scale {
+    --month-h: 44px;
+    --year-w: 0px;
+    --ticks-w: 54px;
+    --lane-w: 14px;
+    --rod-w: 2px;
+    --body: 10px;
+    --tick-inset: 16px;
+    grid-template-columns:
+      var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), minmax(10px, var(--lane-w))) minmax(150px, 1fr) 0 0;
+  }
+  .scale-year {
+    grid-column: 2;
+    margin-top: 0;
+    padding: 24px var(--tick-inset) 0 0;
+    text-align: right;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-strong);
+    letter-spacing: var(--track-small);
+    line-height: var(--leading-small);
+    color: var(--secondary);
+  }
+  .entry-band {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .entry-text {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: var(--space-4);
+  }
+  .entry-name h3 {
+    font-size: 1.125rem;
+  }
+  .entry-when,
+  .entry-open {
+    grid-column: 1;
+  }
+  /* Three-month label windows at the shorter month, so the block is held tight. */
+  .entry-when {
+    margin-top: 4px;
+  }
+  .entry-open {
+    justify-self: start;
+    margin: -10px 0 -14px;
+  }
+  .entry-spur::before {
+    right: calc(var(--space-2) - var(--space-4));
+  }
+  /* Phones: the footer stacks into one column on the left edge. */
+  .footer-signature,
+  .footer-links,
+  .footer-colophon,
+  .footer-copyright {
+    grid-column: 1 / -1;
+  }
+  .footer-signature {
+    grid-row: auto;
+  }
+  .site-footer {
+    margin-top: var(--space-8);
+    padding: var(--space-5) 0 var(--space-7);
+  }
+  .footer-grid {
+    row-gap: var(--space-6);
+  }
+  .footer-links {
+    grid-template-columns: 6rem minmax(0, 1fr);
+  }
+  /* Each labelled row stacks its links, one 44px line each, so nothing wraps alone. */
+  .footer-links ul {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+/* Phones: the arc is not practical this narrow, so the instrument stays
+   above 720px and phones get their own selector. The stage turns to 4:3
+   with the title smaller over it and the pill beneath it, previous and next
+   sit on the stage at mid height with pause in its top right corner (all
+   translucent glass on the artwork, brass while pressed), and the stage
+   takes a swipe. Under the stage, the only thing there, a strip of chips
+   scrolls sideways to the page edges and snaps chip by chip: each is the
+   project's thumbnail, title and category in its colour; the active one
+   takes the brass ring and carries the slide timer as a brass line along
+   its top edge. */
+@media (max-width: 720px) {
+  .hero {
+    padding: 8px 0 16px;
+  }
+  .instrument {
+    display: none;
+  }
+  .stage {
+    aspect-ratio: 4 / 3;
+    touch-action: pan-y;
+  }
+  .stage-caption {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .reel-kicker {
+    font-size: var(--text-xs);
+    gap: 10px;
+  }
+  .reel-readout h2 {
+    font-size: 1.625rem;
+    text-wrap: pretty;
+  }
+  .reel-open {
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: var(--text-xs);
+  }
+  /* The step buttons sit at the middle of the clear band above the caption,
+     so they never cross the kicker or the title. */
+  .stage-nav {
+    display: contents;
+  }
+  .stage-nav button {
+    position: absolute;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--on-media) 22%, transparent);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--scrim) 55%, transparent);
+    color: var(--on-media);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .stage-step {
+    top: 38%;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+  .stage-step--prev {
+    left: 10px;
+  }
+  .stage-step--next {
+    right: 10px;
+  }
+  .stage-pause {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  .stage-pause svg {
+    width: 16px;
+    height: 16px;
+  }
+  .stage-nav button:active {
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    color: var(--on-accent);
+  }
+  .reel-chips {
+    position: relative;
+    display: flex;
+    gap: var(--space-2);
+    margin: 12px calc(-1 * var(--site-pad)) 0;
+    /* Side padding of half the strip less half a chip, so the first and last
+       chips can sit at the centre (the strip is the column plus its gutters). */
+    padding: 6px calc((100% + 2 * var(--site-pad)) / 2 - 124px) 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* Both edges fade: the strip scrolls either way and the active chip sits mid-way. */
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--text) 32px, var(--text) calc(100% - 32px), transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--text) 32px, var(--text) calc(100% - 32px), transparent);
+  }
+  .reel-chips::-webkit-scrollbar {
+    display: none;
+  }
+  .reel-chip {
+    position: relative;
+    flex: 0 0 248px;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    box-shadow: inset 0 1px 0 var(--rim);
+    color: var(--text);
+    text-align: left;
+    overflow: hidden;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  .reel-chip:active {
+    transform: scale(0.98);
+  }
+  .reel-chip:focus-visible {
+    outline-offset: 2px;
+  }
+  .reel-chip[aria-pressed="true"] {
+    border-color: var(--accent-fill);
+    box-shadow:
+      inset 0 1px 0 var(--rim),
+      0 0 0 3px color-mix(in srgb, var(--accent-fill) 22%, transparent);
+  }
+  /* The slide timer: a brass line that runs the top edge of the active chip
+     over the slide's stay. Under reduced motion it is simply not there. */
+  .reel-chip::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .is-playing .reel-chip[aria-pressed="true"]::before {
+    animation: chip-sweep var(--reel-delay, 6.5s) linear forwards;
+  }
+  .reel-chip-thumb {
+    flex-shrink: 0;
+    width: 56px;
+    height: 36px;
+    border-radius: var(--radius-tag);
+    object-position: var(--fx, 50%) var(--fy, 44%);
+    background: var(--scrim);
+  }
+  .reel-chip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .reel-chip-title,
+  .reel-chip-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-xs);
+    line-height: 1.3;
+  }
+  .reel-chip-title {
+    font-weight: var(--weight-strong);
+  }
+  .reel-chip-meta {
+    font-weight: var(--weight-ui);
+    letter-spacing: var(--track-small);
+    color: var(--cat, var(--accent));
+  }
+  /* Touch targets: the theme toggle grows to the 44px minimum too. */
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
+  }
+}
+@keyframes chip-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (max-width: 420px) {
+  :root {
+    --site-pad: 16px;
+  }
+  .wordmark-name {
+    font-size: var(--text-sm);
+  }
+  .header-links {
+    gap: 10px;
+  }
+}
+
+/* ---------- View transitions: answering a click ---------- */
+/* Switching view, filtering and changing theme run through the View
+   Transitions API where the browser has it; the scripts fall back to a plain
+   update elsewhere. The page crossfades underneath in the base duration. What
+   goes clears first (two thirds of the base), what arrives starts a third in,
+   so a frame mid-way shows one thing, not two half-things: a card that goes
+   recedes, a card that arrives settles in, a panel sinks away and rises into
+   place. A card that stays glides to its new slot: its snapshots keep the
+   size they were taken at, pinned to the slot's top-left corner, so the
+   group's change of shape never scales or re-crops them mid-flight (only the
+   glide shows), and the old one clears in half the time so a single image
+   travels. */
+::view-transition-group(*) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-old(.card),
+::view-transition-new(.card) {
+  inline-size: auto;
+  block-size: auto;
+  inset-inline-start: 0;
+}
+::view-transition-old(.card) {
+  animation-duration: calc(var(--dur-base) / 2);
+}
+/* A card that glides travels above one that goes: the script marks a leaving
+   card before its old state is captured, and its group sits under the rest. */
+.project-card.is-leaving {
+  view-transition-class: card leaving;
+}
+::view-transition-group(.card) {
+  z-index: 1;
+}
+::view-transition-group(.leaving) {
+  z-index: 0;
+}
+/* The toolbar is its own group and never crossfades: its old snapshot is not
+   shown and its new one is live, so the pressed pill and segment change on
+   the page itself and their labels never dip. */
+::view-transition-group(toolbar),
+::view-transition-new(toolbar) {
+  animation: none;
+}
+::view-transition-old(toolbar) {
+  display: none;
+}
+::view-transition-old(.card):only-child {
+  animation: vt-recede calc(var(--dur-base) * 2 / 3) var(--ease-in-out) both;
+}
+::view-transition-new(.card):only-child {
+  animation: vt-settle var(--dur-base) var(--ease-out) calc(var(--dur-base) / 3) both;
+}
+::view-transition-old(gallery):only-child,
+::view-transition-old(timeline):only-child {
+  animation: vt-sink calc(var(--dur-base) * 2 / 3) var(--ease-in-out) both;
+}
+::view-transition-new(gallery):only-child,
+::view-transition-new(timeline):only-child {
+  animation: vt-rise var(--dur-base) var(--ease-out) calc(var(--dur-base) / 3) both;
+}
+@keyframes vt-recede {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes vt-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes vt-sink {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+/* Every state is instant: no arrival, no sweep, no crossfades, no transitions.
+   The scripts also skip the View Transitions API and never set is-arriving. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .reel-slide,
+  .reel-slide > img,
+  .reel-slide > video {
+    transform: none;
+  }
+}
