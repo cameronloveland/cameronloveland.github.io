@@ -190,6 +190,8 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       root.style.setProperty('--reel-index', String(current));
       // The mark's bead flares as the hand lands (see .mark-halo-far): the
       // class is dropped and put back so every landing flares, not only the first.
+      // An ordinary turn also ends a reset's blue (see the mark below).
+      root.classList.remove('is-reel-reset');
       if (started) { root.classList.remove('is-reel-turned'); void root.offsetWidth; root.classList.add('is-reel-turned'); }
       root.style.setProperty('--mark-turn', String(lap + current * step()));
       // On phones the active chip is brought to the centre of its strip. The
@@ -217,6 +219,32 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
     selectors.forEach(button => button.addEventListener('click', () => { setPaused(true); show(Number(button.dataset.slideTo)); }));
     reel.querySelectorAll('[data-reel-prev]').forEach(button => button.addEventListener('click', () => { setPaused(true); show(current - 1); }));
     reel.querySelectorAll('[data-reel-next]').forEach(button => button.addEventListener('click', () => { setPaused(true); show(current + 1); }));
+    // The maker's mark in the header is the reel's reset: a press rewinds to
+    // the first project (the lap count goes back too, so the mark's hand
+    // unwinds rather than crossing the gap) and starts the reel again, lit
+    // Ion for that landing (see .is-reel-reset). While the pointer rests on
+    // it the page carries is-mark-hot and the meters light up to say what it
+    // does. It is the home link as well, so the page still goes to the top.
+    const mark = document.querySelector<HTMLElement>('a.mark');
+    if (mark) {
+      // Pointer and focus each keep their own flag, so a mouse passing over
+      // a focused mark does not put its light out on the way off.
+      let hovered = false, focused = false;
+      const hot = () => root.classList.toggle('is-mark-hot', hovered || focused);
+      mark.addEventListener('pointerenter', () => { hovered = true; hot(); });
+      mark.addEventListener('pointerleave', () => { hovered = false; hot(); });
+      mark.addEventListener('focus', () => { focused = true; hot(); });
+      mark.addEventListener('blur', () => { focused = false; hot(); });
+      mark.addEventListener('click', event => {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: reduced.matches ? 'auto' : 'smooth' });
+        lap = 0;
+        current = 0;
+        setPaused(reduced.matches);
+        show(0);
+        root.classList.add('is-reel-reset');
+      });
+    }
     let pausedBeforePointer = paused;
     plays.forEach(play => {
       play.addEventListener('pointerdown', () => { pausedBeforePointer = paused; });
