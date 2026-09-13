@@ -30,7 +30,7 @@ const entries = sorted.map((project, lane) => {
   return { project, start, end, lane, row: start - firstMonth + 1, rodRows: monthsInclusive(start, end), label: 0, labelSm: 0 };
 });
 const lanes = entries.length;
-const categories = ['games', 'web', 'mobile-apps', 'experiments'] as const;
+const categories = ['games', 'web', 'mobile-apps', 'experiments', 'prototypes'] as const;
 
 // Every month row is the same height, so the scale stays one scale. A label
 // needs a window of whole months: two on wide screens, three on narrow ones

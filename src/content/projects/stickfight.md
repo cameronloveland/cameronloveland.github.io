@@ -1,7 +1,7 @@
 ---
 title: "Stickfight"
 description: "Two-player stick fight over WebRTC, built to prove one thing: an authoritative multiplayer architecture where the host authority can later move from a browser peer to a dedicated server without rewriting the simulation or renderer. The networking boundary is the deliverable."
-section: "games"
+section: "prototypes"
 startDate: 2026-08-16
 updatedDate: 2026-09-05
 unpublished: true

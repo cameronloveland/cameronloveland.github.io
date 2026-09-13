@@ -31,10 +31,10 @@ anything visual; it is the contract every visual change is judged against.
 
 Each project is a markdown file with frontmatter validated against the schema in
 `src/content/config.ts`: `title`, `description`, `section`
-(`web` | `games` | `mobile-apps` | `experiments`), `startDate`, `updatedDate`
+(`web` | `games` | `mobile-apps` | `experiments` | `prototypes`), `startDate`, `updatedDate`
 (optional), `links` (label/href/primary; the primary link's wording comes from the
 section via `src/utils/linkLabel.ts`: Play now, Open website, Visit website, Open
-project), `languages` (name/color, following GitHub's linguist colors), `stack`,
+project, Try it), `languages` (name/color, following GitHub's linguist colors), `stack`,
 `commits` (optional), `image` (optional, WebP under `public/images/`), `stageImage`
 (optional, a different picture for the wide hero stage), `imageFocus` (optional
 object-position pair for the crop), `stageFit` (`cover` | `contain`), `video`
@@ -75,8 +75,8 @@ main slot and the footer.
 ## Styling (`src/styles/portfolio.css`)
 
 - One stylesheet. Tokens for both themes sit at the top: colors (`:root` is the light
-  "Daylight" theme, `[data-theme="dark"]` is "Night"), the four category colors
-  (`--cat-games`, `--cat-web`, `--cat-mobile`, `--cat-experiments`), type scale,
+  "Daylight" theme, `[data-theme="dark"]` is "Night"), the five category colors
+  (`--cat-games`, `--cat-web`, `--cat-mobile`, `--cat-experiments`, `--cat-prototypes`), type scale,
   weights, radius scale (24 / 16 / 12 / 6 / pill), spacing and motion tokens
   (`--dur-fast/base/slow`, `--ease-out`, `--ease-in-out`). Nothing outside the token
   blocks declares a color.
