@@ -57,7 +57,7 @@
   --shadow-frame: 0 24px 64px color-mix(in srgb, var(--shadow-ink) 16%, transparent);
   /* The fold: a daytime sky with ink-line rings, like an engraving plate. */
   --sky-zenith: color-mix(in srgb, var(--signal-fill) 26%, var(--bg));
-  --star-alpha: 0.16;
+  --star-alpha: 0;
   --ring: color-mix(in srgb, var(--text) 54%, transparent);
   --ring-faint: color-mix(in srgb, var(--text) 22%, transparent);
   --rim-light: color-mix(in srgb, var(--surface) 85%, transparent);
@@ -649,7 +649,7 @@ video {
   --terminal: 40px;
   --hand-x: calc(var(--body-a, 0.5) + var(--reel-index, 0) * var(--body-step, 0));
   --sweep-len: calc(min(var(--body-step, 1), 1 - var(--hand-x)) * var(--arc-len, 1000) * 1px);
-  padding: 12px 0 40px;
+  padding: 12px 0 64px;
 }
 .stage {
   position: relative;
@@ -666,6 +666,18 @@ video {
   --cat-web: var(--media-cat-web);
   --cat-mobile: var(--media-cat-mobile);
   --cat-experiments: var(--media-cat-experiments);
+}
+/* The rim: a brass hairline just inside the edge, the glass of the instrument
+   in the same metal as the arc. It sits above the artwork and under nothing
+   a person presses. */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  z-index: 2;
+  border-radius: calc(var(--radius-frame) - 6px);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
 }
 /* Turning the reel: the outgoing slide recedes (fades and draws back a touch)
    under the incoming one, which lands at full size at once and then settles
@@ -1062,6 +1074,9 @@ video {
 }
 .orbit-body-title {
   display: block;
+  /* Only the body rides the curve: the title drops by however far its body
+     sits above the arc's lowest point, so every title shares one baseline. */
+  margin-top: calc((var(--arc-dip, 0.52) * 100 - var(--y)) * var(--arc-h) / 100);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1232,7 +1247,7 @@ video {
 
 /* ---------- Work heading and toolbar ---------- */
 .work-area {
-  padding-top: var(--space-5);
+  padding-top: var(--space-8);
   scroll-margin-top: var(--space-5);
 }
 .work-heading {
