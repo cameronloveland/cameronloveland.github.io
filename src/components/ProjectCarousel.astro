@@ -120,6 +120,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
     function schedule() {
       clearTimeout(timer);
       reel!.classList.remove('is-playing');
+      root.classList.remove('is-reel-playing');
       // The sweep waits for the arrival (the instrument winding up) to finish.
       if (paused || document.hidden || slides.length < 2 || root.classList.contains('is-arriving')) return;
       // Restart the sweep along the arc with the slide timer.
@@ -131,6 +132,10 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       const delay = video ? Math.round(video.duration * 1000) + 300 : 6500;
       reel!.style.setProperty('--reel-delay', `${delay}ms`);
       reel!.classList.add('is-playing');
+      // The maker's mark keeps the same time (see .mark-sweep), so the page
+      // carries the delay and the playing state too.
+      root.style.setProperty('--reel-delay', `${delay}ms`);
+      root.classList.add('is-reel-playing');
       remaining = delay;
       if (!held) arm(remaining);
     }
@@ -140,10 +145,15 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       if (held === value) return;
       held = value;
       reel!.classList.toggle('is-held', held);
+      root.classList.toggle('is-reel-held', held);
       if (!reel!.classList.contains('is-playing')) return;
       if (held) { clearTimeout(timer); remaining = Math.max(0, due - performance.now()); } else arm(remaining);
     }
+    // The maker's mark's needle counts laps, so that going on from the last
+    // project it turns the short way round to the first rather than unwinding.
+    let lap = 0;
     function show(index: number) {
+      if (index >= slides.length) lap += 1; else if (index < 0) lap -= 1;
       current = (index + slides.length) % slides.length;
       slides.forEach((slide,i) => {
         slide.classList.toggle('is-active', i === current);
@@ -170,6 +180,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       // index is set on the page as well as the reel.
       reel!.style.setProperty('--reel-index', String(current));
       root.style.setProperty('--reel-index', String(current));
+      root.style.setProperty('--mark-turn', String(lap + current * Number(reel!.style.getPropertyValue('--body-step') || 0)));
       // On phones the active chip is brought to the centre of its strip. The
       // strip scrolls itself rather than the page, so a turn never moves the
       // page under a reader who has scrolled on.
