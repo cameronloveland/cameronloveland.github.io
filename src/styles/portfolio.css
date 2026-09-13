@@ -2010,7 +2010,7 @@ video {
    decoration for the eye; the entries carry every date for the ear. */
 .scale-spine {
   grid-column: 2;
-  grid-row: 1 / -1;
+  grid-row: 1 / span var(--now-row, var(--rows));
   justify-self: end;
   width: 1px;
   background: var(--ring-faint);
@@ -2060,7 +2060,7 @@ video {
 .scale-now {
   position: relative;
   grid-column: 2 / -4;
-  grid-row: var(--rows);
+  grid-row: var(--now-row, var(--rows));
   align-self: end;
   height: 0;
   pointer-events: none;
@@ -2114,6 +2114,8 @@ video {
   --rod-color: var(--cat, var(--accent));
   --k: var(--kn, 0);
   --stack-y: calc(var(--k) * var(--month-h));
+  /* Where the metal ends, measured from the start month: the middle of the last month, or the Now line while in progress. */
+  --rod-end: calc(var(--rod-rows) * var(--month-h) - var(--month-h) / 2);
   grid-column: 1 / -1;
   grid-row: var(--r0) / var(--r1);
   display: grid;
@@ -2192,6 +2194,9 @@ video {
 .timeline-entry--progress .entry-rod::before {
   bottom: var(--month-h);
 }
+.timeline-entry--progress {
+  --rod-end: calc(var(--rod-rows) * var(--month-h));
+}
 .timeline-entry--progress .entry-rod-end {
   bottom: 0;
   width: var(--rod-w);
@@ -2213,12 +2218,28 @@ video {
   content: "";
   position: absolute;
   top: calc(var(--stack-y) + 1px);
-  left: 50%;
+  left: calc(var(--lane-w) / 2);
   right: calc(var(--space-2) - var(--space-6));
   height: 2px;
   border-radius: 1px;
   background: var(--rod-color);
   transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+/* A label pushed past the end of its rod (the list can run on below Now when
+   several projects start in the same months) gets a trace: a dotted leg in
+   the rod's colour, down the rod's own lane from where the metal ends to the
+   spur, so the eye can follow the label back to its place on the scale. It
+   has no height while the spur still meets the rod. */
+.entry-spur::after {
+  content: "";
+  position: absolute;
+  top: var(--rod-end);
+  left: calc(var(--lane-w) / 2);
+  width: var(--rod-w);
+  height: max(0px, calc(var(--stack-y) + 2px - var(--rod-end)));
+  margin-left: calc(var(--rod-w) / -2);
+  background: repeating-linear-gradient(to bottom, var(--rod-color) 0 2px, transparent 2px 6px);
+  opacity: 0.75;
 }
 /* Whatever the filter hides, the first entry left has nothing above it, so
    its label returns to its start month and the spur goes. */
@@ -2525,6 +2546,7 @@ video {
     --month-h: 38px;
     grid-template-columns:
       var(--year-w) var(--ticks-w) repeat(var(--lanes, 1), var(--lane-w)) minmax(0, 1fr) 0 0;
+    grid-template-rows: repeat(var(--rows-sm, var(--rows)), var(--month-h));
     padding-bottom: calc(var(--month-h) + 32px);
   }
   .timeline-entry {

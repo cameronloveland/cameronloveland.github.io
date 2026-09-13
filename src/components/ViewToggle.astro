@@ -20,6 +20,19 @@
         if (!panel.hidden && !project.hidden) count++;
       });
     });
+    // The timeline grid carries spare rows for labels that cascade past Now;
+    // trim them to what the entries still showing need, never below the months.
+    const scale = document.querySelector<HTMLElement>('.timeline-scale');
+    if (scale) {
+      const months = Number(scale.dataset.months);
+      let wide = months, narrow = months;
+      scale.querySelectorAll<HTMLElement>('.timeline-entry:not([hidden])').forEach(entry => {
+        wide = Math.max(wide, Number(entry.dataset.need));
+        narrow = Math.max(narrow, Number(entry.dataset.needSm));
+      });
+      scale.style.setProperty('--rows', String(wide));
+      scale.style.setProperty('--rows-sm', String(narrow));
+    }
     viewButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
     categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === category)));
     const empty = document.querySelector<HTMLElement>('.empty-state');
