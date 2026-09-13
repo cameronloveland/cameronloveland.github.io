@@ -1,6 +1,6 @@
 # cameronloveland.github.io
 
-Personal project showcase: side projects, shipped and experimental. An Astro static site hosted
+Personal project showcase: side projects, prototypes and experiments. An Astro static site hosted
 on GitHub Pages, with no client framework and no tracking.
 
 ## Local preview

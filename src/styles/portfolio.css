@@ -611,8 +611,8 @@ video {
   100% { opacity: 0; transform: scale(1.8); }
 }
 /* The sparks: gone until the reel turns; then, out of the flash, each mote
-   leaps from the bead, arcs up and falls, dimming as it goes, one smooth
-   flight. They wait for the hand to settle so they never ride the turning
+   is thrown off the bead and falls, drifting a little sideways and slowing
+   as it goes, as sparks come off a wheel, dimming as it goes. They wait for the hand to settle so they never ride the turning
    group. The orbit turns with the rete so the motes start at the bead; the
    inner group turns back so they fall down the page. Every landing throws
    them again (is-reel-turned is dropped and put back by the carousel
@@ -643,17 +643,18 @@ video {
   animation: mark-spark 2.8s linear 1;
   animation-delay: calc(var(--dur-slow) + var(--sd, 0s));
 }
-/* One parabola, sampled evenly so the flight is continuous: up fast, over
-   the top, then down and away, the light going out over the last third. */
+/* One fall, sampled evenly so it is continuous: the mote leaves fast and
+   sideways, the drift dies off under friction while the drop gathers pace,
+   and the light goes out over the last third. */
 @keyframes mark-spark {
   0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
-  6% { transform: translate(calc(var(--sx) * 0.18px), -2.4px) scale(1); opacity: 1; }
-  15% { transform: translate(calc(var(--sx) * 0.34px), -3.2px) scale(1); opacity: 1; }
-  25% { transform: translate(calc(var(--sx) * 0.48px), -2.6px) scale(0.95); opacity: 1; }
-  40% { transform: translate(calc(var(--sx) * 0.64px), calc(var(--sy) * 0.08px)) scale(0.9); opacity: 1; }
-  55% { transform: translate(calc(var(--sx) * 0.77px), calc(var(--sy) * 0.3px)) scale(0.8); opacity: 0.95; }
-  70% { transform: translate(calc(var(--sx) * 0.87px), calc(var(--sy) * 0.55px)) scale(0.7); opacity: 0.75; }
-  85% { transform: translate(calc(var(--sx) * 0.95px), calc(var(--sy) * 0.78px)) scale(0.55); opacity: 0.4; }
+  6% { transform: translate(calc(var(--sx) * 0.3px), calc(var(--sy) * 0.02px)) scale(1); opacity: 1; }
+  15% { transform: translate(calc(var(--sx) * 0.55px), calc(var(--sy) * 0.07px)) scale(1); opacity: 1; }
+  25% { transform: translate(calc(var(--sx) * 0.72px), calc(var(--sy) * 0.15px)) scale(0.95); opacity: 1; }
+  40% { transform: translate(calc(var(--sx) * 0.86px), calc(var(--sy) * 0.3px)) scale(0.9); opacity: 1; }
+  55% { transform: translate(calc(var(--sx) * 0.94px), calc(var(--sy) * 0.47px)) scale(0.8); opacity: 0.95; }
+  70% { transform: translate(calc(var(--sx) * 0.98px), calc(var(--sy) * 0.65px)) scale(0.7); opacity: 0.75; }
+  85% { transform: translate(calc(var(--sx) * 1px), calc(var(--sy) * 0.83px)) scale(0.55); opacity: 0.4; }
   100% { transform: translate(calc(var(--sx) * 1px), calc(var(--sy) * 1px)) scale(0.4); opacity: 0; }
 }
 @keyframes mark-flare {
@@ -705,6 +706,54 @@ video {
 }
 .mark:hover {
   color: var(--text);
+}
+/* The mark is the reel's control as well as its clock: while the pointer is
+   on it (or it has focus) every meter the reel keeps, the mark's own band,
+   the arc's sweep and the phone chips' line, lights Ion, so the connection
+   shows before anything is pressed. The carousel script puts is-mark-hot
+   on the page for it. */
+.mark-sweep,
+.arc-sweep {
+  transition: stroke var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out);
+}
+.is-mark-hot .mark-sweep,
+.is-mark-hot .arc-sweep {
+  stroke: var(--signal-fill);
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--signal-fill) 80%, transparent)) drop-shadow(0 0 5px color-mix(in srgb, var(--signal-fill) 45%, transparent));
+}
+.is-mark-hot .mark-track {
+  stroke: var(--signal-fill);
+  opacity: 0.35;
+}
+/* Pressed, the mark rewinds the reel to the first project and starts it
+   again: the hand unwinds, the meter empties, and for that landing the
+   light is Ion, the halo, the flash, the sparks and a glow on the whole
+   dial, so a reset reads as a different thing from a turn. The class stays
+   until the next turn; the glow itself runs once and settles. */
+.is-reel-reset .mark svg {
+  animation: mark-reset 1.6s var(--ease-out) 1;
+}
+.is-reel-reset .mark-halo,
+.is-reel-reset .mark-halo-far {
+  fill: color-mix(in srgb, var(--signal-fill) 22%, transparent);
+}
+.is-reel-reset .mark-flash {
+  fill: color-mix(in srgb, white 70%, var(--signal-fill));
+  filter: drop-shadow(0 0 2px white) drop-shadow(0 0 4px var(--signal-fill));
+}
+.is-reel-reset .mark-spark {
+  fill: color-mix(in srgb, var(--signal-fill) 75%, white);
+}
+.is-reel-reset .mark-sparks {
+  filter: drop-shadow(0 0 1.5px color-mix(in srgb, var(--signal-fill) 80%, transparent));
+}
+[data-theme="dark"].is-reel-reset .mark-sparks {
+  filter: drop-shadow(0 0 1px white) drop-shadow(0 0 2.5px var(--signal-fill));
+}
+@keyframes mark-reset {
+  0% { filter: drop-shadow(0 0 0 transparent); }
+  25% { filter: drop-shadow(0 0 3px var(--signal-fill)) drop-shadow(0 0 9px color-mix(in srgb, var(--signal-fill) 60%, transparent)); }
+  100% { filter: drop-shadow(0 0 0 transparent); }
 }
 .header-links {
   display: flex;
@@ -2940,6 +2989,10 @@ video {
   }
   .is-playing .reel-chip[aria-pressed="true"]::before {
     animation: chip-sweep var(--reel-delay, 6.5s) linear forwards;
+  }
+  .is-mark-hot .reel-chip::before {
+    background: var(--signal-fill);
+    box-shadow: 0 0 4px color-mix(in srgb, var(--signal-fill) 70%, transparent);
   }
   .reel-chip-thumb {
     flex-shrink: 0;
