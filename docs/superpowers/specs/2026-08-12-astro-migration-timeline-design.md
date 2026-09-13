@@ -1,4 +1,4 @@
-# Astro migration + dev timeline — design
+# Astro migration + dev timeline - design
 
 ## Context
 
@@ -18,24 +18,23 @@ Astro is a good fit for GitHub Pages: its default `output: "static"`
 mode produces pre-rendered HTML/CSS/JS with no server required, which is
 all GitHub Pages can serve anyway. Because this repo is the special
 `<username>.github.io` "user site" repo, the site deploys at the domain
-root — no `base` path config needed, same URL structure as today.
+root - no `base` path config needed, same URL structure as today.
 
-Astro does **not** meaningfully change the site's styling capability —
-the point of migrating is componentization and structured content, not
+Astro does **not** meaningfully change the site's styling capability - the point of migrating is componentization and structured content, not
 CSS. `style.css` ports over close to unchanged.
 
 ## Architecture
 
 Three pieces, built in order:
 
-1. **Astro migration** — scaffold Astro, port `index.html`/`style.css`
+1. **Astro migration** - scaffold Astro, port `index.html`/`style.css`
    into components + a base layout, model each project as a content
    collection entry, update the deploy workflow to build before
    publishing.
-2. **Grouping toggle** — a Grid/Timeline pill switches `<main>` between
+2. **Grouping toggle** - a Grid/Timeline pill switches `<main>` between
    the existing section-grouped grid and a chronological view of the
    same project data.
-3. **Timeline** — a vertical, changelog-style scrolling list of
+3. **Timeline** - a vertical, changelog-style scrolling list of
    projects sorted by start date.
 
 No UI framework (React/Vue/etc.) is added. All interactivity (theme
@@ -76,7 +75,7 @@ src/
 ```
 
 Screenshots move from `images/` to `public/images/` and are referenced
-as plain `<img>` tags (no Astro image optimization for now — keeps
+as plain `<img>` tags (no Astro image optimization for now - keeps
 behavior identical to today; can be revisited later).
 
 ## Data model
@@ -87,24 +86,24 @@ schema:
 - `title: string`
 - `description: string`
 - `section: enum("web" | "games" | "mobile-apps" | "experiments")`
-- `startDate: date` (required — every project has one, including
+- `startDate: date` (required - every project has one, including
   unpublished/in-progress ones)
 - `updatedDate: date` (optional)
 - `links: { label: string, href: string, primary?: boolean }[]`
 - `languages: { name: string, color: string }[]`
 - `stack: string[]`
 - `commits: number` (optional)
-- `image: string` (optional — path under `public/images/`)
+- `image: string` (optional - path under `public/images/`)
 - `unpublished: boolean` (default `false`)
 
 Astro validates every entry against this schema at build time
 (`astro build` / `astro check`), so a malformed project fails the build
 loudly instead of silently rendering wrong. This is the project's
-equivalent of a test gate — there's no runtime logic to unit test, but
+equivalent of a test gate - there's no runtime logic to unit test, but
 bad content data can't ship.
 
 `index.astro` reads the collection once and both the grid and timeline
-render from the same in-memory list — no duplicate data source.
+render from the same in-memory list - no duplicate data source.
 
 ## Grouping toggle
 
@@ -112,7 +111,7 @@ render from the same in-memory list — no duplicate data source.
 sidebar, styled like the existing pill badges. Behavior:
 
 - Default view on page load is Grid. No persistence (e.g. no
-  `localStorage`) for now — simplest option; can be added later if
+  `localStorage`) for now - simplest option; can be added later if
   people flip it often.
 - Switching to Timeline hides the section sidebar (its anchor-link
   highlighting doesn't apply to a chronological view) and swaps
@@ -135,10 +134,10 @@ ascending. Each entry shows:
 If `updatedDate` differs from `startDate`, a small "updated {date}"
 sub-line appears under the date. Unpublished projects render with the
 existing `card--unpublished` dimming treatment and no live-site link,
-per the "include unpublished projects" decision below — they still get
+per the "include unpublished projects" decision below - they still get
 a `startDate` and appear in their chronological position.
 
-Granularity is one entry per project (not per-milestone) — this reuses
+Granularity is one entry per project (not per-milestone) - this reuses
 the same `startDate`/`updatedDate` fields the cards already need, with
 no extra authoring burden.
 
@@ -159,16 +158,16 @@ change; `actions/upload-pages-artifact` and `actions/deploy-pages`
 stay as-is.
 
 This intentionally reverses the "no build step" simplicity documented
-in `CLAUDE.md` — that file will need a matching update once this ships
+in `CLAUDE.md` - that file will need a matching update once this ships
 (workflow section, page-structure section, and the "no build tooling"
 note all currently describe the pre-Astro setup).
 
 ## Decisions made during design
 
 - Project data becomes a structured content collection now, not a
-  later cleanup — this is what removes the copy-paste-per-card pain
+  later cleanup - this is what removes the copy-paste-per-card pain
   and gives the timeline a ready-made data source.
-- No UI framework — vanilla JS only, consistent with the site's
+- No UI framework - vanilla JS only, consistent with the site's
   current near-zero-JS footprint.
 - The toggle switches between two render modes of the same project
   data (grouped-by-category vs chronological), not a separate page.
@@ -180,12 +179,12 @@ note all currently describe the pre-Astro setup).
 
 ## Out of scope
 
-- Astro image optimization (`<Image />` component) — plain `<img>` for
+- Astro image optimization (`<Image />` component) - plain `<img>` for
   now.
 - Timeline entry persistence of the toggle state across page loads.
 - Per-project multiple milestones/events.
 - Reconciling this repo's diverged `origin/main` history and flipping
-  the GitHub Pages source setting to "GitHub Actions" — tracked
+  the GitHub Pages source setting to "GitHub Actions" - tracked
   separately as the publish-fix work already in progress on the
   `static-site-publish-fix` branch. This migration should land on its
   own branch and merge after (or be rebased onto) that fix.

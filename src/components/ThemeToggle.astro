@@ -1,6 +1,6 @@
 ---
 ---
-<button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+<button class="theme-toggle" aria-label="Dark theme" aria-pressed="true" onclick="toggleTheme()">
   <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
     <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
@@ -18,10 +18,15 @@
     var apply = function () {
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('theme', next); } catch (_) {}
+      // The button reports the state it holds (pressed = dark) and the browser chrome tint follows the ground.
+      document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-pressed', String(next === 'dark')); });
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', next === 'light' ? '#f3f4fa' : '#0e1128');
     };
     // The page crossfades between themes where the browser has view transitions; elsewhere, or under reduced motion, it switches at once.
     var reduced = false;
     try { reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
     if (document.startViewTransition && !reduced) document.startViewTransition(apply); else apply();
   }
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-pressed', String(document.documentElement.getAttribute('data-theme') !== 'light')); });
 </script>

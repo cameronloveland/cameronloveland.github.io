@@ -40,7 +40,7 @@
   // snapshot recedes beneath the cards gliding to new slots (see portfolio.css).
   categoryButtons.forEach(button => { button.disabled = false; button.addEventListener('click', () => {
     const next = button.dataset.category!;
-    document.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => project.classList.toggle('is-leaving', !project.hidden && next !== 'all' && project.dataset.projectCategory !== next));
+    panels.forEach(panel => panel.querySelectorAll<HTMLElement>('[data-project-category]').forEach(project => project.classList.toggle('is-leaving', !project.hidden && next !== 'all' && project.dataset.projectCategory !== next)));
     change(() => { category = next; render(); });
   }); });
   document.querySelector('[data-reset]')?.addEventListener('click', () => { change(() => { category = 'all'; render(); }); categoryButtons[0]?.focus(); });

@@ -3,9 +3,9 @@ import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import type { CollectionEntry } from 'astro:content';
 import { monthIndex, monthFromIndex, formatMonthShort, formatMonthIndex, isoMonth, monthsInclusive } from '../utils/formatDate';
 import { linkLabel } from '../utils/linkLabel';
+import { sectionLabel } from '../utils/projects';
 interface Props { projects: CollectionEntry<'projects'>[]; }
 const { projects } = Astro.props;
-const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
 
 // The scale: one row per month from the earliest start to the current month
 // (or the latest date in the data, if that is later). Oldest at the top, so
@@ -13,7 +13,8 @@ const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',ex
 const today = new Date();
 const nowMonth = monthIndex(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)));
 const sorted = [...projects].sort((a, b) => a.data.startDate.valueOf() - b.data.startDate.valueOf() || a.data.title.localeCompare(b.data.title));
-const firstMonth = Math.min(...sorted.map(p => monthIndex(p.data.startDate)));
+// With nothing to show the scale is one month wide, the current one; the panel then holds only the empty state.
+const firstMonth = sorted.length ? Math.min(nowMonth, ...sorted.map(p => monthIndex(p.data.startDate))) : nowMonth;
 const lastMonth = Math.max(nowMonth, ...sorted.map(p => monthIndex(p.data.updatedDate ?? p.data.startDate)));
 const rows = monthsInclusive(firstMonth, lastMonth);
 
@@ -24,7 +25,8 @@ const rows = monthsInclusive(firstMonth, lastMonth);
 const entries = sorted.map((project, lane) => {
   const { startDate, updatedDate, unpublished } = project.data;
   const start = monthIndex(startDate);
-  const end = unpublished ? nowMonth : Math.max(start, monthIndex(updatedDate ?? startDate));
+  // A rod never runs backwards: work planned for a coming month shows as one month at its start.
+  const end = Math.max(start, unpublished ? nowMonth : monthIndex(updatedDate ?? startDate));
   return { project, start, end, lane, row: start - firstMonth + 1, rodRows: monthsInclusive(start, end), label: 0, labelSm: 0 };
 });
 const lanes = entries.length;
@@ -50,11 +52,11 @@ const ticks = Array.from({ length: rows }, (_, i) => {
   return { row: i + 1, year, yearStart: month === 0 || i === 0, label: formatMonthShort(index) };
 });
 ---
-<div id="timeline-panel" class="project-timeline" data-view-panel="timeline" aria-label="Projects by start date" hidden>
+<div id="timeline-panel" class="project-timeline" data-view-panel="timeline" role="region" aria-label="Projects by start date" hidden>
   <p class="timeline-intro">{rows} months on one scale, oldest first. Each project has its own rod, in its category's color, from the month it started to the month it was last updated, or dashed on to now while it is still in progress.</p>
   {/* The legend is a hint, not a control: the filter row above already filters. */}
   <ul class="timeline-legend" aria-label="Rod colors by category">
-    {categories.map(section => <li data-legend={section}><span class="legend-rod" aria-hidden="true"></span>{labels[section]}</li>)}
+    {categories.map(section => <li data-legend={section}><span class="legend-rod" aria-hidden="true"></span>{sectionLabel(section)}</li>)}
   </ul>
   <div class="timeline-scale" style={`--rows:${rows};--lanes:${lanes}`}>
     <span class="scale-spine" aria-hidden="true"></span>
@@ -84,7 +86,7 @@ const ticks = Array.from({ length: rows }, (_, i) => {
           <div class="entry-text">
             <div class="entry-name">
               <h3>{title}</h3>
-              <p class="entry-kicker"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
+              <p class="entry-kicker"><span>{sectionLabel(section)}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
             </div>
             <p class="entry-when"><span class="entry-range">{unpublished
                 ? <>Since <time datetime={isoMonth(start)}>{formatMonthIndex(start)}</time></>

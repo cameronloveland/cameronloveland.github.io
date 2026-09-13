@@ -1,12 +1,11 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import { ctaLabel } from '../utils/linkLabel';
+import { sectionLabel, sortByOrder } from '../utils/projects';
 import { getCollection } from 'astro:content';
+// The featured set, in the order the reel shows them.
 const order = ['antikythera', 'strength-path', 'cosmic-drift', 'tavernborn', 'hud-portfolio'];
-const projects = (await getCollection('projects')).filter(p => p.data.image);
-const rank = (id: string) => order.includes(id) ? order.indexOf(id) : order.length;
-projects.sort((a,b) => rank(a.id) - rank(b.id) || a.data.title.localeCompare(b.data.title));
-const categories = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
+const projects = sortByOrder((await getCollection('projects')).filter(p => p.data.image), order);
 const count = projects.length;
 // Past seven bodies the arc is crowded: only the active body and its two
 // neighbours show their titles; the rest name themselves to screen readers.
@@ -19,7 +18,6 @@ const dense = count > 7;
 // The arc runs from arcEnd at both edges down to arcDip in the middle. The
 // script redraws the same curve in pixels once the width is known, so the
 // ticks, the sweep and the hand's motion path all follow the drawn line.
-// --share is the body's place along the run, 0 to 1.
 const bodyA = 9, bodyB = 91, arcEnd = 18, arcDip = 52;
 const step = count > 1 ? (bodyB - bodyA) / (count - 1) : 0;
 const sagitta = arcDip - arcEnd;
@@ -27,7 +25,7 @@ const radius = (500 * 500 + sagitta * sagitta) / (2 * sagitta);
 const arcY = (x: number) => arcDip - (radius - Math.sqrt(radius * radius - (x - 500) ** 2));
 const bodies = projects.map((project, index) => {
   const x = count > 1 ? bodyA + index * step : 50;
-  return { project, index, x: x.toFixed(2), y: arcY(x * 10).toFixed(2), share: count > 1 ? (index / (count - 1)).toFixed(3) : '0.5' };
+  return { project, index, x: x.toFixed(2), y: arcY(x * 10).toFixed(2) };
 });
 // The arc itself, as an arc command from edge to edge (an ellipse once the box is stretched).
 const arcPath = `M0 ${arcEnd} A${radius.toFixed(1)} ${radius.toFixed(1)} 0 0 0 1000 ${arcEnd}`;
@@ -50,7 +48,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       {/* Every readout sits in the same grid cell, anchored to the stage's bottom edge, so the caption never moves as the reel turns; the script crossfades them. */}
       <div class="reel-readouts">
         {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} data-project-category={project.data.section} aria-hidden={index !== 0} inert={index !== 0}>
-          <p class="reel-kicker"><span class="reel-category">{categories[project.data.section]}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
+          <p class="reel-kicker"><span class="reel-category">{sectionLabel(project.data.section)}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
           <h2>{project.data.title}</h2>
         </div>)}
       </div>
@@ -80,7 +78,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
         <path class="arc-sweep" />
       </svg>
       <div class="arc-bodies" role="group" aria-label="Choose featured project">
-        {bodies.map(({project,index,x,y,share}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y};--share:${share}`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{categories[project.data.section]}</span></button>)}
+        {bodies.map(({project,index,x,y}) => <button type="button" class="orbit-body" style={`--x:${x}%;--y:${y}`} data-slide-to={index} aria-pressed={index === 0}><span class="orbit-body-title">{project.data.title}</span><span class="orbit-body-meta">{sectionLabel(project.data.section)}</span></button>)}
       </div>
       <span class="arc-hand" aria-hidden="true"></span>
     </div>
@@ -89,7 +87,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
   </div>
   {/* Phones: the selector is a strip of chips that scrolls sideways and snaps, one per project with its thumbnail, title and category. Only one selector is displayed at a time (the stylesheet hides the other), so assistive technology meets one. */}
   <div class="reel-chips" hidden role="group" aria-label="Choose featured project">
-    {projects.map((project,index) => <button type="button" class="reel-chip" style={focus(project.data.imageFocus)} data-slide-to={index} data-project-category={project.data.section} aria-pressed={index === 0}><img class="reel-chip-thumb" src={project.data.image} alt="" loading="lazy" width="56" height="36" /><span class="reel-chip-text"><span class="reel-chip-title">{project.data.title}</span><span class="reel-chip-meta">{categories[project.data.section]}</span></span></button>)}
+    {projects.map((project,index) => <button type="button" class="reel-chip" style={focus(project.data.imageFocus)} data-slide-to={index} data-project-category={project.data.section} aria-pressed={index === 0}><img class="reel-chip-thumb" src={project.data.image} alt="" loading="lazy" width="56" height="36" /><span class="reel-chip-text"><span class="reel-chip-title">{project.data.title}</span><span class="reel-chip-meta">{sectionLabel(project.data.section)}</span></span></button>)}
   </div>
 </section>}
 <script>
@@ -121,8 +119,9 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       void reel!.offsetWidth;
       // A video slide holds long enough to finish one loop.
       const video = slides[current].querySelector('video');
-      if (video && !video.duration) video.addEventListener('loadedmetadata', schedule, { once: true });
-      const delay = video ? Math.round((video.duration || 20) * 1000) + 300 : 6500;
+      // Until its length is known the timer and the sweep wait, so neither restarts mid-flight.
+      if (video && !video.duration) { video.addEventListener('loadedmetadata', schedule, { once: true }); return; }
+      const delay = video ? Math.round(video.duration * 1000) + 300 : 6500;
       reel!.style.setProperty('--reel-delay', `${delay}ms`);
       reel!.classList.add('is-playing');
       timer = setTimeout(() => show(current + 1), delay);
@@ -198,8 +197,11 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       show(dx < 0 ? current + 1 : current - 1);
     });
     stage.addEventListener('pointercancel', () => { swipe = undefined; });
-    reel.addEventListener('mouseenter', () => { hovering = true; schedule(); });
-    reel.addEventListener('mouseleave', () => { hovering = false; schedule(); });
+    // The hover hold is for pointers that hover; a tap must not leave the reel held.
+    if (matchMedia('(hover: hover)').matches) {
+      reel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; schedule(); } });
+      reel.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { hovering = false; schedule(); } });
+    }
     // Keyboard interaction stops rotation until explicitly restarted.
     reel.addEventListener('focusin', () => setPaused(true));
     document.addEventListener('visibilitychange', schedule);
@@ -234,6 +236,8 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
     measure();
     if ('ResizeObserver' in window) new ResizeObserver(measure).observe(arc);
     else addEventListener('resize', measure);
+    // Title widths change when the web font swaps in.
+    document.fonts?.ready.then(measure);
 
     setPaused(paused);
     show(current);
@@ -245,6 +249,8 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
     // hand then eases along the arc from wherever it was. Either way the
     // sweep starts here.
     const hand = reel.querySelector<HTMLElement>('.arc-hand');
+    // The last thing to settle: the hand where the arc is shown, else the stage controls.
+    const last = hand && getComputedStyle(hand).display !== 'none' ? hand : reel.querySelector<HTMLElement>('.stage-pause');
     function arrive() {
       if (!root.classList.contains('is-arriving')) return;
       // A transition does not pick up where a cancelled animation left off, so
@@ -256,7 +262,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       schedule();
     }
     if (root.classList.contains('is-arriving')) {
-      [hand, strip].forEach(el => el?.addEventListener('animationend', event => { if (event.target === el) arrive(); }));
+      last?.addEventListener('animationend', event => { if (event.target === last) arrive(); });
       reel.addEventListener('pointerdown', arrive, { capture: true });
       reel.addEventListener('keydown', arrive, { capture: true });
       setTimeout(arrive, 1600);

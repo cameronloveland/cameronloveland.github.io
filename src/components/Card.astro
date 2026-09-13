@@ -1,6 +1,7 @@
 ---
 import ExternalLinkIcon from './ExternalLinkIcon.astro';
 import { linkLabel } from '../utils/linkLabel';
+import { sectionLabel } from '../utils/projects';
 import { formatMonthYear } from '../utils/formatDate';
 import type { CollectionEntry } from 'astro:content';
 interface Props { project: CollectionEntry<'projects'>; index?: number; }
@@ -10,7 +11,6 @@ const { title, description, links, image, imageFocus, unpublished, section, stac
 // Any other links (source, hackathon page) stay as plain text links beside it.
 const primary = links.find(l => l.primary) || links[0];
 const secondary = links.filter(l => l !== primary);
-const labels = {games:'Game',web:'Interactive web','mobile-apps':'Mobile app',experiments:'Experiment'};
 const updated = updatedDate && updatedDate.valueOf() !== startDate.valueOf() ? updatedDate : undefined;
 const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 ---
@@ -21,7 +21,7 @@ const isoDate = (date: Date) => date.toISOString().slice(0, 10);
   </div>
   <div class="project-body">
     <div class="project-copy">
-      <p class="project-kicker"><span>{labels[section]}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
+      <p class="project-kicker"><span>{sectionLabel(section)}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
       <h3>{title}</h3>
       <p>{description}</p>
     </div>
@@ -30,7 +30,7 @@ const isoDate = (date: Date) => date.toISOString().slice(0, 10);
       {stack.length > 0 && <><dt>Stack</dt><dd>{stack.join(', ')}</dd></>}
       <dt>Started</dt>
       <dd><time datetime={isoDate(startDate)}>{formatMonthYear(startDate)}</time>{updated && <>, updated <time datetime={isoDate(updated)}>{formatMonthYear(updated)}</time></>}</dd>
-      {commits && <><dt>Commits</dt><dd>{commits}</dd></>}
+      {commits !== undefined && <><dt>Commits</dt><dd>{commits}</dd></>}
     </dl>
     {links.length > 0 && <div class="project-actions">
       {primary && <a class="project-open" href={primary.href} target="_blank" rel="noopener noreferrer" aria-label={`${linkLabel(primary.label, section)}: ${title} (opens in a new tab)`}>{linkLabel(primary.label, section)}<ExternalLinkIcon /></a>}

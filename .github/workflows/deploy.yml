@@ -6,6 +6,10 @@ on:
     branches: [ main ]
   # Allow manual runs from the Actions tab
   workflow_dispatch:
+  # Rebuild on the first of each month so the timeline's Now line and the
+  # footer year, both computed at build time, keep up with the calendar
+  schedule:
+    - cron: '17 6 1 * *'
 
 # Permissions needed for the official Pages deploy actions
 permissions:

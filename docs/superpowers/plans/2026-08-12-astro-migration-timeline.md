@@ -4,7 +4,7 @@
 
 **Goal:** Convert the hand-written static site to Astro with project data as a content collection, then add a toggleable chronological "dev timeline" view alongside the existing grouped grid.
 
-**Architecture:** Astro static output (`output: "static"`), zero UI framework — all interactivity (theme toggle, sidebar highlighting, grid/timeline switch) stays vanilla JS via Astro's `is:inline` script directive. Each project is a markdown file with schema-validated frontmatter in `src/content/projects/`; `index.astro` reads that collection once and renders both the grid and the timeline from the same data.
+**Architecture:** Astro static output (`output: "static"`), zero UI framework - all interactivity (theme toggle, sidebar highlighting, grid/timeline switch) stays vanilla JS via Astro's `is:inline` script directive. Each project is a markdown file with schema-validated frontmatter in `src/content/projects/`; `index.astro` reads that collection once and renders both the grid and the timeline from the same data.
 
 **Tech Stack:** Astro 5 (static output), TypeScript (content schema only), vanilla JS, GitHub Actions, GitHub Pages.
 
@@ -12,10 +12,10 @@
 
 ## Global Constraints
 
-- No UI framework — vanilla JS only, via Astro's `<script is:inline>` directive for anything that must run synchronously/unbundled (critical for the theme-init script, to avoid a flash of the wrong theme).
-- Astro `output: "static"`, no `base` path — this repo is the `<username>.github.io` user-site repo and deploys at the domain root.
-- Content collection schema validation (`astro check` / `astro build`) is this project's test gate — there is no other test framework, matching the "no build tooling unless needed" spirit of the original site, just enforced differently now.
-- Every project entry requires a `startDate`, including unpublished/in-progress projects — the timeline needs it.
+- No UI framework - vanilla JS only, via Astro's `<script is:inline>` directive for anything that must run synchronously/unbundled (critical for the theme-init script, to avoid a flash of the wrong theme).
+- Astro `output: "static"`, no `base` path - this repo is the `<username>.github.io` user-site repo and deploys at the domain root.
+- Content collection schema validation (`astro check` / `astro build`) is this project's test gate - there is no other test framework, matching the "no build tooling unless needed" spirit of the original site, just enforced differently now.
+- Every project entry requires a `startDate`, including unpublished/in-progress projects - the timeline needs it.
 - `CardMeta` (languages/stack/commits/history) renders only for published projects; unpublished projects still carry a `startDate` for the timeline but show no meta footer on their card, matching today's Strength Path card.
 - Default view on page load is Grid. No persistence of the Grid/Timeline choice across loads.
 - External links use `target="_blank" rel="noopener noreferrer"` (existing site convention, carries over unchanged).
@@ -119,7 +119,7 @@ rmdir images 2>/dev/null || true
 
 - [ ] **Step 6: Write a temporary placeholder `src/pages/index.astro`**
 
-This gets fully replaced in Task 5 once the content collection and Card component exist — it only exists now to prove the Astro toolchain builds.
+This gets fully replaced in Task 5 once the content collection and Card component exist - it only exists now to prove the Astro toolchain builds.
 
 ```astro
 ---
@@ -243,7 +243,7 @@ image: "/images/space-portfolio.png"
 ---
 ```
 
-Note `section: "webz"` — not a valid enum value.
+Note `section: "webz"` - not a valid enum value.
 
 - [ ] **Step 3: Run the build and confirm it fails on the invalid entry**
 
@@ -356,7 +356,7 @@ git commit -m "feat: add projects content collection with schema validation"
 
 ---
 
-### Task 3: Base layout — header, theme toggle, sky scene, footer
+### Task 3: Base layout - header, theme toggle, sky scene, footer
 
 **Files:**
 - Create: `src/components/SkyScene.astro`
@@ -527,7 +527,7 @@ git commit -m "feat: add base layout with header, theme toggle, sky scene"
 
 **Interfaces:**
 - Consumes: `Layout.astro`'s `sidebar` named slot (Task 3).
-- Produces: `Sidebar.astro` (no props, self-contained nav + `IntersectionObserver` script). Section shells with `id="web"`, `id="games"`, `id="mobile-apps"`, `id="experiments"` for the observer and sidebar anchors to target — later tasks (5) fill these with real content but must keep these exact ids.
+- Produces: `Sidebar.astro` (no props, self-contained nav + `IntersectionObserver` script). Section shells with `id="web"`, `id="games"`, `id="mobile-apps"`, `id="experiments"` for the observer and sidebar anchors to target - later tasks (5) fill these with real content but must keep these exact ids.
 
 - [ ] **Step 1: Write `Sidebar.astro`**
 
@@ -633,7 +633,7 @@ git commit -m "feat: add sidebar navigation with active-link highlighting"
 
 **Interfaces:**
 - Consumes: `projects` collection (Task 2), `Sidebar`/section shells (Task 4).
-- Produces: `formatMonthYear(date: Date): string` — used again in Task 6's `Timeline.astro`. `Card.astro` with `Props: { project: CollectionEntry<'projects'> }`. `CardMeta.astro` with `Props: { project: CollectionEntry<'projects'> }`, rendered only for published projects.
+- Produces: `formatMonthYear(date: Date): string` - used again in Task 6's `Timeline.astro`. `Card.astro` with `Props: { project: CollectionEntry<'projects'> }`. `CardMeta.astro` with `Props: { project: CollectionEntry<'projects'> }`, rendered only for published projects.
 
 - [ ] **Step 1: Write `src/utils/formatDate.ts`**
 
@@ -1053,7 +1053,7 @@ jobs:
 
 - [ ] **Step 2: Verify**
 
-There's no local Actions runner, so this can't be exercised in isolation — review the diff against the file above for accuracy. It gets its real verification when this branch is pushed and the workflow actually runs (tracked separately: pushing the branch and flipping Settings → Pages → Source to "GitHub Actions" is out of scope for this plan per the design spec).
+There's no local Actions runner, so this can't be exercised in isolation - review the diff against the file above for accuracy. It gets its real verification when this branch is pushed and the workflow actually runs (tracked separately: pushing the branch and flipping Settings → Pages → Source to "GitHub Actions" is out of scope for this plan per the design spec).
 
 - [ ] **Step 3: Commit**
 
@@ -1165,7 +1165,7 @@ git commit -m "docs: update CLAUDE.md for Astro architecture"
 
 - [ ] **Step 1: Start the dev server**
 
-Run: `npm run dev` (background) — note the local URL (default `http://localhost:4321`).
+Run: `npm run dev` (background) - note the local URL (default `http://localhost:4321`).
 
 - [ ] **Step 2: Visual and interaction pass in a real browser**
 
