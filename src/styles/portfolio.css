@@ -2245,14 +2245,8 @@ video {
   width: 15px;
   height: 15px;
 }
-.footer-colophon {
-  grid-column: 5 / -1;
-  max-width: 60ch;
-  text-wrap: pretty;
-}
 .footer-copyright {
   grid-column: 5 / -1;
-  margin-top: calc(-1 * var(--space-5));
   font-size: var(--text-xs);
   font-weight: var(--weight-ui);
   letter-spacing: var(--track-small);
@@ -2277,7 +2271,6 @@ video {
     grid-column: span 5;
   }
   .footer-links,
-  .footer-colophon,
   .footer-copyright {
     grid-column: 6 / -1;
   }
@@ -2519,7 +2512,6 @@ video {
   /* Phones: the footer stacks into one column on the left edge. */
   .footer-signature,
   .footer-links,
-  .footer-colophon,
   .footer-copyright {
     grid-column: 1 / -1;
   }
