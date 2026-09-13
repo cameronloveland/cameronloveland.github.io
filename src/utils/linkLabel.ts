@@ -14,5 +14,7 @@ export function linkLabel(label: string, section: string): string {
   if (key === 'live site' || key === 'preview') return ctaLabel(section);
   if (key === 'github') return 'GitHub';
   if (key === 'devpost') return 'Devpost';
+  if (key === 'google play') return 'Google Play';
+  if (key === 'app store') return 'App Store';
   return label;
 }

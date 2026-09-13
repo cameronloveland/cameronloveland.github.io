@@ -7,7 +7,7 @@ unpublished: true
 stack: ["React Native"]
 image: "/images/strength-path.webp"
 stageImage: "/images/strength-path-hero.webp"
-imageFocus: "70% 45%"
+imageFocus: "50% 27%"
 links:
   - label: "preview"
     href: "https://strengthpath.app/"

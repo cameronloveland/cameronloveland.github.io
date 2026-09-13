@@ -1513,7 +1513,6 @@ video {
 }
 .project-plate dd {
   color: var(--secondary);
-  font-variant-numeric: tabular-nums;
   min-width: 0;
   text-wrap: pretty;
 }
@@ -1803,7 +1802,6 @@ video {
   letter-spacing: var(--track-small);
   line-height: var(--leading-small);
   color: var(--muted);
-  font-variant-numeric: tabular-nums;
   pointer-events: none;
 }
 .scale-tick::before {
@@ -2048,7 +2046,6 @@ video {
   font-weight: var(--weight-ui);
   line-height: 1.5;
   color: var(--secondary);
-  font-variant-numeric: tabular-nums;
   transition: color var(--dur-fast) var(--ease-out);
 }
 .entry-range {
@@ -2224,7 +2221,6 @@ video {
 .closing-plate dd {
   grid-column: 2;
   color: var(--secondary);
-  font-variant-numeric: tabular-nums;
   min-width: 0;
   max-width: 60ch;
   text-wrap: pretty;
@@ -2522,6 +2518,9 @@ video {
     scrollbar-width: none;
     margin: -6px calc(-1 * var(--site-pad));
     padding: 6px var(--site-pad);
+    /* The row runs off the right edge on purpose; a fade there says so. */
+    -webkit-mask-image: linear-gradient(90deg, var(--text) calc(100% - 40px), transparent);
+    mask-image: linear-gradient(90deg, var(--text) calc(100% - 40px), transparent);
   }
   .category-filter::-webkit-scrollbar {
     display: none;
@@ -2761,6 +2760,9 @@ video {
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
+    /* Both edges fade: the strip scrolls either way and the active chip sits mid-way. */
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--text) 32px, var(--text) calc(100% - 32px), transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--text) 32px, var(--text) calc(100% - 32px), transparent);
   }
   .reel-chips::-webkit-scrollbar {
     display: none;
