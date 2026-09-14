@@ -23,7 +23,9 @@ const majors = Array.from({ length: count }, (_, i) => ({ from: point(7.4, home 
 const minorR = 9.3;
 const minorGap = (2 * Math.PI * minorR / 36 - 0.35).toFixed(3);
 // The stars on the face: radius and bearing, in the field inside the minors.
-const stars = [[5.6, 20], [4.2, 150], [6.4, 205], [3.1, 300], [6.6, 95]].map(([r, deg]) => point(r, deg));
+// Placed clear of the monogram at rest; the sky turns, so they drift behind
+// the letters and out again, as stars do behind anything.
+const stars = [[6.6, 40], [6.8, 135], [6.8, 215], [3.6, 285], [6.6, 95]].map(([r, deg]) => point(r, deg));
 // The hand is a clock hand: a long tapered pointer from the core out over
 // the limb to the meter's edge, with a bead riding it (the body, as on the
 // Antikythera pointers) and a short counterweight past the core.
@@ -31,15 +33,17 @@ const pt = (r: number, deg: number) => { const p = point(r, deg); return `${p.x}
 const handShape = `${pt(2.4, home - 22)} ${pt(11.2, home)} ${pt(2.4, home + 22)}`;
 const tailShape = `${pt(2.4, home + 180 - 30)} ${pt(5.2, home + 180)} ${pt(2.4, home + 180 + 30)}`;
 const body = point(7.6, home);
-// The relic's ornament. Four studs at the cardinal points of the limb, as
-// on an old compass card; a compass rose under the pivot, eight points, the
-// four cardinals long; and the ecliptic, the astrolabe's off-centre ring,
-// faint on the face and turning with the sky.
+// The relic's ornament. Three studs on the limb, as on an old compass card
+// (north is Polaris); the maker's monogram engraved on the face either side
+// of the pivot, a C as an open arc and an L as two strokes, so the core is
+// the point the letters turn about; and the ecliptic, the astrolabe's
+// off-centre ring, faint on the face and turning with the sky.
 const studs = [0, 90, 180].map(deg => point(10.6, deg));
+const letterC = 'M12.22,15.61 A2.5,2.5 0 1 1 12.22,12.39';
+const letterL = '16.6,11.5 16.6,16.5 19.4,16.5';
 // Polaris: at north, where a stud would be, a small four-point star, the
 // fixed point the whole dial turns about.
 const polaris = [[0, 1.9], [0.55, 0.55], [1.9, 0], [0.55, -0.55], [0, -1.9], [-0.55, -0.55], [-1.9, 0], [-0.55, 0.55]].map(([dx, dy]) => `${(14 + dx).toFixed(2)},${(3.4 + dy).toFixed(2)}`).join(' ');
-const rose = Array.from({ length: 16 }, (_, i) => { const long = i % 4 === 0, mid = i % 2 === 0; return pt(long ? 5.4 : mid ? 3.2 : 1.3, i * 22.5 - 90); }).join(' ');
 const ecliptic = point(2.4, 60);
 // The sparks: a handful of motes that fly off the bead as the hand lands,
 // arcing up and falling before they go out (.mark-spark). They ride an
@@ -62,7 +66,8 @@ const sparks = [[-5, 22, 0], [4, 26, 0.08], [-1.5, 30, 0.16], [6.5, 19, 0.04], [
     <circle class="mark-ecliptic" cx={ecliptic.x} cy={ecliptic.y} r="5.6"/>
     {stars.map((star, i) => <circle class="mark-star" cx={star.x} cy={star.y} r="0.55" style={`--twinkle: ${i * 1.3}s`}/>)}
   </g>
-  <polygon class="mark-rose" points={rose}/>
+  <path class="mark-monogram" d={letterC}/>
+  <polyline class="mark-monogram" points={letterL}/>
   {majors.map(major => <line class="mark-tick" x1={major.from.x} y1={major.from.y} x2={major.to.x} y2={major.to.y}/>)}
   <g class="mark-rete">
     <polygon class="mark-hand" points={handShape}/>
