@@ -476,24 +476,23 @@ video {
 .mark-hand,
 .mark-star,
 .mark-stud,
-.mark-rose,
 .mark-polaris {
   fill: currentColor;
   stroke: none;
 }
 /* The relic's metal is not one tone. The case (limb, chapter ring, studs,
-   majors, rose) is worn brass, dulled a little toward the ink; the hand, its
+   majors, monogram) is worn brass, dulled a little toward the ink; the hand, its
    bead and the meter are the bright metal, the parts that move and are
    handled. */
 .mark-limb,
 .mark-tick,
 .mark-chapter,
 .mark-minors,
-.mark-ecliptic {
+.mark-ecliptic,
+.mark-monogram {
   stroke: var(--mark-worn);
 }
 .mark-stud,
-.mark-rose,
 .mark-core {
   fill: var(--mark-worn);
 }
@@ -511,9 +510,12 @@ video {
 .mark-stud {
   opacity: 0.85;
 }
-/* The compass rose under the pivot: eight points, faint, the cardinals long. */
-.mark-rose {
-  opacity: 0.55;
+/* The monogram engraved on the face: the maker's C and L either side of the
+   pivot, cut in the worn brass so the bright hand reads over them. */
+.mark-monogram {
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 /* The ecliptic: the astrolabe's off-centre ring, a whisper on the face. */
 .mark-ecliptic {
