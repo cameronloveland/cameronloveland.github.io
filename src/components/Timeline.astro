@@ -99,7 +99,7 @@ const ticks = Array.from({ length: rows }, (_, i) => {
           <div class="entry-text">
             <div class="entry-name">
               <h3>{title}</h3>
-              <p class="entry-kicker"><span>{sectionLabel(section)}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'In progress' : 'Live'}</span></p>
+              <p class="entry-kicker"><span>{sectionLabel(section)}</span><span class:list={['status', {'status--progress': unpublished}]}>{unpublished ? 'Under development' : 'Live'}</span></p>
             </div>
             <p class="entry-when"><span class="entry-range">{unpublished
                 ? <>Since <time datetime={isoMonth(start)}>{formatMonthIndex(start)}</time></>

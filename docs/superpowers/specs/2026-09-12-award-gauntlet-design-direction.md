@@ -201,7 +201,7 @@ instrument's geometry, and the display face is the engraved label.
   type scale, radius scale, spacing scale, elevation.
 - All label treatments replaced: no eyebrows, no "01 / PROJECT", no
   "PROJECT SPOTLIGHT", no middle-dot tagline, no number prefixes on carousel
-  selectors, no monospace. Status is "Live" or "In progress" everywhere.
+  selectors, no monospace. Status is "Live" or "Under development" everywhere.
 - Text glyph controls (arrows, pause bars) replaced with inline SVG icons.
 
 ## Left for later pieces

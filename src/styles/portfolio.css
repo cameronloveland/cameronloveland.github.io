@@ -488,8 +488,7 @@ video {
 .mark-tick,
 .mark-chapter,
 .mark-minors,
-.mark-ecliptic,
-.mark-monogram {
+.mark-ecliptic {
   stroke: var(--mark-worn);
 }
 .mark-stud,
@@ -510,12 +509,16 @@ video {
 .mark-stud {
   opacity: 0.85;
 }
-/* The monogram engraved on the face: the maker's C and L either side of the
-   pivot, cut in the worn brass so the bright hand reads over them. */
+/* The monogram: a C and an L struck on the face, lit brightest against
+   whatever the theme's ground is (white on the night face, ink on the
+   daylight one) so it always reads as raised metal, never an engraving. */
 .mark-monogram {
-  stroke-width: 1.1;
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 90%, var(--accent-fill));
+  stroke-width: 2.1;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.92;
 }
 /* The ecliptic: the astrolabe's off-centre ring, a whisper on the face. */
 .mark-ecliptic {
@@ -1879,6 +1882,13 @@ video {
   color: var(--accent);
   text-decoration: underline;
 }
+.project-more--badge {
+  padding: 0;
+}
+.project-more--badge img {
+  height: 62px;
+  width: auto;
+}
 /* The one response: the pill fills brass and the media frame warms (its edge
    turns brass, a glow rings it, light falls in from the top), whether the
    pointer is anywhere on the card or the pill has focus. The image itself
@@ -1909,6 +1919,21 @@ video {
 .project-open:active {
   background: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
   border-color: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+}
+/* The Google Play badge is its own finished artwork: no pill chrome around
+   it, just the official graphic sized to the row. */
+.project-open--badge {
+  padding: 0;
+  border: none;
+  background: none;
+}
+.project-open--badge img {
+  height: 62px;
+  width: auto;
+}
+.project-open--badge:hover,
+.project-open--badge:focus-visible {
+  background: none;
 }
 .project-card:has(.project-open:active) .project-media {
   transform: scale(0.985);

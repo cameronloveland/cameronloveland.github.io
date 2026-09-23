@@ -1,12 +1,12 @@
 // The words a visitor reads on a project's links. The primary action is named
-// by what the visitor gets: games are played, sites and app pages are visited,
-// experiments are opened, prototypes are tried. The hero pill, the cards and the timeline all call
-// ctaLabel so one action keeps one name across the page.
+// by what the visitor gets: games are played, prototypes are tried,
+// everything else opens (all links target a new tab, so "open" is accurate,
+// "visit" reads like a redirect). The hero pill, the cards and the timeline
+// all call ctaLabel so one action keeps one name across the page.
 export function ctaLabel(section: string): string {
   if (section === 'games') return 'Play now';
-  if (section === 'web') return 'Open website';
-  if (section === 'mobile-apps') return 'Visit website';
   if (section === 'prototypes') return 'Try it';
+  if (section === 'web' || section === 'mobile-apps') return 'Open website';
   return 'Open project';
 }
 
