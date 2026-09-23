@@ -47,7 +47,7 @@ const stageImage = (project: typeof projects[number]) => project.data.stageFit =
       {/* Every readout sits in the same grid cell, anchored to the stage's bottom edge, so the caption never moves as the reel turns; the script crossfades them. */}
       <div class="reel-readouts">
         {projects.map((project,index) => <div class:list={['reel-readout', {'is-active': index === 0}]} data-readout={index} data-project-category={project.data.section} aria-hidden={index !== 0} inert={index !== 0}>
-          <p class="reel-kicker"><span class="reel-category">{sectionLabel(project.data.section)}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'In progress' : 'Live'}</span></p>
+          <p class="reel-kicker"><span class="reel-category">{sectionLabel(project.data.section)}</span><span class:list={['status', {'status--progress': project.data.unpublished}]}>{project.data.unpublished ? 'Under development' : 'Live'}</span></p>
           <h2>{project.data.title}</h2>
         </div>)}
       </div>

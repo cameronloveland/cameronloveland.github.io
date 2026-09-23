@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="512" height="512">
+  <!-- The maker's mark at rest: the dial from MakerMark.astro drawn once, by
+       hand, on the Night ground, for use as a logo or avatar. Keep in step
+       with the component when its geometry changes. -->
+  <rect width="28" height="28" fill="#0e1128"/>
+  <g fill="none" stroke="#e9bb5c" stroke-width="1.25">
+    <circle cx="14" cy="14" r="12.4" stroke-width="1.8" opacity="0.22"/>
+    <g stroke="#d8b46d">
+      <circle cx="14" cy="14" r="10.6" stroke-width="1.1"/>
+      <circle cx="14" cy="14" r="8.5" stroke-width="0.5" opacity="0.45"/>
+      <circle cx="14" cy="14" r="9.3" stroke-width="0.9" opacity="0.5" stroke-dasharray="0.35 1.273"/>
+      <circle cx="15.2" cy="16.08" r="5.6" stroke-width="0.45" opacity="0.3"/>
+      <g stroke="#f4efe3" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">
+        <path d="M17.50,8.40 A6.6,6.6 0 1 0 17.50,19.60"/>
+        <path d="M18,10.4 L18,17.6 L20.4,17.6"/>
+      </g>
+      <g stroke-linecap="round">
+        <line x1="18.76" y1="8.33" x2="20.30" y2="6.49"/>
+        <line x1="20.77" y1="16.99" x2="22.97" y2="17.95"/>
+        <line x1="13.02" y1="21.33" x2="12.70" y2="23.71"/>
+        <line x1="6.68" y1="15.11" x2="4.31" y2="15.47"/>
+        <line x1="10.90" y1="7.28" x2="9.89" y2="5.10"/>
+      </g>
+    </g>
+  </g>
+  <g fill="#d8b46d">
+    <circle cx="24.6" cy="14" r="0.7" opacity="0.85"/>
+    <circle cx="14" cy="24.6" r="0.7" opacity="0.85"/>
+    <circle cx="3.4" cy="14" r="0.7" opacity="0.85"/>
+    <circle cx="14" cy="14" r="1.6"/>
+  </g>
+  <g fill="#e9bb5c">
+    <polygon points="14.00,5.30 14.55,3.95 15.90,3.40 14.55,2.85 14.00,1.50 13.45,2.85 12.10,3.40 13.45,3.95" opacity="0.9"/>
+    <g opacity="0.7">
+      <circle cx="19.06" cy="18.24" r="0.55"/>
+      <circle cx="9.19" cy="18.81" r="0.55"/>
+      <circle cx="8.43" cy="10.10" r="0.55"/>
+      <circle cx="14.93" cy="10.52" r="0.55"/>
+      <circle cx="13.42" cy="20.57" r="0.55"/>
+    </g>
+    <polygon points="14.74,11.72 21.20,5.42 16.12,12.87"/>
+    <polygon points="13.58,16.36 10.66,17.98 11.74,14.82" opacity="0.7"/>
+    <circle cx="18.89" cy="8.18" r="4.2" opacity="0.09"/>
+    <circle cx="18.89" cy="8.18" r="2.9" opacity="0.22"/>
+    <circle cx="18.89" cy="8.18" r="1.5"/>
+  </g>
+</svg>

@@ -476,13 +476,12 @@ video {
 .mark-hand,
 .mark-star,
 .mark-stud,
-.mark-rose,
 .mark-polaris {
   fill: currentColor;
   stroke: none;
 }
 /* The relic's metal is not one tone. The case (limb, chapter ring, studs,
-   majors, rose) is worn brass, dulled a little toward the ink; the hand, its
+   majors, monogram) is worn brass, dulled a little toward the ink; the hand, its
    bead and the meter are the bright metal, the parts that move and are
    handled. */
 .mark-limb,
@@ -493,7 +492,6 @@ video {
   stroke: var(--mark-worn);
 }
 .mark-stud,
-.mark-rose,
 .mark-core {
   fill: var(--mark-worn);
 }
@@ -511,9 +509,16 @@ video {
 .mark-stud {
   opacity: 0.85;
 }
-/* The compass rose under the pivot: eight points, faint, the cardinals long. */
-.mark-rose {
-  opacity: 0.55;
+/* The monogram: a C and an L struck on the face, lit brightest against
+   whatever the theme's ground is (white on the night face, ink on the
+   daylight one) so it always reads as raised metal, never an engraving. */
+.mark-monogram {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 90%, var(--accent-fill));
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.92;
 }
 /* The ecliptic: the astrolabe's off-centre ring, a whisper on the face. */
 .mark-ecliptic {
@@ -1877,6 +1882,13 @@ video {
   color: var(--accent);
   text-decoration: underline;
 }
+.project-more--badge {
+  padding: 0;
+}
+.project-more--badge img {
+  height: 62px;
+  width: auto;
+}
 /* The one response: the pill fills brass and the media frame warms (its edge
    turns brass, a glow rings it, light falls in from the top), whether the
    pointer is anywhere on the card or the pill has focus. The image itself
@@ -1907,6 +1919,21 @@ video {
 .project-open:active {
   background: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
   border-color: color-mix(in srgb, var(--accent-fill) 84%, var(--shadow-ink));
+}
+/* The Google Play badge is its own finished artwork: no pill chrome around
+   it, just the official graphic sized to the row. */
+.project-open--badge {
+  padding: 0;
+  border: none;
+  background: none;
+}
+.project-open--badge img {
+  height: 62px;
+  width: auto;
+}
+.project-open--badge:hover,
+.project-open--badge:focus-visible {
+  background: none;
 }
 .project-card:has(.project-open:active) .project-media {
   transform: scale(0.985);
