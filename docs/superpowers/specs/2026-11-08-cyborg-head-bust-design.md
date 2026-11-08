@@ -26,13 +26,14 @@ a scan.
 - A simple collared shirt on the shoulders, like the reference photo.
 - The glasses stay whole on both sides; the red eye glows through the lens.
 - A drop-in replacement for the placeholder: same behaviour, no new interactions.
+- Human-looking hands that grip the hero edge in place of the capsule placeholders, the
+  android-side hand in metal (added by Cameron 2026-11-08).
 - Free and CC0 throughout.
 
 ## Non-goals (for now)
 
 - Eye tracking, blinking, expressions, lip sync, shape keys for the face.
 - Photoreal skin, strand hair, subsurface tricks that the web cannot afford.
-- The hands that grip the hero edge. They stay placeholders.
 - The Astro site build. The redesign has not been built yet; this goal ends with the head
   working in the hero mockup and a GLB ready for the site.
 
@@ -105,13 +106,17 @@ The GLB must slot into the existing rig in the mockup
 - Units and orientation: glTF defaults (+Y up, facing +Z). Scaled so the skull is about
   the placeholder's size (head height about 2.2 units before `HEAD_SCALE`), so the scroll
   peek math, the hands and `EYE_LOCAL_Y` keep working with at most a constant change.
+- One continuous skinned mesh for the skin, so turning the head bends the neck instead of
+  opening a seam (decided by Cameron 2026-11-08, after a split head and bust showed a hole
+  at the hero's turn limits).
 - Nodes, by name:
-  - `Bust`: shoulders and neck, static (attached to `rig`).
-  - `Head`: everything above the neck, pivot at the skull centre, where the placeholder
-    `head` group pivots, so the motion feels the same and the fixed `EYE_LOCAL_Y` scroll
-    peek math holds. The JS rotates this node exactly as it rotates the placeholder `head`
-    group today. The JS writes `head.position.y` for the idle bob, so the node carries no
-    translation of its own (wrap it in a group if needed).
+  - `Bust`: the root joint, static (attached to `rig`), at the origin with no rotation.
+  - `Head`: the joint that drives everything above the neck, a child of `Bust`, pivot at
+    the skull centre, where the placeholder `head` group pivots, so the motion feels the
+    same and the fixed `EYE_LOCAL_Y` scroll peek math holds. The JS rotates this node
+    exactly as it rotates the placeholder `head` group today and writes `head.position.y`
+    for the idle bob, so it carries no translation and no rest rotation of its own. The
+    neck vertices are weighted between `Bust` and `Head`.
   - `EyeRed`: the robot eye, emissive material, child of `Head`.
   - `EyeHuman`: the human eye, child of `Head`.
   - `Glasses`: child of `Head`.
