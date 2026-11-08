@@ -25,9 +25,13 @@ ns = lib.parse_args()
 skin = lib.get("Skin")
 rig = lib.get("Rig")
 
-# Hero units (glTF Y up is Blender Z up here; the face points to -Y).
+# Hero units (glTF Y up is Blender Z up here; the face points to -Y). Placement follows
+# the joints that 30_bust.py records, so a likeness step that reshapes the neck or the
+# shoulders moves the hoodie with them. Values were tuned on the default MPFB body.
+neck = Vector(skin["joint_neck"])
+shoulder_half_width = abs(Vector(skin["joint_l_shoulder"]).x)
 # The neckline tilts like a real one: low at the front of the neck, higher at the back.
-COLLAR_MID, COLLAR_TILT = -1.50, 0.25   # z at y 0, and the rise per unit toward the back
+COLLAR_MID, COLLAR_TILT = neck.z - 0.20, 0.25   # z at y 0, and the rise per unit toward the back
 
 
 def collar_z(y):
@@ -38,11 +42,27 @@ EASE = 0.09                 # how far the cloth sits off the body
 SMOOTH_PASSES = 4           # enough to lose the anatomy, not the shoulders
 HIDDEN_DEPTH = 0.35         # skin this far below the neckline is under the hoodie
 ROLL_FRONT, ROLL_BACK = 0.07, 0.30  # hood roll radius at the front and back of the neck
-CORD_X, CORD_LENGTH, CORD_R = 0.2, 0.95, 0.018
+CORD_X = 0.114 * shoulder_half_width
+CORD_LENGTH, CORD_R = 0.95, 0.018
+UP = Vector((0, 0, 1))
+
+
+def face_out(bm, verts, centre):
+    """Add a face and make it point away from `centre` (the axis of the tube it is on)."""
+    f = bm.faces.new(verts)
+    f.normal_update()
+    if f.normal.dot(f.calc_center_median() - centre) < 0:
+        f.normal_flip()
+    return f
+
 
 # --- body ---------------------------------------------------------------------------
 bm = bmesh.new()
 bm.from_mesh(skin.data)
+for layer in list(bm.loops.layers.uv.values()):  # the cloth carries no texture or weights
+    bm.loops.layers.uv.remove(layer)
+for layer in list(bm.verts.layers.deform.values()):
+    bm.verts.layers.deform.remove(layer)
 bmesh.ops.delete(bm, geom=[f for f in bm.faces if not all(v.co.z < collar_z(v.co.y) for v in f.verts)], context="FACES")
 bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
 inner = [v for v in bm.verts if not v.is_boundary]
@@ -54,58 +74,70 @@ for v in bm.verts:
 for _ in range(2):
     bmesh.ops.smooth_vert(bm, verts=inner, factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
 
-# The neckline: boundary verts near the collar line, ordered around the neck.
-top = [v for v in bm.verts if v.is_boundary and v.co.z > collar_z(v.co.y) - 0.3]
-if len(top) < 12:
-    lib.fail(f"hoodie neckline not found ({len(top)} boundary verts near the collar line)")
-cx = sum(v.co.x for v in top) / len(top)
-cy = sum(v.co.y for v in top) / len(top)
-top.sort(key=lambda v: math.atan2(v.co.y - cy, v.co.x - cx))
-ring = [v.co.copy() for v in top]
+# The neckline: walk the boundary edges from the highest boundary vertex (the bottom cut
+# is far below) until the loop closes, so the order follows the mesh, not an angle.
+start = max((v for v in bm.verts if v.is_boundary), key=lambda v: v.co.z)
+loop, prev, cur = [start], None, start
+for _ in range(len(bm.verts)):
+    nxt = next((e.other_vert(cur) for e in cur.link_edges if e.is_boundary and e.other_vert(cur) is not prev), None)
+    if nxt is None:
+        lib.fail("hoodie neckline is not a closed loop")
+    if nxt is start:
+        break
+    loop.append(nxt)
+    prev, cur = cur, nxt
+else:
+    lib.fail("hoodie neckline did not close")
+if len(loop) < 12:
+    lib.fail(f"hoodie neckline too short ({len(loop)} verts)")
+ring = [v.co.copy() for v in loop]
+if sum(a.x * b.y - b.x * a.y for a, b in zip(ring, ring[1:] + ring[:1])) < 0:
+    ring.reverse()  # counter-clockwise seen from above, so (t.y, -t.x) points outward
 # The cut edge zigzags along the mesh; average neighbours so the roll follows a smooth line.
 for _ in range(6):
     ring = [(ring[i - 1] + ring[i] * 2 + ring[(i + 1) % len(ring)]) / 4 for i in range(len(ring))]
+cx = sum(p.x for p in ring) / len(ring)
+cy = sum(p.y for p in ring) / len(ring)
 body = bpy.data.meshes.new("HoodieBody")
 bm.to_mesh(body)
 bm.free()
 
 # --- hood roll ----------------------------------------------------------------------
-# Sweep a circle around the neckline. `back` is 0 at the front of the neck, 1 at the back.
-# Resample the ring evenly so the roll is smooth whatever the neckline's vertex spacing.
+# Sweep a circle around the neckline, resampled evenly by arc length. `back` is 0 at the
+# front of the neck and 1 at the back, where the lowered hood bunches up.
 SEG, SIDES = 72, 14
+seglen = [(ring[(i + 1) % len(ring)] - ring[i]).length for i in range(len(ring))]
+total = sum(seglen)
+
+
+def ring_at(dist):
+    """Neckline point `dist` along the loop, and the loop's tangent there."""
+    dist %= total
+    for i, length in enumerate(seglen):
+        if dist <= length or i == len(seglen) - 1:
+            a, b = ring[i], ring[(i + 1) % len(ring)]
+            return a.lerp(b, dist / length if length else 0.0), (b - a).normalized()
+        dist -= length
+
+
 half_depth = max(abs(p.y - cy) for p in ring) or 1.0
-
-
-def ring_at(angle):
-    """Neckline point at a polar angle around (cx, cy), interpolated from the ring."""
-    angles = [math.atan2(p.y - cy, p.x - cx) for p in ring]
-    for i in range(len(ring)):
-        a0, a1 = angles[i], angles[(i + 1) % len(ring)]
-        if (i + 1) % len(ring) == 0:
-            a1 += 2 * math.pi
-        a = angle if angle >= a0 else angle + 2 * math.pi
-        if a0 <= a <= a1:
-            t = (a - a0) / (a1 - a0) if a1 > a0 else 0.0
-            return ring[i].lerp(ring[(i + 1) % len(ring)], t)
-    return ring[0]
-
-
 bm = bmesh.new()
-rows = []
+rows, centres = [], []
 for i in range(SEG):
-    angle = -math.pi + 2 * math.pi * i / SEG
-    p = ring_at(angle)
-    out = Vector((p.x - cx, p.y - cy, 0)).normalized()
+    p, tangent = ring_at(total * i / SEG)
+    out = Vector((tangent.y, -tangent.x, 0)).normalized()
     back = min(1.0, max(0.0, ((p.y - cy) / half_depth + 1) / 2))
     w = back * back * (3 - 2 * back)  # smoothstep
     r = ROLL_FRONT + (ROLL_BACK - ROLL_FRONT) * w
     centre = p + out * (r * 0.55) + Vector((0, 0.10 * w, -0.06 * w + r * 0.25))
-    rows.append([bm.verts.new(centre + r * (math.cos(a) * out + math.sin(a) * Vector((0, 0, 1))))
+    centres.append(centre)
+    rows.append([bm.verts.new(centre + r * (math.cos(a) * out + math.sin(a) * UP))
                  for a in (2 * math.pi * k / SIDES for k in range(SIDES))])
 for i in range(SEG):
     a, b = rows[i], rows[(i + 1) % SEG]
+    axis = (centres[i] + centres[(i + 1) % SEG]) / 2
     for k in range(SIDES):
-        bm.faces.new((a[k], a[(k + 1) % SIDES], b[(k + 1) % SIDES], b[k]))
+        face_out(bm, (a[k], a[(k + 1) % SIDES], b[(k + 1) % SIDES], b[k]), axis)
 roll = bpy.data.meshes.new("HoodieRoll")
 bm.to_mesh(roll)
 bm.free()
@@ -122,16 +154,17 @@ for side in (-1, 1):
         hit, *_ = body_bvh.ray_cast(Vector((side * CORD_X, front_y - 3, z)), Vector((0, 1, 0)))
         y = (hit.y if hit else front_y) - CORD_R * 1.5
         pts.append(Vector((side * (CORD_X - 0.015 * j / 8), y, z)))
-    prev = None
+    prev_ring = None
     for j, p in enumerate(pts):
         r = CORD_R * (1.6 if j == len(pts) - 1 else 1.0)  # aglet at the tip
-        cur = [bm.verts.new(p + r * Vector((math.cos(a), math.sin(a), 0)))
-               for a in (2 * math.pi * k / 6 for k in range(6))]
-        if prev:
+        cur_ring = [bm.verts.new(p + r * Vector((math.cos(a), math.sin(a), 0)))
+                    for a in (2 * math.pi * k / 6 for k in range(6))]
+        if prev_ring:
+            axis = (pts[j - 1] + p) / 2
             for k in range(6):
-                bm.faces.new((prev[k], prev[(k + 1) % 6], cur[(k + 1) % 6], cur[k]))
-        prev = cur
-    bm.faces.new(prev[::-1])
+                face_out(bm, (prev_ring[k], prev_ring[(k + 1) % 6], cur_ring[(k + 1) % 6], cur_ring[k]), axis)
+        prev_ring = cur_ring
+    face_out(bm, prev_ring, pts[-2])  # cap at the tip, facing down the cord
 cords = bpy.data.meshes.new("HoodieCords")
 bm.to_mesh(cords)
 bm.free()
