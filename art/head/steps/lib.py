@@ -54,6 +54,18 @@ def mpfb():
          "Install MPFB 2.0.17 from extensions.blender.org and enable it.")
 
 
+def mpfb_data(*parts):
+    """Absolute path to a file in MPFB's bundled data directory (for example
+    mpfb_data("rigs", "standard", "weights.default.json"))."""
+    import sys as _sys
+    HumanService = mpfb()[0]
+    package = _sys.modules[HumanService.__module__].__package__.rsplit(".", 1)[0]
+    path = os.path.join(os.path.dirname(_sys.modules[package].__file__), "data", *parts)
+    if not os.path.exists(path):
+        fail(f"MPFB data file {os.path.join(*parts)} is missing; reinstall MPFB 2.0.17")
+    return path
+
+
 def group_centroid(obj, name):
     """World-space centroid of the vertices in vertex group `name`, read from the mesh
     data (bake MPFB targets first so the joints reflect the shaped body)."""
