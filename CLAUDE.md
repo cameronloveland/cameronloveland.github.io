@@ -26,6 +26,12 @@ anything visual; it is the contract every visual change is judged against.
   Settings > Pages > Source = **GitHub Actions**.
 - There is no test suite beyond Astro's content collection schema validation (see
   below) - a project with malformed frontmatter fails `npm run build`.
+- **Roadmap:** `docs/VISION.md` (consumed by `/next-goal`). Current goal: the cyborg head
+  bust, spec `docs/superpowers/specs/2026-11-08-cyborg-head-bust-design.md`.
+- **Gates:** `npm run build`; for `art/head/` items also `npm run head` (headless Blender
+  build plus GLB budget check, created by the first roadmap item).
+- **Run by hand:** `npm run head`, then look at the renders in `art/head/renders/`; the hero
+  mockup is served by the brainstorm companion from `.superpowers/brainstorm/`.
 
 ## Project data (`src/content/projects/`)
 
