@@ -38,7 +38,7 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 - [x] (b) Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback (2026-11-08: PR #99, bust swaps in after load and copies the placeholder's pose; placeholder stays on failure)
 - [x] Hoodie on the `Bust` shoulders, hood down behind the neck, hiding the bust's cut edge (2026-11-08: PR #100, hoodie built from the bust, hood roll and drawstrings, no poke-through at the turn limits)
 - [~] Likeness pass on the MPFB base: face shape, haircut, beard, skin tone and eyes tuned to the photo, with side-by-side review renders for Cameron's sign-off (branch: likeness-pass, plan: docs/superpowers/plans/2026-11-08-likeness-pass.md)
-- [ ] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell
+- [~] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell (branch: cyborg-tear)
 - [ ] Red robot eye: emissive `EyeRed` in the torn socket, with a red point light in the hero
 
 ### Good: it clearly reads as Cameron, ragged tear over a real metal skull, glasses, hair, inside 3 MB

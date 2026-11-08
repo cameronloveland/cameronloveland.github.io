@@ -77,6 +77,10 @@ From Cameron:
 - The tear is a patch (temple, eye socket, cheek, toward the jaw), not a full vertical half.
 - Glasses whole, red eye glowing through the lens.
 - Stylized real now; may push toward realism later, so keep the pipeline able to.
+- After the first likeness review (2026-11-08): the tear is larger than first drawn, still
+  sparing the mouth, nose and ear, so it carries more of the image; it reveals a realistic
+  metal cyborg skull, Terminator style; the red eye is a small glowing red dot in a dark
+  lens, not a whole red eye. Say "cyborg", not "android". Hoodie olive, as in the photo.
 - Behaviour matches the placeholder exactly: head follows the mouse, glances at the
   active project after 2.5 s idle, the scroll peek and its rise, the dim-then-lit intro.
 
