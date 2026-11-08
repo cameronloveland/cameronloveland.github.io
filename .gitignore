@@ -16,3 +16,10 @@ node_modules/
 dist/
 .astro/
 .playwright-mcp/
+
+# Head build outputs (art/head/README.md); the shipped head.glb is committed
+art/head/build/
+art/head/renders/
+*.blend1
+__pycache__/
+art/head/**/*.blend
