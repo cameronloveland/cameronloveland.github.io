@@ -38,9 +38,9 @@
 
 **Files:** Modify `art/head/steps/30_bust.py`, `art/head/steps/90_export.py`, `art/head/steps/lib.py`
 
-- [ ] **Step 1:** Before `bake_targets`, load `weights.default.json` from MPFB's data dir and write groups: `Head = clamp(head + jaw + eye.L + eye.R + tongue* + 1.0 * neck03 + 0.6 * neck02 + 0.2 * neck01)`, `Bust = 1 - Head`. Drop all other groups after the mask is applied.
+- [ ] **Step 1:** Before `bake_targets`, load `weights.default.json` from MPFB's data dir and write groups: `Bust` share 1.0 for body bones (spine, clavicle, shoulder, arms, hands, breast, pelvis, root, legs), 0.8 / 0.4 / 0.0 for neck01 / neck02 / neck03, 0 for every other bone; `Head = 1 - Bust` normalised; Head forced to 1.0 above y -0.5 after scaling. Drop all other groups after the mask is applied.
 - [ ] **Step 2:** One bisect below the shoulders, no neck split; name the mesh `Skin`. Scale and pivot as before.
 - [ ] **Step 3:** Armature `Rig` with bones `Bust` and `Head`, both head (0, 0, 0), tail (0, 0, 1), roll 0, `Head` parented to `Bust` unconnected; `Skin` gets an Armature modifier; eyes and `Glasses` bone-parented to `Head` keeping their world transforms.
-- [ ] **Step 4:** `90_export.py`: `export_skins=True`, `export_armature_object_remove=True`; add renders `turned-yaw.png` (yaw 0.744, pitch 0.2) and `turned-pitch.png` (pitch 0.504 up, yaw -0.4) by posing the `Head` bone, then reset the pose before export.
+- [ ] **Step 4:** `90_export.py`: `export_skins=True`, `export_armature_object_remove=True`; add renders `turned-down.png` (pitch 0.504, yaw 0.744, roll 0.16) and `turned-up.png` (all negated) by posing the `Head` bone in `ZYX` mode (Three's `XYZ`), then reset the pose before export.
 - [ ] **Step 5: Run** `npm run head` - expected pass; look at the turned renders for gaps, face smear and eye drift.
 - [ ] **Step 6:** README (nodes, known issues removed), CREDITS (weights). Commit.

@@ -67,11 +67,17 @@ function inspect(json, errors, stats) {
   if (!skins.length) errors.push('no skin; the neck must be skinned to Head and Bust');
   else if (!skins.some((s) => s.joints?.includes(head) && s.joints?.includes(bust))) errors.push('no skin is driven by both Head and Bust');
 
+  const moved = (t) => t && t.some((v) => Math.abs(v) > 1e-6);
+  const turned = (r) => r && (Math.abs(r[0]) > 1e-6 || Math.abs(r[1]) > 1e-6 || Math.abs(r[2]) > 1e-6);
+  if (bust !== undefined) {
+    const n = nodes[bust];
+    if (moved(n.translation) || turned(n.rotation) || n.matrix) errors.push('Bust must sit at the origin with no rotation');
+  }
   if (head !== undefined) {
     const t = nodes[head].translation;
-    if (t && t.some((v) => Math.abs(v) > 1e-6)) errors.push(`Head has a translation ${JSON.stringify(t)}; the JS owns head.position`);
+    if (moved(t)) errors.push(`Head has a translation ${JSON.stringify(t)}; the JS owns head.position`);
     const r = nodes[head].rotation;
-    if (r && (Math.abs(r[0]) > 1e-6 || Math.abs(r[1]) > 1e-6 || Math.abs(r[2]) > 1e-6)) errors.push(`Head has a rest rotation ${JSON.stringify(r)}; the JS overwrites head.rotation`);
+    if (turned(r)) errors.push(`Head has a rest rotation ${JSON.stringify(r)}; the JS overwrites head.rotation`);
     if (nodes[head].matrix) errors.push('Head uses a matrix; it must use TRS with no translation');
     for (const name of HEAD_CHILDREN) {
       const i = byName.get(name);

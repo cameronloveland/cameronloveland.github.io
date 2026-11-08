@@ -29,10 +29,11 @@ human = lib.get("Human")
 eyes = lib.get("Eyes")
 
 # Head and Bust weights from MPFB's CC0 default-rig weights, indexed by base-mesh vertex,
-# so this runs before the helper geometry is removed. Torso bones count toward Bust, the
+# so this runs before the helper geometry is removed. Body bones count toward Bust, the
 # neck bones hand over from Bust to Head bottom to top, and every other bone (skull, jaw,
 # eyes and the many face bones) counts fully toward Head.
-TORSO = ("spine", "clavicle", "shoulder", "upperarm", "breast", "pelvis", "root")
+TORSO = ("spine", "clavicle", "shoulder", "upperarm", "lowerarm", "wrist", "metacarpal", "finger",
+         "breast", "pelvis", "root", "upperleg", "lowerleg", "foot", "toe")
 NECK_BUST_SHARE = {"neck01": 0.8, "neck02": 0.4, "neck03": 0.0}
 
 
@@ -120,6 +121,14 @@ to_hero = Matrix.Scale(k, 4) @ Matrix.Translation(-pivot)
 for obj in (skin, eye_human, eye_red):
     obj.data.transform(to_hero)
     obj.data.update()
+
+# Everything above the neck turns as one with the skull: the rig weights leave the back of
+# the skull and the ears slightly on the neck bones, which would make them lag the face.
+SKULL_FLOOR = -0.5  # glTF units below the pivot; the chin sits near -0.95
+g_head, g_bust = skin.vertex_groups["Head"], skin.vertex_groups["Bust"]
+skull = [v.index for v in skin.data.vertices if v.co.z > SKULL_FLOOR]
+g_head.add(skull, 1.0, "REPLACE")
+g_bust.remove(skull)
 
 # Eye origins at their own centres, so a later item can turn them in place.
 for obj in (eye_human, eye_red):

@@ -60,4 +60,6 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
 - In Three.js `Head` and `Bust` load as `Bone`s. Find nodes by name, rotate only `Head`
   with `head.rotation.set(...)` as the placeholder does, and add the whole scene to the
   rig. Quantization folds a scale and offset into the eye nodes' transforms.
-- Loading needs `GLTFLoader` with `MeshoptDecoder`.
+- Loading needs `GLTFLoader` with `MeshoptDecoder`. Three computes a skinned mesh's
+  bounds once, so set `frustumCulled = false` on `Skin` or a turned head near the screen
+  edge can be culled early.

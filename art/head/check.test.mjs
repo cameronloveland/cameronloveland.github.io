@@ -128,6 +128,16 @@ test('an identity Head rotation is allowed', () => {
   assert.equal(r.ok, true, r.errors.join('\n'));
 });
 
+test('a Bust away from the origin or rotated fails', () => {
+  for (const extra of [{ translation: [0, -1, 0] }, { rotation: [0.38, 0, 0, 0.92] }]) {
+    const json = contract();
+    Object.assign(json.nodes[0], extra);
+    const r = checkGlb(makeGlb(json));
+    assert.equal(r.ok, false, JSON.stringify(extra));
+    assert.ok(r.errors.some((e) => e.includes('Bust')), r.errors.join('\n'));
+  }
+});
+
 test('a GLB with no skin fails', () => {
   const r = checkGlb(makeGlb(contract({ skin: false })));
   assert.equal(r.ok, false);

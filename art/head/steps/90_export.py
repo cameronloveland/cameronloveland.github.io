@@ -19,7 +19,7 @@ for name in ("Skin", "Rig", "EyeHuman", "EyeRed", "Glasses"):
     lib.get(name)
 rig = lib.get("Rig")
 head_pose = rig.pose.bones["Head"]
-head_pose.rotation_mode = "XYZ"
+head_pose.rotation_mode = "ZYX"  # Blender ZYX applies X first, same as Three's default XYZ
 
 scene = bpy.context.scene
 for engine in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT", "BLENDER_WORKBENCH"):
