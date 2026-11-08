@@ -24,7 +24,7 @@
 
 1. Blender exits 0 on a Python exception unless told otherwise: every step runs with `--python-exit-code 1`, and the driver fails on non-zero exit.
 2. Blender missing or not at the default path: the driver honours `BLENDER`, then the default Windows path, then `blender` on PATH, and fails with a message naming `BLENDER`.
-3. MPFB not installed or disabled: `01_base.py` fails with a message naming MPFB instead of an ImportError trace.
+3. MPFB not installed or disabled: `10_base.py` fails with a message naming MPFB instead of an ImportError trace.
 4. A failed run must not leave a stale `head.glb` that looks fresh: output goes to `build/` and is copied to `art/head/head.glb` only after the check passes.
 5. Paths with spaces (`Program Files`): spawn with an argument array, never a shell string.
 
@@ -48,14 +48,14 @@
 ### Task 2: Blender build steps
 
 **Files:**
-- Create: `art/head/steps/lib.py`, `art/head/steps/01_base.py`, `art/head/steps/02_bust.py`, `art/head/steps/90_export.py`
+- Create: `art/head/steps/lib.py`, `art/head/steps/10_base.py`, `art/head/steps/30_bust.py`, `art/head/steps/90_export.py`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: each step is run as `blender -b [<prev>.blend] --python-exit-code 1 --python <step>.py -- --out <build>/<step>.blend [--glb <path>] [--renders <dir>]`. `lib.py` gives `parse_args() -> argparse.Namespace`, `save(ns)`, `group_centroid(obj, name) -> Vector`. Later items add steps between `02` and `90` (for example `03_likeness.py`) and the driver picks them up by filename order.
+- Produces: each step is run as `blender -b [<prev>.blend] --python-exit-code 1 --python <step>.py -- --out <build>/<step>.blend [--glb <path>] [--renders <dir>]`. `lib.py` gives `parse_args() -> argparse.Namespace`, `save(ns)`, `group_centroid(obj, name) -> Vector`. Later items add steps in the gaps (for example `20_likeness.py` before the bake in `30_bust.py`, `40_tear.py` after it) and the driver picks them up by filename order.
 
-- [ ] **Step 1: `01_base.py`** - clear the scene; import `HumanService`, `AssetService`, `TargetService` from `bl_ext.user_default.mpfb.services` (fail with "MPFB 2 is not installed or enabled" on ImportError); `create_human(scale=0.1)` with default macros; add `low-poly/low-poly.mhclo` eyes with `subdiv_levels=0`; record joint centroids (`joint-l-eye`, `joint-r-eye`, `joint-neck`, `joint-head`, `joint-l-shoulder`, `joint-r-shoulder`) as custom properties on the human; `TargetService.bake_targets`, then apply the `Hide helpers` mask; save.
-- [ ] **Step 2: `02_bust.py`** - on the body: bisect at `z_cut = shoulder_z - 0.06` clearing below, then duplicate and bisect at `z_neck = neck_z + 0.02` into `Head` (above) and `Bust` (below). Split the eye mesh by x sign into `EyeHuman` (x < 0) and `EyeRed` (x > 0). Scale everything about the world origin by `k = 2.2 / (2 * (crown_z - eye_z))` (crown = head mesh max z). Pivot = (0, centre of the cranium's y extent, eye_z - 0.14 / k) in pre-scale units; translate all objects so the pivot sits at the origin, set `Head` origin there, parent `EyeHuman`, `EyeRed` and a new empty `Glasses` to `Head` keeping transforms. Materials: Principled skin `#c8957c` roughness 0.55 on `Head`/`Bust`, eye white roughness 0.3 on `EyeHuman`, emission red `#ff2a1a` strength 4 on `EyeRed`. Save.
+- [ ] **Step 1: `10_base.py`** - clear the scene; import `HumanService`, `AssetService`, `TargetService` from `bl_ext.user_default.mpfb.services` (fail with "MPFB 2 is not installed or enabled" on ImportError); `create_human(scale=0.1)` with default macros; add `low-poly/low-poly.mhclo` eyes with `subdiv_levels=0`; name the basemesh `Human`; MPFB targets stay live so a likeness step can still change them; save.
+- [ ] **Step 2: `30_bust.py`** - `TargetService.bake_targets`, record the joint centroids, apply the `Hide helpers` mask; then on the body: bisect at `z_cut = shoulder_z - 0.06` clearing below, then duplicate and bisect at `z_neck = neck_z + 0.02` into `Head` (above) and `Bust` (below). Split the eye mesh by x sign into `EyeHuman` (x < 0) and `EyeRed` (x > 0). Scale everything about the world origin by `k = 2.2 / (2 * (crown_z - eye_z))` (crown = head mesh max z). Pivot = (0, centre of the cranium's y extent, eye_z - 0.14 / k) in pre-scale units; translate all objects so the pivot sits at the origin, set `Head` origin there, parent `EyeHuman`, `EyeRed` and a new empty `Glasses` to `Head` keeping transforms. Materials: Principled skin `#c8957c` roughness 0.55 on `Head`/`Bust`, eye white roughness 0.3 on `EyeHuman`, emission red `#ff2a1a` strength 4 on `EyeRed`. Save.
 - [ ] **Step 3: `90_export.py`** - render front (camera on -Y) and three-quarter (45 degrees toward +X) previews with EEVEE at 900 x 900 to `--renders`; export `--glb` with `export_format='GLB'`, `export_yup=True`, `export_apply=True`, no animations, no cameras or lights.
 - [ ] **Step 4: Verify** by running the three steps by hand; expected `build/raw.glb` and two PNGs.
 - [ ] **Step 5: Commit** `feat(head): headless Blender steps for the MPFB base bust`.
