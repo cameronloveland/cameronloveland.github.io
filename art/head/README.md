@@ -28,7 +28,8 @@ default install path, set `BLENDER` to its executable first.
 
 Only a passing build replaces `head.glb`. Previews land in `renders/`: front and
 three-quarter at rest, plus `turned-down` and `turned-up` with the head at the hero's turn
-limits, to check the neck bends cleanly. `build/` and `renders/` are gitignored. Check any GLB on its own with
+limits, to check the neck bends cleanly, and `face-front` and `face-three-quarter` framed
+crown to chin for comparing the likeness with the reference photo. `build/` and `renders/` are gitignored. Check any GLB on its own with
 `node art/head/check.mjs <file.glb>`.
 
 ## Steps
@@ -36,8 +37,10 @@ limits, to check the neck bends cleanly. `build/` and `renders/` are gitignored.
 | Step | What it does |
 | --- | --- |
 | `10_base.py` | MPFB base human with low-poly eyes; MPFB targets stay live |
-| `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials |
+| `20_likeness.py` | The likeness: MPFB macros (male, about 35, heavier) and face targets (rounder face, fuller cheeks, light smile), tuned by eye against the reference photo; refits the eyes |
+| `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials (brown iris and pupil on `EyeHuman` from the eye's own face rings); keeps MPFB's `scalp`, `lips` and `ears` groups for `45` |
 | `40_hoodie.py` | A hoodie built from the bust: the skin below a tilted neckline smoothed and pushed out, a hood roll swept round the neck (thin at the front, bunched at the back), two drawstrings; hides the skin underneath; bone-parented to `Bust` |
+| `45_hair.py` | Hair, beard, mustache and brows as shells of the skin's own faces, pushed out and tapered at the edges, inside `Skin` on the `Hair` and `Beard` materials so they keep its weights and bend with the neck; removes the region groups |
 | `90_export.py` | Preview renders and the raw GLB export; always last |
 
 Add a step by dropping a new numbered script in a gap: anything that changes MPFB
@@ -53,7 +56,8 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
 
 - glTF defaults: +Y up, facing +Z. Head about 2.2 units crown to chin; the eye line sits
   0.14 above the `Head` origin, the skull-centre pivot.
-- One skinned mesh, `Skin`, from the crown to below the shoulders. Two joints drive it:
+- One skinned mesh, `Skin`, from the crown to below the shoulders, with the hair and
+  beard shells on its `Hair` and `Beard` materials. Two joints drive it:
   `Bust` (the scene root, static) and `Head` (its child), both at the origin with no
   rotation. The neck is weighted between them, so rotating `Head` bends the neck.
 - `EyeHuman` (character right, -X), `EyeRed` (character left, +X, the android side) and

@@ -66,16 +66,21 @@ helpers.append(cam)
 # Rest views, then the head at the hero's limits. The Head bone's local X, Y, Z are the
 # glTF X, Y, Z, so (pitch, yaw, roll) here match head.rotation.set(pitch, yaw, roll) in
 # the hero: yaw up to 0.744, pitch up to 0.504 (positive looks down), roll up to 0.16.
+# The face views frame crown to chin for the likeness review against the photo.
+BUST, FACE = (15, -0.4, -0.7), (8, 0.15, 0.0)  # camera distance, camera height, target height
 VIEWS = (
-    ("front", 0, (0, 0, 0)),
-    ("three-quarter", 45, (0, 0, 0)),
-    ("turned-down", 45, (0.504, 0.744, 0.16)),
-    ("turned-up", -45, (-0.504, -0.744, -0.16)),
+    ("front", 0, (0, 0, 0), BUST),
+    ("three-quarter", 45, (0, 0, 0), BUST),
+    ("turned-down", 45, (0.504, 0.744, 0.16), BUST),
+    ("turned-up", -45, (-0.504, -0.744, -0.16), BUST),
+    ("face-front", 0, (0, 0, 0), FACE),
+    ("face-three-quarter", 30, (0, 0, 0), FACE),
 )
 os.makedirs(ns.renders, exist_ok=True)
-for label, angle, pose in VIEWS:
+for label, angle, pose, (distance, height, aim) in VIEWS:
     a = math.radians(angle)
-    cam.location = (15 * math.sin(a), -15 * math.cos(a), -0.4)
+    target.location = (0, 0, aim)
+    cam.location = (distance * math.sin(a), -distance * math.cos(a), height)
     head_pose.rotation_euler = pose
     bpy.context.view_layer.update()
     scene.render.filepath = os.path.join(os.path.abspath(ns.renders), f"{label}.png")

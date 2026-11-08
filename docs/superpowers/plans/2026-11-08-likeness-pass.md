@@ -4,7 +4,7 @@
 
 **Goal:** Turn the neutral MPFB bust into a stylized-real likeness of Cameron (face shape, hair, beard, brows, skin tone, brown eyes) and produce side-by-side review renders for his sign-off.
 
-**Architecture:** A new `20_likeness.py` sets MPFB macros, face targets and a light resting smile while targets are still live, then refits the eyes. `30_bust.py` gets the new skin tone and an iris and pupil on `EyeHuman`. A new `35_hair.py` grows hair, beard, mustache and brows as offset shells of the skin's own faces, kept inside the `Skin` mesh (second material), so they share its weights and bend with the neck. `90_export.py` adds face close-ups. The photo comparison is assembled outside the repo.
+**Architecture:** A new `20_likeness.py` sets MPFB macros, face targets and a light resting smile while targets are still live, then refits the eyes. `30_bust.py` gets the new skin tone and an iris and pupil on `EyeHuman`. A new `45_hair.py` (after the hoodie, so the hoodie never sees the shells) grows hair, beard, mustache and brows as offset shells of the skin's own faces, kept inside the `Skin` mesh (`Hair` and `Beard` materials), so they share its weights and bend with the neck. `90_export.py` adds face close-ups. The photo comparison is assembled outside the repo.
 
 **Tech Stack:** Blender 5.2 headless, MPFB 2.0.17 (`HumanService`, `TargetService`), bmesh, Node build driver `art/head/build.mjs`.
 
@@ -59,10 +59,10 @@
 - [ ] **Step 3:** Run `npm run head`. Expected: passes; the human eye shows a brown iris looking straight ahead in `front.png`.
 - [ ] **Step 4:** Commit.
 
-### Task 3: Hair, beard, mustache and brows (`35_hair.py`)
+### Task 3: Hair, beard, mustache and brows (`45_hair.py`)
 
 **Files:**
-- Create: `art/head/steps/35_hair.py`
+- Create: `art/head/steps/45_hair.py`
 
 **Interfaces:**
 - Consumes: `Skin` in hero units with `Head`/`Bust` groups and the `joint_*` custom properties from `30_bust.py`; `Rig`.
@@ -72,7 +72,7 @@
 - [ ] **Step 2:** Duplicate the selected skin faces in bmesh, push the copies out along vertex normals (scalp about 0.05, beard about 0.04, mustache 0.03, brows 0.02, in hero units), keep the duplicated vertices' deform weights, and close nothing: the shells are open caps. Assign them to slot `Hair`.
 - [ ] **Step 3:** Print the added face count with the `head build:` prefix.
 - [ ] **Step 4:** Run `npm run head`. Expected: passes (triangles under 40,000); renders show short dark hair, a short full beard and mustache, dark brows; no gap or skin poke-through in `turned-down.png` and `turned-up.png`.
-- [ ] **Step 5:** Iterate the region constants against the photo, then commit `35_hair.py` and `head.glb`.
+- [ ] **Step 5:** Iterate the region constants against the photo, then commit `45_hair.py` and `head.glb`.
 
 ### Task 4: Review renders, docs
 
@@ -85,7 +85,7 @@
 - Produces: `renders/face-front.png` and `renders/face-three-quarter.png`, framed on the face at rest.
 
 - [ ] **Step 1:** Add a per-view camera distance and target height so the two face views frame crown to chin; keep the four existing views as they are.
-- [ ] **Step 2:** README steps table gains `20_likeness.py` and `35_hair.py`; the renders paragraph names the face views. CREDITS gains the MPFB face targets and expression unit (CC0) and the hair shells (made here).
+- [ ] **Step 2:** README steps table gains `20_likeness.py` and `45_hair.py`; the renders paragraph names the face views. CREDITS gains the MPFB face targets and expression unit (CC0) and the hair shells (made here).
 - [ ] **Step 3:** Run `npm run head` and `npm run build`. Expected: both pass.
 - [ ] **Step 4:** Outside the repo, compose the photo next to `face-front.png` and `face-three-quarter.png` into `%USERPROFILE%\Pictures\portfolio-head\likeness-review.png` with a scratch script, and show it to Cameron.
 - [ ] **Step 5:** Commit; open the PR. Merge and check off the roadmap only after Cameron signs off on the likeness (the spec's one review stop).

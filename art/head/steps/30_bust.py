@@ -12,6 +12,7 @@ facing +Z):
 - Glasses: an empty bone-parented to Head until the glasses item fills it.
 """
 import json
+import math
 import os
 import sys
 
@@ -62,6 +63,9 @@ for index, w in enumerate(head_w):
     if w < 1.0:
         g_bust.add([index], 1.0 - w, "REPLACE")
 
+# MPFB region groups that 45_hair.py places the hair and beard by; it removes them.
+REGIONS = ("scalp", "lips", "ears")
+
 # Bake the targets, read the joints, then drop the helper geometry.
 if human.data.shape_keys:
     TargetService.bake_targets(human)
@@ -70,7 +74,7 @@ bpy.context.view_layer.objects.active = human
 for mod in list(human.modifiers):
     bpy.ops.object.modifier_apply(modifier=mod.name)
 for group in list(human.vertex_groups):
-    if group.name not in ("Head", "Bust"):
+    if group.name not in ("Head", "Bust") + REGIONS:
         human.vertex_groups.remove(group)
 
 # Put every mesh in world space with identity transforms and no parents.
@@ -178,16 +182,9 @@ def material(name, color, roughness, emission=None):
     return mat
 
 
-def srgb(hex_color):
-    def lin(c):
-        c /= 255
-        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-    return tuple(lin(int(hex_color[i:i + 2], 16)) for i in (0, 2, 4))
-
-
-red = srgb("ff2a1a")
-mats = {skin: material("Skin", srgb("c8957c"), 0.55),
-        eye_human: material("EyeWhite", srgb("f2efe9"), 0.3),
+red = lib.srgb("ff2a1a")
+mats = {skin: material("Skin", lib.srgb("deae88"), 0.55),
+        eye_human: material("EyeWhite", lib.srgb("f2efe9"), 0.3),
         eye_red: material("EyeRed", red, 0.2, emission=(red, 4.0))}
 for obj, mat in mats.items():
     obj.data.materials.clear()
@@ -195,6 +192,19 @@ for obj, mat in mats.items():
     for poly in obj.data.polygons:
         poly.material_index = 0
         poly.use_smooth = True
+
+# The human eye's iris and pupil follow the MPFB eye's own face rings: a tiny cap round the
+# eye's axis (the pupil), one ring of small faces round it (the iris), then the white. The
+# axis is the mean normal of those small faces; it tilts slightly off straight ahead.
+PUPIL_DEG, IRIS_DEG = 10, 28
+largest = max(p.area for p in eye_human.data.polygons)
+small = [p for p in eye_human.data.polygons if p.area < 0.25 * largest]
+axis = sum((p.normal for p in small), Vector()).normalized()
+eye_human.data.materials.append(material("Iris", lib.srgb("5a3a24"), 0.25))
+eye_human.data.materials.append(material("Pupil", lib.srgb("0b0807"), 0.2))
+for poly in eye_human.data.polygons:
+    angle = math.degrees(poly.normal.angle(axis))
+    poly.material_index = 2 if angle < PUPIL_DEG else 1 if angle < IRIS_DEG else 0
 
 for obj in list(bpy.data.objects):
     if obj not in mats and obj not in (glasses, rig):
