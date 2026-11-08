@@ -32,7 +32,7 @@ the first `- [ ]` line, top tier first; `- [~] text (branch: x, plan: y)` marks 
 item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-design.md. Approval: once.
 
 ### Working: the bust is in the hero with matched behaviour, rough likeness, basic tear, red eye
-- [~] Head build pipeline: `art/head/` headless Blender scripts export a compressed MPFB base bust GLB with the spec's node names, plus `npm run head` and a budget check (branch: head-build-pipeline, plan: docs/superpowers/plans/2026-11-08-head-build-pipeline.md)
+- [x] Head build pipeline: `art/head/` headless Blender scripts export a compressed MPFB base bust GLB with the spec's node names, plus `npm run head` and a budget check (2026-11-08: PR #97, 70 KB neutral MPFB bust; neck seam opens on turn, skinned-neck fix proposed in art/head/README.md)
 - [ ] Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback
 - [ ] Likeness pass on the MPFB base: face shape, haircut, beard, skin tone and eyes tuned to the photo, with side-by-side review renders for Cameron's sign-off
 - [ ] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell
