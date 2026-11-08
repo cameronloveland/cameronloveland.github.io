@@ -41,11 +41,11 @@ MACROS = {
 # behind the glasses, a slightly wider and shorter head, and a wider mouth with lifted
 # corners for his easy smile.
 TARGETS = {
-    ("head", "head-round"): 0.5,
-    ("head", "head-fat-incr"): 0.4,
-    ("cheek", "l-cheek-volume-incr"): 0.5,
-    ("cheek", "r-cheek-volume-incr"): 0.5,
-    ("chin", "chin-width-incr"): 0.3,
+    ("head", "head-round"): 0.3,
+    ("head", "head-fat-incr"): 0.6,
+    ("cheek", "l-cheek-volume-incr"): 0.3,
+    ("cheek", "r-cheek-volume-incr"): 0.3,
+    ("chin", "chin-width-incr"): 0.5,
     ("nose", "nose-volume-incr"): 0.3,
     ("eyes", "l-eye-scale-decr"): 0.2,
     ("eyes", "r-eye-scale-decr"): 0.2,
@@ -55,6 +55,20 @@ TARGETS = {
     ("head", "head-scale-vert-decr"): 0.15,
     ("mouth", "mouth-angles-up"): 0.9,
     ("mouth", "mouth-scale-horiz-incr"): 0.3,
+    # Round 2: ears flat to the head, a fuller lower face, a broader nose tip and the
+    # squint of his smile.
+    ("ears", "l-ear-wing-decr"): 0.8,
+    ("ears", "r-ear-wing-decr"): 0.8,
+    ("ears", "l-ear-flap-decr"): 0.4,
+    ("ears", "r-ear-flap-decr"): 0.4,
+    ("chin", "chin-jaw-drop-incr"): 0.3,
+    ("cheek", "l-cheek-bones-incr"): 0.3,
+    ("cheek", "r-cheek-bones-incr"): 0.3,
+    ("head", "head-oval"): 0.3,
+    ("nose", "nose-point-width-incr"): 0.4,
+    ("nose", "nose-scale-horiz-incr"): 0.2,
+    ("expression/units/caucasian", "eye-left-slit"): 0.35,
+    ("expression/units/caucasian", "eye-right-slit"): 0.35,
 }
 
 
@@ -74,7 +88,6 @@ for (folder, stem), weight in TARGETS.items():
 bpy.context.view_layer.update()
 HumanService.refit(human)
 bpy.context.view_layer.update()
-
 
 
 def shaped_centroid(group_name):
