@@ -15,8 +15,11 @@ import lib  # noqa: E402
 ns = lib.parse_args()
 if not ns.glb or not ns.renders:
     lib.fail("90_export.py needs --glb and --renders")
-for name in ("Head", "Bust", "EyeHuman", "EyeRed", "Glasses"):
+for name in ("Skin", "Rig", "EyeHuman", "EyeRed", "Glasses"):
     lib.get(name)
+rig = lib.get("Rig")
+head_pose = rig.pose.bones["Head"]
+head_pose.rotation_mode = "ZYX"  # Blender ZYX applies X first, same as Three's default XYZ
 
 scene = bpy.context.scene
 for engine in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT", "BLENDER_WORKBENCH"):
@@ -60,12 +63,25 @@ scene.collection.objects.link(cam)
 scene.camera = cam
 helpers.append(cam)
 
+# Rest views, then the head at the hero's limits. The Head bone's local X, Y, Z are the
+# glTF X, Y, Z, so (pitch, yaw, roll) here match head.rotation.set(pitch, yaw, roll) in
+# the hero: yaw up to 0.744, pitch up to 0.504 (positive looks down), roll up to 0.16.
+VIEWS = (
+    ("front", 0, (0, 0, 0)),
+    ("three-quarter", 45, (0, 0, 0)),
+    ("turned-down", 45, (0.504, 0.744, 0.16)),
+    ("turned-up", -45, (-0.504, -0.744, -0.16)),
+)
 os.makedirs(ns.renders, exist_ok=True)
-for label, angle in (("front", 0), ("three-quarter", 45)):
+for label, angle, pose in VIEWS:
     a = math.radians(angle)
     cam.location = (15 * math.sin(a), -15 * math.cos(a), -0.4)
+    head_pose.rotation_euler = pose
+    bpy.context.view_layer.update()
     scene.render.filepath = os.path.join(os.path.abspath(ns.renders), f"{label}.png")
     bpy.ops.render.render(write_still=True)
+head_pose.rotation_euler = (0, 0, 0)
+bpy.context.view_layer.update()
 
 for obj in helpers:
     bpy.data.objects.remove(obj, do_unlink=True)
@@ -78,7 +94,8 @@ bpy.ops.export_scene.gltf(
     export_apply=True,
     export_animations=False,
     export_morph=False,
-    export_skins=False,
+    export_skins=True,
+    export_armature_object_remove=True,
     export_cameras=False,
     export_lights=False,
 )

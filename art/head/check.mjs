@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 export const MAX_BYTES = 3 * 1024 * 1024;
 export const MAX_TRIANGLES = 40000;
-export const ROOT_NODES = ['Bust', 'Head'];
+export const JOINTS = ['Bust', 'Head'];
 export const HEAD_CHILDREN = ['EyeHuman', 'EyeRed', 'Glasses'];
 
 function readJson(buf) {
@@ -52,18 +52,32 @@ function inspect(json, errors, stats) {
 
   for (const n of nodes) if (n.mesh !== undefined) stats.triangles += meshTriangles(json, json.meshes[n.mesh]);
 
-  for (const name of [...ROOT_NODES, ...HEAD_CHILDREN]) {
+  for (const name of [...JOINTS, ...HEAD_CHILDREN]) {
     if (!byName.has(name)) errors.push(`missing node ${name}`);
   }
   const sceneRoots = new Set(json.scenes?.[json.scene ?? 0]?.nodes ?? []);
-  for (const name of ROOT_NODES) {
-    const i = byName.get(name);
-    if (i !== undefined && (parent.has(i) || !sceneRoots.has(i))) errors.push(`${name} must be a root node of the scene`);
-  }
+  const isRoot = (i) => !parent.has(i) && sceneRoots.has(i);
+  const bust = byName.get('Bust');
   const head = byName.get('Head');
+  if (bust !== undefined && !isRoot(bust)) errors.push('Bust must be a root node of the scene');
+  if (head !== undefined && !(isRoot(head) || parent.get(head) === bust)) errors.push('Head must be a scene root or a child of Bust');
+
+  // The hero turns Head by bending a skinned neck, so a skin must be driven by Head and Bust.
+  const skins = json.skins ?? [];
+  if (!skins.length) errors.push('no skin; the neck must be skinned to Head and Bust');
+  else if (!skins.some((s) => s.joints?.includes(head) && s.joints?.includes(bust))) errors.push('no skin is driven by both Head and Bust');
+
+  const moved = (t) => t && t.some((v) => Math.abs(v) > 1e-6);
+  const turned = (r) => r && (Math.abs(r[0]) > 1e-6 || Math.abs(r[1]) > 1e-6 || Math.abs(r[2]) > 1e-6);
+  if (bust !== undefined) {
+    const n = nodes[bust];
+    if (moved(n.translation) || turned(n.rotation) || n.matrix) errors.push('Bust must sit at the origin with no rotation');
+  }
   if (head !== undefined) {
     const t = nodes[head].translation;
-    if (t && t.some((v) => Math.abs(v) > 1e-6)) errors.push(`Head has a translation ${JSON.stringify(t)}; the JS owns head.position`);
+    if (moved(t)) errors.push(`Head has a translation ${JSON.stringify(t)}; the JS owns head.position`);
+    const r = nodes[head].rotation;
+    if (turned(r)) errors.push(`Head has a rest rotation ${JSON.stringify(r)}; the JS overwrites head.rotation`);
     if (nodes[head].matrix) errors.push('Head uses a matrix; it must use TRS with no translation');
     for (const name of HEAD_CHILDREN) {
       const i = byName.get(name);

@@ -33,7 +33,9 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 
 ### Working: the bust is in the hero with matched behaviour, rough likeness, basic tear, red eye
 - [x] Head build pipeline: `art/head/` headless Blender scripts export a compressed MPFB base bust GLB with the spec's node names, plus `npm run head` and a budget check (2026-11-08: PR #97, 70 KB neutral MPFB bust; neck seam opens on turn, skinned-neck fix proposed in art/head/README.md)
-- [ ] Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback
+- [x] ~~Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback~~ (2026-11-08: split into a/b)
+- [x] (a) Skinned neck: one continuous bust mesh with `Bust` and `Head` as glTF joints at the origin and the neck weighted between them, so the head turns without a seam (2026-11-08: PR #98, neck bends cleanly at the hero's turn limits)
+- [ ] (b) Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback
 - [ ] Likeness pass on the MPFB base: face shape, haircut, beard, skin tone and eyes tuned to the photo, with side-by-side review renders for Cameron's sign-off
 - [ ] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell
 - [ ] Red robot eye: emissive `EyeRed` in the torn socket, with a red point light in the hero
@@ -44,6 +46,7 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 - [ ] Rimless rectangular `Glasses` on the head, with the red eye glowing through the lens
 - [ ] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form
 - [ ] Collared shirt on the `Bust` shoulders
+- [ ] Human hands that grip the hero edge, replacing the capsule placeholders, the android-side hand in metal
 - [ ] Web budget pass: decimation, baked normal maps, KTX2 textures and meshopt bring the GLB under 3 MB
 
 ### Polished: detail, lighting match with the hero, performance

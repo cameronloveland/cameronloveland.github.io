@@ -22,11 +22,13 @@ default install path, set `BLENDER` to its executable first.
    that opens the previous step's `.blend` and saves its own to `build/`;
 2. `gltf-transform meshopt` on `build/raw.glb` (meshopt compression plus quantization);
 3. `check.mjs`, which fails the run if a contract node is missing or misplaced (`Bust`
-   and `Head` must be scene roots, the rest children of `Head`), `Head`
-   has a translation, the GLB is 3 MB or more, or it has over 40,000 triangles.
+   a scene root, `Head` its child, the rest children of `Head`), `Head` has a
+   translation or a rest rotation, no skin is driven by both joints, the GLB is 3 MB or
+   more, or it has over 40,000 triangles.
 
-Only a passing build replaces `head.glb`. Front and three-quarter previews land in
-`renders/`. `build/` and `renders/` are gitignored. Check any GLB on its own with
+Only a passing build replaces `head.glb`. Previews land in `renders/`: front and
+three-quarter at rest, plus `turned-down` and `turned-up` with the head at the hero's turn
+limits, to check the neck bends cleanly. `build/` and `renders/` are gitignored. Check any GLB on its own with
 `node art/head/check.mjs <file.glb>`.
 
 ## Steps
@@ -34,7 +36,7 @@ Only a passing build replaces `head.glb`. Front and three-quarter previews land 
 | Step | What it does |
 | --- | --- |
 | `10_base.py` | MPFB base human with low-poly eyes; MPFB targets stay live |
-| `30_bust.py` | Bakes the targets, cuts the bust, splits `Head` from `Bust` at the neck and the eyes by side, scales and pivots to the hero contract, simple materials |
+| `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials |
 | `90_export.py` | Preview renders and the raw GLB export; always last |
 
 Add a step by dropping a new numbered script in a gap: anything that changes MPFB
@@ -50,20 +52,14 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
 
 - glTF defaults: +Y up, facing +Z. Head about 2.2 units crown to chin; the eye line sits
   0.14 above the `Head` origin, the skull-centre pivot.
-- Nodes: `Bust` and `Head` at the root; `EyeHuman` (character right, -X), `EyeRed`
-  (character left, +X, the android side) and `Glasses` (empty for now) under `Head`.
-- Quantization folds a scale and offset into node transforms and can move a mesh into an
-  unnamed child node, so `Head` is a plain group. Find nodes by name, never assume `Head`
-  is a Mesh, and rotate only `Head`.
-- Loading in Three.js needs `GLTFLoader` with `MeshoptDecoder`.
-
-## Known issues
-
-- The neck seam opens when the head turns. `Head` and `Bust` are split at the neck, and
-  the hero turns `Head` up to about 43 degrees of yaw and 29 of pitch around a pivot at
-  eye level, so the neck base swings well clear of the `Bust` and shows its open ring.
-  A tucked neck skirt was tried and covers only a few degrees. Proposed fix for the hero
-  item: one continuous skinned mesh with `Bust` (root) and `Head` as glTF joints, both
-  at the origin so `Head` keeps no translation, and the neck weighted from `Bust` to
-  `Head`. Rotating the `Head` joint then bends the neck instead of tearing it. This
-  changes the node contract (`Bust` and `Head` become joints), so it needs sign-off.
+- One skinned mesh, `Skin`, from the crown to below the shoulders. Two joints drive it:
+  `Bust` (the scene root, static) and `Head` (its child), both at the origin with no
+  rotation. The neck is weighted between them, so rotating `Head` bends the neck.
+- `EyeHuman` (character right, -X), `EyeRed` (character left, +X, the android side) and
+  `Glasses` (empty for now) are children of `Head`.
+- In Three.js `Head` and `Bust` load as `Bone`s. Find nodes by name, rotate only `Head`
+  with `head.rotation.set(...)` as the placeholder does, and add the whole scene to the
+  rig. Quantization folds a scale and offset into the eye nodes' transforms.
+- Loading needs `GLTFLoader` with `MeshoptDecoder`. Three computes a skinned mesh's
+  bounds once, so set `frustumCulled = false` on `Skin` or a turned head near the screen
+  edge can be culled early.
