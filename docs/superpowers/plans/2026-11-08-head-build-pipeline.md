@@ -40,9 +40,9 @@
 - Produces: `checkGlb(buf: Buffer) -> { ok: boolean, errors: string[], stats: { bytes, triangles, nodes: string[] } }` and a CLI `node art/head/check.mjs <file.glb>` that prints stats and exits 1 on errors. Constants `MAX_BYTES = 3 * 1024 * 1024`, `MAX_TRIANGLES = 40000`.
 
 - [ ] **Step 1: Write failing tests** with a helper `makeGlb(json, binLength)` that packs a GLB header plus JSON chunk. Tests: valid contract passes; missing `Glasses` fails with an error containing `Glasses`; `EyeRed` not under `Head` fails; `Head` with a non-zero translation fails; triangles over 40,000 (indices accessor count 120003, mode 4) fails; a buffer over `MAX_BYTES` fails; a non-GLB buffer fails with `not a GLB`.
-- [ ] **Step 2: Run** `node --test art/head/` - expected FAIL (module not found).
+- [ ] **Step 2: Run** `node --test art/head/check.test.mjs` - expected FAIL (module not found).
 - [ ] **Step 3: Implement** `checkGlb`: parse magic `glTF`, version 2, first chunk type `JSON`; triangles = sum over primitives (mode undefined or 4) of `indices` accessor count / 3, else position count / 3; walk node children to resolve parents.
-- [ ] **Step 4: Run** `node --test art/head/` - expected all pass.
+- [ ] **Step 4: Run** `node --test art/head/check.test.mjs` - expected all pass.
 - [ ] **Step 5: Commit** `feat(head): GLB contract and budget checker`.
 
 ### Task 2: Blender build steps
@@ -68,7 +68,7 @@
 
 **Interfaces:**
 - Consumes: `checkGlb` (Task 1); step CLI (Task 2).
-- Produces: `npm run head` = `node --test art/head/ && node art/head/build.mjs`.
+- Produces: `npm run head` = `node --test art/head/check.test.mjs && node art/head/build.mjs`.
 
 - [ ] **Step 1: Install** `npm i -D @gltf-transform/cli`.
 - [ ] **Step 2: Implement `build.mjs`**: resolve Blender (Review Focus 2); run `steps/NN_*.py` in order, chaining blends (Review Focus 1, 5); `node <cli bin> meshopt build/raw.glb build/head.glb`; `checkGlb`; on pass copy to `art/head/head.glb` and print bytes, triangles and node names; on fail print errors and exit 1 (Review Focus 4).
