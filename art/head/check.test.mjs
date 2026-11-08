@@ -93,6 +93,39 @@ test('a file over 3 MB fails', () => {
   assert.ok(r.errors.some((e) => e.includes('MB')), r.errors.join('\n'));
 });
 
+test('a Bust parented under Head fails', () => {
+  const json = contract();
+  json.nodes[1].children.push(0);
+  json.scenes[0].nodes = [1];
+  const r = checkGlb(makeGlb(json));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.some((e) => e.includes('Bust') && e.includes('root')), r.errors.join('\n'));
+});
+
+test('a Head nested in another group fails', () => {
+  const json = contract();
+  json.nodes.push({ name: 'Wrapper', children: [1] });
+  json.scenes[0].nodes = [0, 5];
+  const r = checkGlb(makeGlb(json));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.some((e) => e.includes('Head') && e.includes('root')), r.errors.join('\n'));
+});
+
+test('triangle strips and fans count toward the budget', () => {
+  const json = contract();
+  json.meshes[0].primitives.push({ attributes: { POSITION: 0 }, mode: 5 }, { attributes: { POSITION: 0 }, mode: 6 });
+  const r = checkGlb(makeGlb(json));
+  assert.equal(r.stats.triangles, 4 * (100 + 98 + 98));
+});
+
+test('a broken accessor reference fails instead of throwing', () => {
+  const json = contract();
+  json.meshes[0].primitives[0].indices = 9;
+  const r = checkGlb(makeGlb(json));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.length > 0);
+});
+
 test('a buffer that is not a GLB fails', () => {
   const r = checkGlb(Buffer.from('not a model at all'));
   assert.equal(r.ok, false);

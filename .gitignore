@@ -22,3 +22,4 @@ art/head/build/
 art/head/renders/
 *.blend1
 __pycache__/
+art/head/**/*.blend

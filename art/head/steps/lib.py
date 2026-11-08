@@ -37,18 +37,26 @@ def fail(message):
 
 
 def mpfb():
-    """Import the MPFB 2 services, or fail with a message that names MPFB."""
-    try:
-        from bl_ext.user_default.mpfb.services.humanservice import HumanService
-        from bl_ext.user_default.mpfb.services.assetservice import AssetService
-        from bl_ext.user_default.mpfb.services.targetservice import TargetService
-    except ImportError as e:
-        fail(f"MPFB 2 is not installed or enabled in Blender ({e}). Install it from extensions.blender.org.")
-    return HumanService, AssetService, TargetService
+    """Import the MPFB 2 services from whichever extension repo holds them, or fail with
+    a message that names MPFB. extensions.blender.org installs into `blender_org`; a
+    manual install from disk lands in `user_default`."""
+    import importlib
+    repos = [r.module for r in bpy.context.preferences.extensions.repos if r.enabled]
+    for repo in dict.fromkeys(repos + ["blender_org", "user_default"]):
+        base = f"bl_ext.{repo}.mpfb.services"
+        try:
+            return (importlib.import_module(f"{base}.humanservice").HumanService,
+                    importlib.import_module(f"{base}.assetservice").AssetService,
+                    importlib.import_module(f"{base}.targetservice").TargetService)
+        except ImportError:
+            continue
+    fail(f"MPFB 2 is not installed or enabled in Blender (looked in extension repos {repos}). "
+         "Install MPFB 2.0.17 from extensions.blender.org and enable it.")
 
 
 def group_centroid(obj, name):
-    """World-space centroid of the vertices in vertex group `name` (evaluated mesh)."""
+    """World-space centroid of the vertices in vertex group `name`, read from the mesh
+    data (bake MPFB targets first so the joints reflect the shaped body)."""
     group = obj.vertex_groups.get(name)
     if group is None:
         fail(f"{obj.name} has no vertex group {name}")

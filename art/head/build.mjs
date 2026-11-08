@@ -21,8 +21,11 @@ function die(message) {
 }
 
 function findBlender() {
+  if (process.env.BLENDER) {
+    if (existsSync(process.env.BLENDER)) return process.env.BLENDER;
+    die(`BLENDER is set to ${process.env.BLENDER}, which does not exist.`);
+  }
   const candidates = [
-    process.env.BLENDER,
     process.platform === 'win32' ? 'C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe' : null,
     process.platform === 'darwin' ? '/Applications/Blender.app/Contents/MacOS/Blender' : null,
   ].filter(Boolean);
@@ -50,7 +53,9 @@ const blender = findBlender();
 const steps = readdirSync(join(here, 'steps')).filter((f) => /^\d+_.+\.py$/.test(f)).sort();
 if (!steps.length || !steps.at(-1).startsWith('90_export')) die('steps/ must end with 90_export.py');
 
+// Clear both so nothing left over from an earlier run is mistaken for this one.
 rmSync(build, { recursive: true, force: true });
+rmSync(renders, { recursive: true, force: true });
 mkdirSync(build, { recursive: true });
 
 let previous = null;

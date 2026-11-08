@@ -59,8 +59,12 @@ head = human
 bust = human.copy()
 bust.data = human.data.copy()
 human.users_collection[0].objects.link(bust)
-bisect(head, neck_z + 0.02, keep_above=True)
-bisect(bust, neck_z + 0.02, keep_above=False)
+# Known issue (README, "Known issues"): the hero turns Head up to about 43 degrees around
+# a pivot at eye level, which opens this seam; the hero item replaces the split with a
+# skinned neck.
+seam_z = neck_z + 0.02
+bisect(head, seam_z, keep_above=True)
+bisect(bust, seam_z, keep_above=False)
 head.name, head.data.name = "Head", "Head"
 bust.name, bust.data.name = "Bust", "Bust"
 for obj in (head, bust):

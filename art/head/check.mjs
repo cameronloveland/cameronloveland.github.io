@@ -20,9 +20,12 @@ function readJson(buf) {
 function meshTriangles(json, mesh) {
   let tris = 0;
   for (const p of mesh.primitives ?? []) {
-    if (p.mode !== undefined && p.mode !== 4) continue; // only plain triangle lists count
-    const acc = p.indices !== undefined ? json.accessors[p.indices] : json.accessors[p.attributes.POSITION];
-    tris += Math.floor(acc.count / 3);
+    const mode = p.mode ?? 4;
+    if (mode < 4) continue; // points and lines carry no triangles
+    const index = p.indices ?? p.attributes.POSITION;
+    const acc = json.accessors?.[index];
+    if (!acc) throw new Error(`a primitive points at missing accessor ${index}`);
+    tris += mode === 4 ? Math.floor(acc.count / 3) : Math.max(0, acc.count - 2); // 5 strip, 6 fan
   }
   return tris;
 }
@@ -30,15 +33,19 @@ function meshTriangles(json, mesh) {
 export function checkGlb(buf) {
   const errors = [];
   const stats = { bytes: buf.length, triangles: 0, nodes: [] };
-  let json;
   try {
-    json = readJson(buf);
+    inspect(readJson(buf), errors, stats);
   } catch (e) {
-    return { ok: false, errors: [e.message], stats };
+    errors.push(e.message);
   }
+  if (stats.triangles > MAX_TRIANGLES) errors.push(`${stats.triangles} triangles is over the ${MAX_TRIANGLES} budget`);
+  if (stats.bytes >= MAX_BYTES) errors.push(`${(stats.bytes / 1048576).toFixed(2)} MB is over the 3 MB budget`);
+  return { ok: errors.length === 0, errors, stats };
+}
 
+function inspect(json, errors, stats) {
   const nodes = json.nodes ?? [];
-  stats.nodes = nodes.map((n) => n.name);
+  stats.nodes = nodes.map((n) => n.name).filter(Boolean); // quantization can add unnamed mesh nodes
   const parent = new Map();
   nodes.forEach((n, i) => (n.children ?? []).forEach((c) => parent.set(c, i)));
   const byName = new Map(nodes.map((n, i) => [n.name, i]));
@@ -47,6 +54,11 @@ export function checkGlb(buf) {
 
   for (const name of [...ROOT_NODES, ...HEAD_CHILDREN]) {
     if (!byName.has(name)) errors.push(`missing node ${name}`);
+  }
+  const sceneRoots = new Set(json.scenes?.[json.scene ?? 0]?.nodes ?? []);
+  for (const name of ROOT_NODES) {
+    const i = byName.get(name);
+    if (i !== undefined && (parent.has(i) || !sceneRoots.has(i))) errors.push(`${name} must be a root node of the scene`);
   }
   const head = byName.get('Head');
   if (head !== undefined) {
@@ -58,10 +70,6 @@ export function checkGlb(buf) {
       if (i !== undefined && parent.get(i) !== head) errors.push(`${name} is not a child of Head`);
     }
   }
-
-  if (stats.triangles > MAX_TRIANGLES) errors.push(`${stats.triangles} triangles is over the ${MAX_TRIANGLES} budget`);
-  if (stats.bytes >= MAX_BYTES) errors.push(`${(stats.bytes / 1048576).toFixed(2)} MB is over the 3 MB budget`);
-  return { ok: errors.length === 0, errors, stats };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
