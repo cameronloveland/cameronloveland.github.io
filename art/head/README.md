@@ -37,6 +37,7 @@ limits, to check the neck bends cleanly. `build/` and `renders/` are gitignored.
 | --- | --- |
 | `10_base.py` | MPFB base human with low-poly eyes; MPFB targets stay live |
 | `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials |
+| `40_hoodie.py` | A hoodie built from the bust: the skin below a tilted neckline smoothed and pushed out, a hood roll swept round the neck (thin at the front, bunched at the back), two drawstrings; hides the skin underneath; bone-parented to `Bust` |
 | `90_export.py` | Preview renders and the raw GLB export; always last |
 
 Add a step by dropping a new numbered script in a gap: anything that changes MPFB
@@ -56,7 +57,7 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
   `Bust` (the scene root, static) and `Head` (its child), both at the origin with no
   rotation. The neck is weighted between them, so rotating `Head` bends the neck.
 - `EyeHuman` (character right, -X), `EyeRed` (character left, +X, the android side) and
-  `Glasses` (empty for now) are children of `Head`.
+  `Glasses` (empty for now) are children of `Head`. `Hoodie` is a static child of `Bust`.
 - In Three.js `Head` and `Bust` load as `Bone`s. Find nodes by name, rotate only `Head`
   with `head.rotation.set(...)` as the placeholder does, and add the whole scene to the
   rig. Quantization folds a scale and offset into the eye nodes' transforms.

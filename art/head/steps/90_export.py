@@ -15,7 +15,7 @@ import lib  # noqa: E402
 ns = lib.parse_args()
 if not ns.glb or not ns.renders:
     lib.fail("90_export.py needs --glb and --renders")
-for name in ("Skin", "Rig", "EyeHuman", "EyeRed", "Glasses"):
+for name in ("Skin", "Rig", "EyeHuman", "EyeRed", "Glasses", "Hoodie"):
     lib.get(name)
 rig = lib.get("Rig")
 head_pose = rig.pose.bones["Head"]

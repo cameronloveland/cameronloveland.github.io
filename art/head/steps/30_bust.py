@@ -65,7 +65,7 @@ for index, w in enumerate(head_w):
 # Bake the targets, read the joints, then drop the helper geometry.
 if human.data.shape_keys:
     TargetService.bake_targets(human)
-joint = {n: lib.group_centroid(human, f"joint-{n}") for n in ("l-eye", "r-eye", "l-shoulder", "r-shoulder")}
+joint = {n: lib.group_centroid(human, f"joint-{n}") for n in ("l-eye", "r-eye", "neck", "head", "l-shoulder", "r-shoulder")}
 bpy.context.view_layer.objects.active = human
 for mod in list(human.modifiers):
     bpy.ops.object.modifier_apply(modifier=mod.name)
@@ -121,6 +121,9 @@ to_hero = Matrix.Scale(k, 4) @ Matrix.Translation(-pivot)
 for obj in (skin, eye_human, eye_red):
     obj.data.transform(to_hero)
     obj.data.update()
+# Joint positions in hero units, for later steps (hoodie, tear) to place parts by.
+for name, co in joint.items():
+    skin[f"joint_{name.replace('-', '_')}"] = list(to_hero @ co)
 
 # Everything above the neck turns as one with the skull: the rig weights leave the back of
 # the skull and the ears slightly on the neck bones, which would make them lag the face.
