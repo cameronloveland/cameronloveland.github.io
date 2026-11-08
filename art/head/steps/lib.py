@@ -78,6 +78,14 @@ def group_centroid(obj, name):
     return sum(pts, Vector()) / len(pts)
 
 
+def srgb(hex_color):
+    """Linear RGB from an sRGB hex string like "c8957c", for material colours."""
+    def lin(c):
+        c /= 255
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return tuple(lin(int(hex_color[i:i + 2], 16)) for i in (0, 2, 4))
+
+
 def get(name):
     obj = bpy.data.objects.get(name)
     if obj is None:

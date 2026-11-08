@@ -196,7 +196,7 @@ def material(name, hex_color, roughness):
     return mat
 
 
-hoodie_mesh.materials.append(material("Hoodie", "2a2c33", 0.92))
+hoodie_mesh.materials.append(material("Hoodie", "77754f", 0.92))  # olive, as in the reference photo
 hoodie_mesh.materials.append(material("Drawstring", "c9c6bf", 0.8))
 hoodie = bpy.data.objects.new("Hoodie", hoodie_mesh)
 skin.users_collection[0].objects.link(hoodie)
