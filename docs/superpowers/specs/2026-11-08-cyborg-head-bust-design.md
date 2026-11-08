@@ -23,7 +23,8 @@ a scan.
   and cheek, down toward the jaw. Ragged skin edge, metal skull and mechanics underneath,
   a red glowing robot eye in that socket. The mouth, nose, most of the beard, the ear and
   the neck stay human, so the face still reads as Cameron.
-- A simple collared shirt on the shoulders, like the reference photo.
+- A hoodie on the shoulders with the hood down behind the neck, so the bust is never shown
+  bare (Cameron, 2026-11-08; replaces the collared shirt from the reference photo).
 - The glasses stay whole on both sides; the red eye glows through the lens.
 - A drop-in replacement for the placeholder: same behaviour, no new interactions.
 - Human-looking hands that grip the hero edge in place of the capsule placeholders, the
@@ -88,8 +89,8 @@ Calls made for him (he can overrule):
 - Red eye is the one colour outside the site palette (mint stays reserved for pressable
   things, indigo for selected). It is emissive and gets a small red point light in
   Three.js. The placeholder's mint droid eye and mint seam go away.
-- Bust ends in a clean horizontal cut just below the shoulders' top line, wearing a simple
-  collared shirt.
+- Bust ends in a clean horizontal cut just below the shoulders' top line, wearing a hoodie
+  with the hood down.
 - Cameron reviews likeness renders (front and three-quarter, next to the photo) before any
   tear or android work starts. That review is the only stop in an otherwise unattended run.
 - "Rebuilds the same GLB" means visually equivalent, not byte-identical.
