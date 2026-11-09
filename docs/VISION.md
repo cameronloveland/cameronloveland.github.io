@@ -44,8 +44,8 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 ### Good: it clearly reads as Cameron, ragged tear over a real metal skull, glasses, hair, inside 3 MB
 - [ ] Ragged tear edge: torn skin geometry with thickness and an irregular border over the metal
 - [ ] Android mechanics under the patch: eye housing, cheek and jaw pistons, cables, panel detail
-- [ ] Rimless rectangular `Glasses` on the head, with the red eye glowing through the lens
-- [ ] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form
+- [~] Rimless rectangular `Glasses` on the head, with the red eye glowing through the lens (branch: cyborg-tear)
+- [~] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form (branch: cyborg-tear)
 - [x] ~~Collared shirt on the `Bust` shoulders~~ (2026-11-08: dropped - replaced by the hoodie item in Working, Cameron's call)
 - [ ] Human hands that grip the hero edge, replacing the capsule placeholders, the android-side hand in metal
 - [ ] Web budget pass: decimation, baked normal maps, KTX2 textures and meshopt bring the GLB under 3 MB

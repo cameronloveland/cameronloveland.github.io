@@ -49,14 +49,12 @@ TARGETS = {
     ("nose", "nose-volume-incr"): 0.3,
     ("eyes", "l-eye-scale-decr"): 0.2,
     ("eyes", "r-eye-scale-decr"): 0.2,
-    ("eyes", "l-eye-height2-decr"): 0.3,
-    ("eyes", "r-eye-height2-decr"): 0.3,
     ("head", "head-scale-horiz-incr"): 0.25,
     ("head", "head-scale-vert-decr"): 0.15,
     ("mouth", "mouth-angles-up"): 0.9,
     ("mouth", "mouth-scale-horiz-incr"): 0.3,
-    # Round 2: ears flat to the head, a fuller lower face, a broader nose tip and the
-    # squint of his smile.
+    # Round 2: ears flat to the head, a fuller lower face, a broader nose tip. (Round 3: eyes
+    # left open; the squint read as half-closed.)
     ("ears", "l-ear-wing-decr"): 0.8,
     ("ears", "r-ear-wing-decr"): 0.8,
     ("ears", "l-ear-flap-decr"): 0.4,
@@ -67,8 +65,6 @@ TARGETS = {
     ("head", "head-oval"): 0.3,
     ("nose", "nose-point-width-incr"): 0.4,
     ("nose", "nose-scale-horiz-incr"): 0.2,
-    ("expression/units/caucasian", "eye-left-slit"): 0.35,
-    ("expression/units/caucasian", "eye-right-slit"): 0.35,
 }
 
 

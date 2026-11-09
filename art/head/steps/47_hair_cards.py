@@ -1,0 +1,174 @@
+"""Step 47: hair cards, so the hair, beard and brows read as hair rather than solid shells.
+
+Cards grow out of the shells 45_hair.py made (found by their Hair and Beard materials),
+which stay underneath as the dense base colour:
+- top: long cards swept up, forward and toward his right, tallest along the centre ridge
+  and curling over at the tips (the messy faux hawk);
+- sides and back: short cards lying down and back (the fade);
+- beard and moustache: short cards lying down along the face, shorter at the edges, dark
+  and grey mixed for salt and pepper;
+- brows: fine cards pointing outward.
+Cards stay inside the Skin mesh with the weights of the shell under them, so they turn and
+bend with it. Hero units, Blender Z up, face toward -Y.
+"""
+import math
+import os
+import random
+import sys
+
+import bmesh
+from mathutils import Vector
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cards  # noqa: E402
+import lib  # noqa: E402
+
+ns = lib.parse_args()
+skin = lib.get("Skin")
+
+SEED = 11
+HAIR_DARK, HAIR_LIGHT, LIGHT_SHARE = "2a1d16", "5b4636", 0.2
+BEARD_DARK, BEARD_GREY, GREY_SHARE = "2e2520", "8f8983", 0.38
+BROW_Z = 0.42           # Hair-shell faces below this (and in front) are brows
+TOP_X = 0.62            # |x| inside which the top gets the long faux hawk cards
+# (cards per unit area, length range, width, segments, lift degrees, curl)
+TOP = (240, (0.26, 0.5), 0.15, 3, 62, -0.3)
+SIDE = (260, (0.06, 0.1), 0.08, 1, 15, -0.1)
+BEARD = (1300, (0.08, 0.13), 0.08, 1, 20, -0.25)
+BROW = (900, (0.05, 0.07), 0.035, 1, 12, -0.1)
+HAWK_WIDTH, HAWK_SIDE = 0.55, 0.45   # top length falls from the ridge to this share at HAWK_WIDTH
+SWEEP = Vector((-0.35, -0.45, 0.0))   # the top sweeps toward his right and forward
+EDGE_RINGS = 2          # beard cards shorten over this many face rings in from the edge
+U_SPAN = 0.5            # each card shows a random half of the strand texture's width
+
+rng = random.Random(SEED)
+image = cards.strand_texture("HairStrands")
+
+bm = bmesh.new()
+bm.from_mesh(skin.data)
+deform = bm.verts.layers.deform.active
+uv = bm.loops.layers.uv.active
+slot = {m.name: i for i, m in enumerate(skin.data.materials)}
+for name in ("Hair", "Beard"):
+    if name not in slot:
+        lib.fail(f"Skin has no {name} material; 45_hair.py must run first")
+
+new_slots = {}
+for name, color in (("HairCard", HAIR_DARK), ("HairCardLight", HAIR_LIGHT),
+                    ("BeardCard", BEARD_DARK), ("BeardCardGrey", BEARD_GREY)):
+    skin.data.materials.append(cards.card_material(name, image, lib.srgb(color)))
+    new_slots[name] = len(skin.data.materials) - 1
+
+hair_faces = [f for f in bm.faces if f.material_index == slot["Hair"]]
+beard_faces = [f for f in bm.faces if f.material_index == slot["Beard"]]
+
+# Face rings in from the beard's edge, so cards shorten toward it.
+beard_set = set(beard_faces)
+ring = {}
+frontier = {f for f in beard_faces if any(sum(1 for lf in e.link_faces if lf in beard_set) < 2 for e in f.edges)}
+level = 0
+while frontier:
+    for f in frontier:
+        ring[f] = level
+    frontier = {lf for f in frontier for e in f.edges for lf in e.link_faces if lf in beard_set and lf not in ring}
+    level += 1
+
+
+def tangent(n, want):
+    """want projected onto the surface, or a fallback when it points along the normal."""
+    t = want - n * want.dot(n)
+    if t.length < 1e-4:
+        t = Vector((0.0, -1.0, -1.0)) - n * Vector((0.0, -1.0, -1.0)).dot(n)
+    return t.normalized()
+
+
+def jitter(t, n, degrees):
+    return (t + n.cross(t) * math.tan(math.radians(rng.uniform(-degrees, degrees)))).normalized()
+
+
+def sample(f):
+    w = [rng.random() + 0.05 for _ in f.verts]
+    total = sum(w)
+    return sum((v.co * (x / total) for v, x in zip(f.verts, w)), Vector())
+
+
+def grow(faces, spec, pick, direction_of, length_of):
+    density, lengths, width, segments, lift, curl = spec
+    made = []
+    for f in faces:
+        count = f.calc_area() * density
+        count = int(count) + (1 if rng.random() < count % 1 else 0)
+        n = f.normal.copy()
+        weights = dict(f.verts[0][deform])
+        for _ in range(count):
+            root = sample(f) - n * 0.01
+            t = direction_of(root, n)
+            d = (t * math.cos(math.radians(lift)) + n * math.sin(math.radians(lift))).normalized()
+            length = rng.uniform(*lengths) * length_of(root, f)
+            u0 = rng.uniform(0.0, 1.0 - U_SPAN)
+            made += [(c, pick()) for c in cards.card(bm, uv, deform, weights, root, d, n, length, width,
+                                                     segments, curl, (u0, u0 + U_SPAN))]
+    return made
+
+
+def hair_pick():
+    return "HairCardLight" if rng.random() < LIGHT_SHARE else "HairCard"
+
+
+def beard_pick():
+    return "BeardCardGrey" if rng.random() < GREY_SHARE else "BeardCard"
+
+
+def is_brow(f):
+    c = f.calc_center_median()
+    return c.z < BROW_Z and c.y < -0.5
+
+
+top = [f for f in hair_faces if not is_brow(f) and abs(f.calc_center_median().x) < TOP_X and f.calc_center_median().z > BROW_Z]
+top_set = set(top)
+sides = [f for f in hair_faces if not is_brow(f) and f not in top_set]
+brows = [f for f in hair_faces if is_brow(f)]
+
+
+def top_dir(root, n):
+    want = Vector((0.0, 0.0, 1.0)) + SWEEP + Vector((-0.25 * math.copysign(1.0, root.x) * min(1.0, abs(root.x) / HAWK_WIDTH), 0.0, 0.0))
+    return jitter(tangent(n, want), n, 25)
+
+
+def top_len(root, f):
+    ax = abs(root.x)
+    return HAWK_SIDE + (1 - HAWK_SIDE) * max(0.0, 1 - (ax / HAWK_WIDTH) ** 2)
+
+
+made = []
+made += grow(top, TOP, hair_pick, top_dir, top_len)
+counts = {"top": len(made)}
+made += grow(sides, SIDE, hair_pick, lambda r, n: jitter(tangent(n, Vector((0.0, 0.4, -1.0))), n, 20), lambda r, f: 1.0)
+made += grow(brows, BROW, lambda: "HairCard", lambda r, n: jitter(tangent(n, Vector((math.copysign(1.0, r.x), 0.0, 0.25))), n, 15),
+             lambda r, f: 1.0)
+
+
+def beard_dir(root, n):
+    want = Vector((0.0, 0.0, -1.0))
+    if root.z > -0.55 and abs(root.x) < 0.3:  # the moustache combs down and out
+        want += Vector((math.copysign(0.6, root.x), 0.0, 0.0))
+    return jitter(tangent(n, want), n, 25)
+
+
+counts["sides+brows"] = len(made) - counts["top"]
+made += grow(beard_faces, BEARD, beard_pick, beard_dir, lambda r, f: 0.45 + 0.55 * min(1.0, ring.get(f, EDGE_RINGS) / EDGE_RINGS))
+
+color = bm.loops.layers.float_color.get("BeardColor")
+for f, name in made:
+    f.material_index = new_slots[name]
+    f.smooth = True
+    if color:
+        for loop in f.loops:
+            loop[color] = (1.0, 1.0, 1.0, 1.0)
+bm.normal_update()
+bm.to_mesh(skin.data)
+bm.free()
+
+lib.save(ns)
+counts["beard"] = len(made) - counts["top"] - counts["sides+brows"]
+print(f"head build: hair cards {len(made)} faces ({', '.join(f'{k} {v}' for k, v in counts.items())})")

@@ -81,6 +81,10 @@ From Cameron:
   sparing the mouth, nose and ear, so it carries more of the image; it reveals a realistic
   metal cyborg skull, Terminator style; the red eye is a small glowing red dot in a dark
   lens, not a whole red eye. Say "cyborg", not "android". Hoodie olive, as in the photo.
+- In the scroll peek the hands wrap over the edge of the section below: fingers curl over
+  its top with the fingertips drawn in front of it, as if pulling up over a ledge
+  (Cameron, 2026-11-08). The hero canvas, or a small layer for the fingers, overlaps the
+  edge to allow it.
 - Behaviour matches the placeholder exactly: head follows the mouse, glances at the
   active project after 2.5 s idle, the scroll peek and its rise, the dim-then-lit intro.
 

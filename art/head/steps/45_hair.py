@@ -4,8 +4,8 @@ Each region's skin faces are copied and pushed out along the skin normals, so th
 follows the head exactly and costs no textures. The copies stay inside the Skin mesh on
 two more materials, `Hair` and `Beard`, and keep the skin's Head and Bust weights, so the beard on the
 neck bends with it when the head turns. Shell edges taper toward the skin so the hair
-thins out instead of ending in a step. This is the rough likeness; the hair pass in the
-roadmap's Good tier gives it volume.
+thins out instead of ending in a step. These are the base layer; 47_hair_cards.py grows
+hair cards out of them.
 
 Regions come from MPFB's `scalp`, `lips` and `ears` groups (kept by 30_bust.py) and from
 lines in hero units, tuned by eye against the reference photo. Blender Z up, face to -Y.
@@ -17,7 +17,7 @@ import sys
 
 import bmesh
 import bpy
-from mathutils import Quaternion, Vector
+from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -40,18 +40,7 @@ MOUSTACHE_GAP = (0.27, 0.42)  # |x| band beside the mouth corners where the join
 TAPER_RINGS = 2             # edge rings over which a shell thins toward the skin
 EDGE_SMOOTH = 10            # passes that round a shell's stepped border into a curve
 EDGE_SHARE = 0.25           # the thickness left at the very edge, so it never z-fights
-# The faux hawk: tapered clumps standing out of the base layer, tallest along the centre
-# ridge and leaning in toward it, falling to short ones at the sides, each tilted at random
-# so the top reads messy rather than combed.
-CLUMP_HEIGHT = 0.42         # ridge clump height
-CLUMP_SIDE = 0.35           # height share at the edge of the hawk
-HAWK_WIDTH = 0.55           # |x| over which the clumps fall from the ridge to the sides
-CLUMP_RADIUS = 0.09         # half-width at the root, across the blade
-CLUMP_FLAT = 0.35           # blade thickness as a share of its width
-CLUMP_FORWARD = 0.45       # forward sweep, doubled along the front hairline
-CLUMPS_PER_VERT = 3
-SWEEP = Vector((-0.35, 0.0, 0.0))  # the top sweeps toward his right (-X), as in the photo
-SEED = 7
+SEED = 7                    # salt and pepper mix
 
 
 def temple(co):
@@ -168,52 +157,7 @@ for _ in range(EDGE_SMOOTH):
         hit, normal, _, _ = surface.find_nearest(co)
         v.co = hit + normal * depth[copy_of[v]] * EDGE_SHARE
 
-# Faux hawk clumps, rooted in the base layer and carrying its weights.
 rng = random.Random(SEED)
-clump_faces, clumps = [], []
-
-
-def clump(root, normal, src):
-    ax = abs(root.x)
-    share = CLUMP_SIDE + (1 - CLUMP_SIDE) * max(0.0, 1 - (ax / HAWK_WIDTH) ** 2)
-    height = CLUMP_HEIGHT * share * rng.uniform(0.7, 1.15)
-    forward = CLUMP_FORWARD * (2.0 if root.y < -0.4 else 1.0)
-    lean = Vector((-0.2 * math.copysign(min(1.0, ax / HAWK_WIDTH), root.x), -forward, 0.0)) + SWEEP
-    jitter = Vector((rng.uniform(-0.35, 0.35), rng.uniform(-0.25, 0.15), 0.0))
-    d = (normal * 0.5 + Vector((0, 0, 0.7)) + lean + jitter).normalized()
-    # The blade's broad side faces along the sweep, twisted a little at random.
-    a = (d.cross(Vector((0, -1, 0))) if abs(d.y) < 0.95 else d.orthogonal()).normalized()
-    a.rotate(Quaternion(d, rng.uniform(-0.6, 0.6)))
-    b = d.cross(a) * CLUMP_FLAT
-    bend = (a * rng.uniform(-1, 1) + b * rng.uniform(-1, 1)) * 0.12 * height
-    rings = []
-    for along, radius, shift in ((-0.02, CLUMP_RADIUS, 0.0), (0.6, CLUMP_RADIUS * 0.6, 0.5)):
-        centre = root + d * (height * along if along > 0 else along) + bend * shift
-        rings.append([bm.verts.new(centre + (a * math.cos(k * math.pi / 2) + b * math.sin(k * math.pi / 2)) * radius)
-                      for k in range(4)])
-    tip = [bm.verts.new(root + d * height + bend + a * s * CLUMP_RADIUS * 0.3) for s in (1, -1)]
-    for v in rings[0] + rings[1] + tip:
-        for g, w in src[deform].items():
-            v[deform][g] = w
-    low, mid = rings
-    for k in range(4):
-        n = (k + 1) % 4
-        clump_faces.append(bm.faces.new((low[k], low[n], mid[n], mid[k])))
-    # Mid ring corners 0 and 2 sit on the broad axis under the blunt tip's two ends, so each
-    # side of the blade closes as one five-sided face.
-    clump_faces.append(bm.faces.new((mid[0], mid[1], mid[2], tip[1], tip[0])))
-    clump_faces.append(bm.faces.new((mid[2], mid[3], mid[0], tip[0], tip[1])))
-    clumps.append(root)
-
-
-for v, i in list(copy_of.items()):
-    if kind[i] != "Hair" or v.co.z < HAIRLINE_TEMPLE or abs(v.co.x) > SIDE_X or ring.get(i, TAPER_RINGS) < 1:
-        continue
-    for _ in range(CLUMPS_PER_VERT):
-        n = normals[i]
-        a = n.orthogonal().normalized()
-        offset = (a * rng.uniform(-1, 1) + n.cross(a) * rng.uniform(-1, 1)) * CLUMP_RADIUS
-        clump(v.co + offset, n, v)
 
 # Beard colour per vertex: a salt and pepper mix, faded into the skin colour over the edge
 # rings and kept faint beside the mouth corners. Every other vertex stays white, so the
@@ -231,7 +175,7 @@ for v, i in copy_of.items():
         share *= MOUSTACHE_JOIN
     elif abs(co.x) <= MOUSTACHE_GAP[0] and co.z > -0.5:
         share = 1.0  # the moustache strip is too narrow to fade; give it the full colour
-    mix = dark.lerp(grey, rng.uniform(0.0, 0.55))
+    mix = dark.lerp(grey, rng.uniform(0.0, 0.35))
     beard_rgb[v] = skin_rgb.lerp(mix, share)
 
 slots = {}
@@ -252,9 +196,6 @@ for f in new_faces:  # a face where hair meets beard goes to whichever most of i
     kinds = [kind[copy_of[v]] for v in f.verts]
     f.material_index = slots[max(set(kinds), key=kinds.count)]
     f.smooth = True
-for f in clump_faces:
-    f.material_index = slots["Hair"]
-    f.smooth = True
 color = bm.loops.layers.float_color.new("BeardColor")
 hair_rgb = Vector(lib.srgb(HAIR_COLOR))
 for f in bm.faces:
@@ -269,4 +210,4 @@ for name in ("scalp", "lips", "ears"):
     skin.vertex_groups.remove(skin.vertex_groups[name])
 
 lib.save(ns)
-print(f"head build: hair and beard shells {len(new_faces)} faces, faux hawk {len(clumps)} clumps")
+print(f"head build: hair and beard shells {len(new_faces)} faces")

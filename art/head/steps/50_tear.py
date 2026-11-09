@@ -42,12 +42,12 @@ LIP_DEPTH = 0.07        # depth of the torn skin's edge
 EDGE_RELAX = 6          # passes that round the face-by-face border before it is ragged
 EDGE_RAG = ((6.0, 0.07), (15.0, 0.035))  # (frequency, distance) noise that pushes the border in and out along the skin
 MARGIN_RINGS = 2        # face rings of skull that run on under the skin past the tear
-BROW = (0.2, 0.07, 0.06)      # height above the eye, half-height, how far it stands out
+BROW = (0.2, 0.08, 0.1)      # height above the eye, half-height, how far it stands out
 CHEEKBONE = (-0.24, 0.07, 0.07)  # same, below the eye; it rises 0.3 per unit toward the ear
 HOLLOW = (-0.44, 0.1, -0.06)    # the hollow under the cheekbone
-SOCKET_RADIUS, SOCKET_DEPTH = 0.28, 0.1
+SOCKET_RADIUS, SOCKET_DEPTH = 0.32, 0.17
 SKULL_SMOOTH = 3        # smoothing passes before the bone is shaped (one more after), ironing out the coarse mesh's creases
-RING_MAJOR, RING_MINOR = 1.2, 0.035  # housing ring radius as a share of the eye radius, tube radius
+RING_MAJOR, RING_MINOR = 1.1, 0.045  # housing ring radius as a share of the eye radius, tube radius
 DOT_DEG = 12            # red dot cone round the eye's axis
 METAL, METAL_DARK, FLESH = "c9cdd3", "3a3d42", "7a2e28"
 LENS, RED = "120707", "ff2a1a"
@@ -91,7 +91,7 @@ skin_slot = skin.data.materials.find("Skin")
 beard_slot = skin.data.materials.find("Beard")
 
 slots = {}
-for mat in (srgb_mat("Metal", METAL, 0.55, 0.3), srgb_mat("MetalDark", METAL_DARK, 0.5, 0.4),
+for mat in (srgb_mat("Metal", METAL, 0.95, 0.2), srgb_mat("MetalDark", METAL_DARK, 0.9, 0.35),
             srgb_mat("Flesh", FLESH, 0.0, 0.6)):
     skin.data.materials.append(mat)
     slots[mat.name] = len(skin.data.materials) - 1
@@ -192,7 +192,7 @@ small = [p for p in eye_red.data.polygons if p.area < 0.25 * max(q.area for q in
 axis = sum((p.normal for p in small), Vector()).normalized()
 a = axis.orthogonal().normalized()
 b = axis.cross(a)
-ring_centre = eye + axis * eye_radius * 0.35
+ring_centre = eye + axis * eye_radius * 0.05  # set into the socket, not standing on it
 SEG, SIDES = 20, 6
 rings = []
 for i in range(SEG):
