@@ -64,7 +64,7 @@ for index, w in enumerate(head_w):
     if w < 1.0:
         g_bust.add([index], 1.0 - w, "REPLACE")
 
-# MPFB region groups that 45_hair.py places the hair and beard by; it removes them.
+# MPFB region groups that 45_hair.py places the scalp shell by; it removes them.
 REGIONS = ("scalp", "lips", "ears")
 
 # Bake the targets, read the joints, then drop the helper geometry.

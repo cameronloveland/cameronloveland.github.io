@@ -1,20 +1,17 @@
-"""Step 45: scalp and stubble shells of the skin itself, under the hair and beard meshes.
+"""Step 45: a dark scalp shell of the skin itself, under the hair mesh.
 
-Each region's skin faces are copied and pushed out along the skin normals, so the hair
-follows the head exactly and costs no textures. The copies stay inside the Skin mesh on
-two more materials, `Hair` and `Beard`, and keep the skin's Head and Bust weights, so the beard on the
-neck bends with it when the head turns. Shell edges taper toward the skin so the hair
-thins out instead of ending in a step. They sit just under the fitted hair and beard
-meshes (42_hair_models.py), so the cut-out gaps in those show dark hair and stubble, not
-bare skin, and the faded sides and the beard's edge read as short hair. Only the skin's
-own faces get a shell; the brows are the fitted brow mesh.
+The scalp's skin faces are copied and pushed out along the skin normals, so the shell
+follows the head exactly and costs no texture. The copy stays inside the Skin mesh on one
+more material, `Hair`, and keeps the skin's weights. Its edges taper toward the skin so it
+thins out instead of ending in a step. It sits just under the fitted hair mesh
+(42_hair_models.py), so the cut-out gaps in the hair show dark hair, not bare scalp, and
+the faded sides read as short hair. The beard and brows are their fitted meshes alone.
 
-Regions come from MPFB's `scalp`, `lips` and `ears` groups (kept by 30_bust.py) and from
-lines in hero units, tuned by eye against the reference photo. Blender Z up, face to -Y.
+The region comes from MPFB's `scalp`, `lips` and `ears` groups (kept by 30_bust.py) and
+from lines in hero units, tuned by eye against the reference photo. Blender Z up, face to -Y.
 """
 import math
 import os
-import random
 import sys
 
 import bmesh
@@ -29,20 +26,13 @@ ns = lib.parse_args()
 skin = lib.get("Skin")
 
 HAIR_COLOR = "2a1d16"       # dark brown
-BEARD_DARK, BEARD_GREY = "352b25", "8c8680"  # salt and pepper: each beard vertex mixes the two
-BEARD_FADE_RINGS = 2        # edge rings over which the beard colour fades into the skin
-BEARD_EDGE = 0.45           # beard colour share at the very edge, so narrow parts keep their colour
-MOUSTACHE_JOIN = 0.35       # beard colour share beside the mouth corners, so the moustache join is faint
 HAIRLINE_Z = 0.58           # front hairline height at the centre
 HAIRLINE_TEMPLE = 0.48      # hairline height where it turns down past the temples
 SIDE_X = 0.62               # beyond this the sides are faded short
 TOP_DEPTH, SIDE_DEPTH = 0.02, 0.015  # how far the base layer stands off the scalp (under the hair mesh)
-BEARD_DEPTH = 0.008         # stubble just off the skin, under the beard mesh
-MOUSTACHE_GAP = (0.27, 0.42)  # |x| band beside the mouth corners where the join is faint
 TAPER_RINGS = 2             # edge rings over which a shell thins toward the skin
 EDGE_SMOOTH = 10            # passes that round a shell's stepped border into a curve
 EDGE_SHARE = 0.25           # the thickness left at the very edge, so it never z-fights
-SEED = 7                    # salt and pepper mix
 
 
 def temple(co):
@@ -63,18 +53,6 @@ def hair_depth(co):
     return TOP_DEPTH + (SIDE_DEPTH - TOP_DEPTH) * side
 
 
-def beard(co):
-    """Jaw, chin, cheeks and upper lip, plus sideburns up to the hair in front of the ears."""
-    if co.y > 0.15:
-        return False
-    ax = abs(co.x)
-    cheek_top = -0.40 + (ax - 0.3) * 0.55 if ax > 0.3 else -0.37  # from the mouth corner, low across the cheek
-    if ax > 0.66 and co.y > -0.62:
-        cheek_top = 0.05  # sideburns, up to the temple hair
-    neck_floor = -1.3 + max(0.0, co.y + 0.4) * 1.5  # a trimmed neckline under the chin, up to the jaw angle
-    return neck_floor < co.z < cheek_top
-
-
 groups = {g.name: g.index for g in skin.vertex_groups}
 for name in ("scalp", "lips", "ears"):
     if name not in groups:
@@ -92,15 +70,13 @@ def member(v, name):
 
 skin_slot = skin.data.materials.find("Skin")
 skin_verts = {v for f in bm.faces if f.material_index == skin_slot for v in f.verts}
-depth, kind = {}, {}
+depth = {}
 for v in bm.verts:
     if v not in skin_verts or member(v, "ears") or member(v, "lips"):
         continue
     co = v.co
     if (member(v, "scalp") and hair(co)) or temple(co):
-        depth[v.index], kind[v.index] = hair_depth(co), "Hair"
-    elif beard(co):
-        depth[v.index], kind[v.index] = BEARD_DEPTH, "Beard"
+        depth[v.index] = hair_depth(co)
 
 faces = [f for f in bm.faces if all(v.index in depth for v in f.verts)]
 inside = {v.index for f in faces for v in f.verts}
@@ -151,52 +127,16 @@ for _ in range(EDGE_SMOOTH):
         hit, normal, _, _ = surface.find_nearest(co)
         v.co = hit + normal * depth[copy_of[v]] * EDGE_SHARE
 
-rng = random.Random(SEED)
-
-# Beard colour per vertex: a salt and pepper mix, faded into the skin colour over the edge
-# rings and kept faint beside the mouth corners. Every other vertex stays white, so the
-# colour attribute leaves the skin and hair materials as they are (glTF puts it on every
-# primitive of the mesh, and three.js multiplies each material's colour by it).
-skin_rgb = Vector(skin.data.materials["Skin"].node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value[:3])
-dark, grey = Vector(lib.srgb(BEARD_DARK)), Vector(lib.srgb(BEARD_GREY))
-beard_rgb = {}
-for v, i in copy_of.items():
-    if kind[i] != "Beard":
-        continue
-    share = BEARD_EDGE + (1 - BEARD_EDGE) * min(1.0, ring.get(i, BEARD_FADE_RINGS) / BEARD_FADE_RINGS)
-    co = skin_co[i]
-    if MOUSTACHE_GAP[0] < abs(co.x) < MOUSTACHE_GAP[1] and co.z > -0.78:
-        share *= MOUSTACHE_JOIN
-    elif abs(co.x) <= MOUSTACHE_GAP[0] and co.z > -0.5:
-        share = 1.0  # the moustache strip is too narrow to fade; give it the full colour
-    mix = dark.lerp(grey, rng.uniform(0.0, 0.35))
-    beard_rgb[v] = skin_rgb.lerp(mix, share)
-
-slots = {}
-for name in ("Hair", "Beard"):
-    mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
-    bsdf = mat.node_tree.nodes["Principled BSDF"]
-    if name == "Beard":
-        attr = mat.node_tree.nodes.new("ShaderNodeVertexColor")
-        attr.layer_name = "BeardColor"
-        mat.node_tree.links.new(attr.outputs["Color"], bsdf.inputs["Base Color"])
-    else:
-        bsdf.inputs["Base Color"].default_value = (*lib.srgb(HAIR_COLOR), 1.0)
-    bsdf.inputs["Roughness"].default_value = 0.85
-    skin.data.materials.append(mat)
-    slots[name] = len(skin.data.materials) - 1
-for f in new_faces:  # a face where hair meets beard goes to whichever most of its corners are
-    kinds = [kind[copy_of[v]] for v in f.verts]
-    f.material_index = slots[max(set(kinds), key=kinds.count)]
+mat = bpy.data.materials.new("Hair")
+mat.use_nodes = True
+bsdf = mat.node_tree.nodes["Principled BSDF"]
+bsdf.inputs["Base Color"].default_value = (*lib.srgb(HAIR_COLOR), 1.0)
+bsdf.inputs["Roughness"].default_value = 0.85
+skin.data.materials.append(mat)
+hair_slot = len(skin.data.materials) - 1
+for f in new_faces:
+    f.material_index = hair_slot
     f.smooth = True
-color = bm.loops.layers.float_color.new("BeardColor")
-hair_rgb = Vector(lib.srgb(HAIR_COLOR))
-for f in bm.faces:
-    beard_face = f.material_index == slots["Beard"]
-    for loop in f.loops:
-        rgb = beard_rgb.get(loop.vert, hair_rgb) if beard_face else (1.0, 1.0, 1.0)
-        loop[color] = (*rgb, 1.0)
 bm.to_mesh(skin.data)
 bm.free()
 
@@ -204,4 +144,4 @@ for name in ("scalp", "lips", "ears"):
     skin.vertex_groups.remove(skin.vertex_groups[name])
 
 lib.save(ns)
-print(f"head build: hair and beard shells {len(new_faces)} faces")
+print(f"head build: scalp shell {len(new_faces)} faces")

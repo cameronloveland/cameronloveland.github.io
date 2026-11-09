@@ -96,10 +96,8 @@ bm = bmesh.new()
 bm.from_mesh(skin.data)
 bm.verts.ensure_lookup_table()
 deform = bm.verts.layers.deform.active
-color = bm.loops.layers.float_color["BeardColor"]
 head_group = skin.vertex_groups["Head"].index
 skin_slot = skin.data.materials.find("Skin")
-beard_slot = skin.data.materials.find("Beard")
 
 slots = {}
 for mat in (srgb_mat("Metal", METAL, 0.95, 0.2), srgb_mat("MetalDark", METAL_DARK, 0.9, 0.35),
@@ -326,11 +324,6 @@ for f, name in extra:
     f.smooth = name != "Metal"
 bm.normal_update()
 
-# The beard colour attribute multiplies every material in three.js; keep it white off the beard.
-for f in bm.faces:
-    if f.material_index != beard_slot:
-        for loop in f.loops:
-            loop[color] = (1.0, 1.0, 1.0, 1.0)
 bm.to_mesh(skin.data)
 bm.free()
 
