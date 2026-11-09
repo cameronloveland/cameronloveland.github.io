@@ -3,7 +3,7 @@ reference photo (kept outside the repo; this script never reads it).
 
 Runs while the MPFB targets are still live, before 30_bust.py bakes them. MPFB fits the
 eyes when they are added and does not refit them on a target change, so this step
-refits them last.
+refits them last. Then it adds the fitted hair, brows and beard meshes.
 """
 import importlib
 import os
@@ -82,8 +82,25 @@ for (folder, stem), weight in TARGETS.items():
     TargetService.load_target(human, path, weight=weight, name=stem)
 
 bpy.context.view_layer.update()
+
 HumanService.refit(human)
 bpy.context.view_layer.update()
+
+# Hair, brows and beard as fitted meshes (MakeHuman CC0 assets): MPFB fits each one to the
+# shaped head as it is added, after the refit (the refit cannot find the vendored beard).
+# 42_hair_models.py textures them and joins them in.
+ASSETS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+FITTED = (  # (object name, asset type, mhclo path)
+    ("HairModel", "Hair", AssetService.find_asset_absolute_path("short01/short01.mhclo", asset_subdir="hair")),
+    ("BrowModel", "Eyebrows", AssetService.find_asset_absolute_path("eyebrow001/eyebrow001.mhclo", asset_subdir="eyebrows")),
+    ("BeardModel", "Clothes", os.path.join(ASSETS, "beard_sigmund", "beard_sigmund.mhclo")),
+)
+for name, asset_type, path in FITTED:
+    if not path or not os.path.exists(path):
+        lib.fail(f"{name}: asset {path} is missing; reinstall MPFB 2.0.17 with its system assets")
+    obj = HumanService.add_mhclo_asset(path, human, asset_type=asset_type, subdiv_levels=0,
+                                       material_type="MAKESKIN", set_up_rigging=False)
+    obj.name = obj.data.name = name
 
 
 def shaped_centroid(group_name):

@@ -37,11 +37,11 @@ crown to chin for comparing the likeness with the reference photo. `build/` and 
 | Step | What it does |
 | --- | --- |
 | `10_base.py` | MPFB base human with low-poly eyes; MPFB targets stay live |
-| `20_likeness.py` | The likeness: MPFB macros (male, about 35, heavier) and face targets (rounder face, fuller cheeks, light smile), tuned by eye against the reference photo; refits the eyes |
+| `20_likeness.py` | The likeness: MPFB macros (male, about 35, heavier) and face targets (rounder face, fuller cheeks, light smile), tuned by eye against the reference photo; refits the eyes, then fits the hair, brow and beard meshes |
 | `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials (brown iris and pupil on `EyeHuman` from the eye's own face rings); keeps MPFB's `scalp`, `lips` and `ears` groups for `45` |
 | `40_hoodie.py` | A hoodie built from the bust: the skin below a tilted neckline smoothed and pushed out, a hood roll swept round the neck (crossing in a V at the front, bunched and folded at the back), two flat drawstrings with eyelets and aglets; hides the skin underneath; bone-parented to `Bust` |
-| `45_hair.py` | Hair, beard, mustache and brows as shells of the skin's own faces, pushed out and tapered at the edges, inside `Skin` on the `Hair` and `Beard` materials so they keep its weights and bend with the neck; removes the region groups |
-| `47_hair_cards.py` | Hair cards (strips with a strand texture cut out by alpha) grown out of the hair, beard and brow shells: a swept faux hawk on top, short cards on the sides, salt and pepper beard cards, fine brow cards; the texture and card builder live in `cards.py`, a helper, not a step |
+| `42_hair_models.py` | Joins the hair (MakeHuman `short01`), brows (`eyebrow001`) and beard (`assets/beard_sigmund`) meshes that `20_likeness.py` fitted into `Skin` with full Head weight and textured alpha-cut materials; lifts the top into a faux hawk and pulls the sides in as a fade |
+| `45_hair.py` | Thin scalp and stubble shells of the skin's own faces under the hair and beard meshes (dark under their cut-out gaps, faded at the edges), inside `Skin` on the `Hair` and `Beard` materials; removes the region groups |
 | `50_tear.py` | The cyborg tear: removes a ragged patch of skin, hair and beard from the temple across the eye and cheek to the jaw, gives the torn edge a flesh lip, and puts a machined metal skull under it (brow shelf, squared socket and housing ring, cheekbone bar, plate seams, pistons in the recess); makes `EyeRed` a black lens with a red dot |
 | `55_glasses.py` | Dark framed rectangular glasses: replaces the `Glasses` empty with a mesh of the same name (see-through lens in a dark rim, bridge, arm tucked behind the ear) on the `Head` bone; the cyborg side keeps only a snapped stub of rim |
 | `90_export.py` | Preview renders and the raw GLB export; always last |
@@ -59,8 +59,9 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
 
 - glTF defaults: +Y up, facing +Z. Head about 2.2 units crown to chin; the eye line sits
   0.14 above the `Head` origin, the skull-centre pivot.
-- One skinned mesh, `Skin`, from the crown to below the shoulders, with the hair and
-  beard shells on its `Hair` and `Beard` materials and the tear's `Metal`, `MetalDark`
+- One skinned mesh, `Skin`, from the crown to below the shoulders, with the fitted
+  hair, brow and beard meshes (`HairModel`, `BrowModel`, `BeardModel`), the scalp and
+  stubble shells (`Hair`, `Beard`) and the tear's `Metal`, `MetalDark`
   and `Flesh`. The beard's colour is a vertex colour (`COLOR_0`), white everywhere off
   the beard, since Three.js multiplies every material on the mesh by it. Two joints drive it:
   `Bust` (the scene root, static) and `Head` (its child), both at the origin with no
@@ -76,7 +77,7 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
 - `Skin` has several materials, so Three.js loads it as a `Group` named `Skin` whose
   children are `SkinnedMesh`es, one per material. Check for either, or the bust is
   rejected and the placeholder stays.
-- Hair cards are alpha `MASK` materials (`HairCard*`, `BeardCard*`) sharing one strand
-  texture. The lenses are alpha `BLEND`.
+- The hair, brow and beard meshes are alpha `MASK` materials, each with its own texture.
+  The lenses are alpha `BLEND`.
 - The metal (`Metal`, `MetalDark`), the lens and the glasses need an environment map to
   read as chrome; the hero mockup gives those materials a `RoomEnvironment`.

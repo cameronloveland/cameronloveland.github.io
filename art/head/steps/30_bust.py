@@ -28,6 +28,7 @@ HumanService, AssetService, TargetService = lib.mpfb()
 
 human = lib.get("Human")
 eyes = lib.get("Eyes")
+fitted = [lib.get(name) for name in ("HairModel", "BrowModel", "BeardModel")]  # from 20_likeness.py
 
 # Head and Bust weights from MPFB's CC0 default-rig weights, indexed by base-mesh vertex,
 # so this runs before the helper geometry is removed. Body bones count toward Bust, the
@@ -78,7 +79,7 @@ for group in list(human.vertex_groups):
         human.vertex_groups.remove(group)
 
 # Put every mesh in world space with identity transforms and no parents.
-for obj in (human, eyes):
+for obj in (human, eyes, *fitted):
     mw = obj.matrix_world.copy()
     obj.parent = None
     obj.data.transform(mw)
@@ -122,7 +123,7 @@ k = lib.HEAD_HEIGHT / (2 * (crown_z - eye_z))
 cranium = [v.y for v in verts if v.z > eye_z]
 pivot = Vector((0.0, (min(cranium) + max(cranium)) / 2, eye_z - lib.EYE_LOCAL_Y / k))
 to_hero = Matrix.Scale(k, 4) @ Matrix.Translation(-pivot)
-for obj in (skin, eye_human, eye_red):
+for obj in (skin, eye_human, eye_red, *fitted):
     obj.data.transform(to_hero)
     obj.data.update()
 # Joint positions in hero units, for later steps (hoodie, tear) to place parts by.
@@ -207,7 +208,7 @@ for poly in eye_human.data.polygons:
     poly.material_index = 2 if angle < PUPIL_DEG else 1 if angle < IRIS_DEG else 0
 
 for obj in list(bpy.data.objects):
-    if obj not in mats and obj not in (glasses, rig):
+    if obj not in mats and obj not in (glasses, rig, *fitted):
         bpy.data.objects.remove(obj, do_unlink=True)
 
 lib.save(ns)

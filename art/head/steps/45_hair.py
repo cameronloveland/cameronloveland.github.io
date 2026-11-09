@@ -1,11 +1,13 @@
-"""Step 45: hair, beard, mustache and brows as shells of the skin itself.
+"""Step 45: scalp and stubble shells of the skin itself, under the hair and beard meshes.
 
 Each region's skin faces are copied and pushed out along the skin normals, so the hair
 follows the head exactly and costs no textures. The copies stay inside the Skin mesh on
 two more materials, `Hair` and `Beard`, and keep the skin's Head and Bust weights, so the beard on the
 neck bends with it when the head turns. Shell edges taper toward the skin so the hair
-thins out instead of ending in a step. These are the base layer; 47_hair_cards.py grows
-hair cards out of them.
+thins out instead of ending in a step. They sit just under the fitted hair and beard
+meshes (42_hair_models.py), so the cut-out gaps in those show dark hair and stubble, not
+bare skin, and the faded sides and the beard's edge read as short hair. Only the skin's
+own faces get a shell; the brows are the fitted brow mesh.
 
 Regions come from MPFB's `scalp`, `lips` and `ears` groups (kept by 30_bust.py) and from
 lines in hero units, tuned by eye against the reference photo. Blender Z up, face to -Y.
@@ -34,8 +36,8 @@ MOUSTACHE_JOIN = 0.35       # beard colour share beside the mouth corners, so th
 HAIRLINE_Z = 0.58           # front hairline height at the centre
 HAIRLINE_TEMPLE = 0.48      # hairline height where it turns down past the temples
 SIDE_X = 0.62               # beyond this the sides are faded short
-TOP_DEPTH, SIDE_DEPTH = 0.05, 0.03   # how far the base layer stands off the scalp
-BEARD_DEPTH, BROW_DEPTH = 0.022, 0.025
+TOP_DEPTH, SIDE_DEPTH = 0.02, 0.015  # how far the base layer stands off the scalp (under the hair mesh)
+BEARD_DEPTH = 0.008         # stubble just off the skin, under the beard mesh
 MOUSTACHE_GAP = (0.27, 0.42)  # |x| band beside the mouth corners where the join is faint
 TAPER_RINGS = 2             # edge rings over which a shell thins toward the skin
 EDGE_SMOOTH = 10            # passes that round a shell's stepped border into a curve
@@ -73,15 +75,6 @@ def beard(co):
     return neck_floor < co.z < cheek_top
 
 
-def brow(co, eye):
-    dx = abs(co.x) - abs(eye.x)
-    if co.y > -0.55 or co.x * eye.x <= 0 or not -0.24 < dx < 0.3:
-        return False
-    centre = eye.z + 0.12 + 0.02 * (1 - (dx / 0.26) ** 2)
-    return abs(co.z - centre) < 0.065
-
-
-eye_l, eye_r = (Vector(skin[f"joint_{s}_eye"]) for s in ("l", "r"))
 groups = {g.name: g.index for g in skin.vertex_groups}
 for name in ("scalp", "lips", "ears"):
     if name not in groups:
@@ -97,17 +90,17 @@ def member(v, name):
     return v[deform].get(groups[name], 0.0) > 0.5
 
 
+skin_slot = skin.data.materials.find("Skin")
+skin_verts = {v for f in bm.faces if f.material_index == skin_slot for v in f.verts}
 depth, kind = {}, {}
 for v in bm.verts:
-    if member(v, "ears") or member(v, "lips"):
+    if v not in skin_verts or member(v, "ears") or member(v, "lips"):
         continue
     co = v.co
     if (member(v, "scalp") and hair(co)) or temple(co):
         depth[v.index], kind[v.index] = hair_depth(co), "Hair"
     elif beard(co):
         depth[v.index], kind[v.index] = BEARD_DEPTH, "Beard"
-    elif brow(co, eye_l) or brow(co, eye_r):
-        depth[v.index], kind[v.index] = BROW_DEPTH, "Hair"
 
 faces = [f for f in bm.faces if all(v.index in depth for v in f.verts)]
 inside = {v.index for f in faces for v in f.verts}
@@ -132,7 +125,8 @@ while frontier:
 
 normals = {i: bm.verts[i].normal.copy() for i in inside}
 skin_co = {i: bm.verts[i].co.copy() for i in inside}
-surface = BVHTree.FromBMesh(bm)
+skin_faces = [f for f in bm.faces if f.material_index == skin_slot]  # not the joined hair meshes
+surface = BVHTree.FromPolygons([v.co.copy() for v in bm.verts], [[v.index for v in f.verts] for f in skin_faces])
 originals = {bm.verts[i] for i in inside}
 dup = bmesh.ops.duplicate(bm, geom=faces)
 for old, new in dup["vert_map"].items():  # the map runs both ways; take original -> copy

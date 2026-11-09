@@ -86,6 +86,10 @@ From Cameron:
   face. The skull reads as a robot skull: brow shelf, squared socket, cheekbone bar, plate
   seams, pistons. Messier hair; the beard reads as hair. Idea under discussion: the intro
   becomes a beam that blasts the face open on click, showing the skull.
+- Hair and beard (2026-11-08): generated strands looked bad, so the hair, brows and beard
+  are fitted CC0 MakeHuman meshes (hair `short01`, brows `eyebrow001`, beard "Sigmund" from
+  the community pack bodyparts05), shaped toward the faux hawk and fade. Cameron chose these
+  over generating hair and beard on fal from the photo (cost, upload, not CC0).
 - In the scroll peek the hands wrap over the edge of the section below: fingers curl over
   its top with the fingertips drawn in front of it, as if pulling up over a ledge
   (Cameron, 2026-11-08). The hero canvas, or a small layer for the fingers, overlaps the

@@ -8,7 +8,7 @@ away from the temple across the eye and cheek to the jaw, showing a metal skull 
   eye socket sunk deep with a housing ring round the eye, a cheekbone bar running back
   toward the ear over a dark recess, inlaid seams that split it into machined plates,
   and two hydraulic pistons in the recess running down toward the jaw hinge.
-- Hair and beard cards with any vertex in the patch go too, so no strand hangs over metal.
+- Hair, brow and beard mesh faces with any vertex over the patch go too, so none hangs over metal.
 - EyeRed: a black lens with a small glowing red dot, Terminator style, instead of a whole
   red eye.
 
@@ -45,6 +45,7 @@ LIP_DEPTH = 0.07        # depth of the torn skin's edge
 EDGE_RELAX = 6          # passes that round the face-by-face border before it is ragged
 EDGE_RAG = ((6.0, 0.07), (15.0, 0.035))  # (frequency, distance) noise that pushes the border in and out along the skin
 MARGIN_RINGS = 2        # face rings of skull that run on under the skin past the tear
+MODEL_STANDOFF = 0.1    # how far the hair meshes can stand off the skin
 BROW = (0.22, 0.08, 0.15)      # height above the eye, half-height, how far it stands out
 BROW_SPAN = 0.36                # |x - eye.x| the brow ridge runs across
 CHEEKBONE = (-0.24, 0.05, 0.14)  # same, below the eye; it rises 0.3 per unit toward the ear
@@ -108,24 +109,15 @@ for mat in (srgb_mat("Metal", METAL, 0.95, 0.2), srgb_mat("MetalDark", METAL_DAR
 
 inside = {v: torn(v.co) and v.co.x > 0 for v in bm.verts}
 gone = [f for f in bm.faces if all(inside[v] for v in f.verts)]
-# Hair and beard cards: a whole card goes if any vertex of it is in the patch.
-card_slots = {i for i, m in enumerate(skin.data.materials) if m.name.startswith(("HairCard", "BeardCard"))}
-seen = set()
+# The fitted hair, brow and beard meshes stand off the skin, so test each of their
+# vertices pulled in toward the head by MODEL_STANDOFF; a face goes if any vertex is in.
+model_slots = {i for i, m in enumerate(skin.data.materials) if m.name in ("HairModel", "BrowModel", "BeardModel")}
 gone_set = set(gone)
 for f in bm.faces:
-    if f.material_index not in card_slots or f in seen:
-        continue
-    card, todo = {f}, [f]
-    while todo:
-        for v in todo.pop().verts:
-            for lf in v.link_faces:
-                if lf not in card:
-                    card.add(lf)
-                    todo.append(lf)
-    seen |= card
-    if any(inside[v] for c in card for v in c.verts):
-        gone += [c for c in card if c not in gone_set]
-        gone_set |= card
+    if f.material_index in model_slots and f not in gone_set:
+        if any(torn(v.co - v.co.normalized() * MODEL_STANDOFF) and v.co.x > 0 for v in f.verts):
+            gone.append(f)
+            gone_set.add(f)
 gone_skin = [f for f in gone if f.material_index == skin_slot]
 if not gone_skin:
     lib.fail("the tear patch removes no skin; check PATCH_OFFSET against the red eye")

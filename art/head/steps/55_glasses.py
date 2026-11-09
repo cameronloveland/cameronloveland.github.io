@@ -36,10 +36,10 @@ WIRE_SIDES = 6
 GLASS, FRAME = "e8eef2", "1c1b1b"
 
 eyes = [lib.get(name).matrix_world.translation.copy() for name in ("EyeHuman", "EyeRed")]
-# The head's own surface, without the hair cards standing off it (they would push the lenses
+# The head's own surface, without the hair meshes standing off it (they would push the lenses
 # forward and the arms out).
-CARDS = {i for i, m in enumerate(skin.data.materials) if m.name.startswith(("HairCard", "BeardCard"))}
-surface = {i for p in skin.data.polygons if p.material_index not in CARDS for i in p.vertices}
+HAIR_MESHES = {i for i, m in enumerate(skin.data.materials) if m.name in ("HairModel", "BrowModel", "BeardModel")}
+surface = {i for p in skin.data.polygons if p.material_index not in HAIR_MESHES for i in p.vertices}
 verts = [skin.matrix_world @ skin.data.vertices[i].co for i in surface]
 
 
