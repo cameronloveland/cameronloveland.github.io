@@ -3,7 +3,7 @@
 The redesigned portfolio's hero centres on a live head that follows the visitor's mouse
 and glances at the active project. This goal replaces the primitive placeholder with a
 stylized-real bust of Cameron: a likeness from his photo, torn open Terminator-style in a
-patch from temple to jaw to show a metal skull and a red robot eye, wearing his rimless
+patch from temple to jaw to show a metal skull and a red robot eye, wearing his dark framed
 glasses. It is built free and CC0 with MPFB 2 in headless Blender and ships as a small
 GLB, for visitors to the site and for Cameron as its signature image.
 
@@ -38,14 +38,14 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 - [x] (b) Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback (2026-11-08: PR #99, bust swaps in after load and copies the placeholder's pose; placeholder stays on failure)
 - [x] Hoodie on the `Bust` shoulders, hood down behind the neck, hiding the bust's cut edge (2026-11-08: PR #100, hoodie built from the bust, hood roll and drawstrings, no poke-through at the turn limits)
 - [~] Likeness pass on the MPFB base: face shape, haircut, beard, skin tone and eyes tuned to the photo, with side-by-side review renders for Cameron's sign-off (branch: likeness-pass, plan: docs/superpowers/plans/2026-11-08-likeness-pass.md)
-- [ ] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell
+- [~] Basic patch tear: a mask removes skin from temple to jaw on the android side over an inner metal skull shell (branch: cyborg-tear)
 - [ ] Red robot eye: emissive `EyeRed` in the torn socket, with a red point light in the hero
 
 ### Good: it clearly reads as Cameron, ragged tear over a real metal skull, glasses, hair, inside 3 MB
 - [ ] Ragged tear edge: torn skin geometry with thickness and an irregular border over the metal
 - [ ] Android mechanics under the patch: eye housing, cheek and jaw pistons, cables, panel detail
-- [ ] Rimless rectangular `Glasses` on the head, with the red eye glowing through the lens
-- [ ] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form
+- [~] Dark framed rectangular `Glasses` on the head, the cyborg-side lens and arm blown off (branch: cyborg-tear)
+- [~] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form (branch: cyborg-tear)
 - [x] ~~Collared shirt on the `Bust` shoulders~~ (2026-11-08: dropped - replaced by the hoodie item in Working, Cameron's call)
 - [ ] Human hands that grip the hero edge, replacing the capsule placeholders, the android-side hand in metal
 - [ ] Web budget pass: decimation, baked normal maps, KTX2 textures and meshopt bring the GLB under 3 MB

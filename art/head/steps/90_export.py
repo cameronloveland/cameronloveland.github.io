@@ -34,6 +34,25 @@ world = bpy.data.worlds.new("Preview") if scene.world is None else scene.world
 scene.world = world
 world.use_nodes = True
 world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.03, 0.03, 0.04, 1)
+# A soft studio gradient that only reflections see (the camera still sees the dark
+# background), so chrome has something to mirror, as the hero's environment map gives it.
+nodes, links = world.node_tree.nodes, world.node_tree.links
+studio = nodes.new("ShaderNodeBackground")
+ramp = nodes.new("ShaderNodeValToRGB")
+ramp.color_ramp.elements[0].color = (0.02, 0.02, 0.025, 1)
+ramp.color_ramp.elements[1].color = (0.9, 0.9, 0.95, 1)
+coord = nodes.new("ShaderNodeTexCoord")
+sep = nodes.new("ShaderNodeSeparateXYZ")
+links.new(coord.outputs["Generated"], sep.inputs[0])
+links.new(sep.outputs["Z"], ramp.inputs["Fac"])
+links.new(ramp.outputs["Color"], studio.inputs["Color"])
+studio.inputs["Strength"].default_value = 0.6
+path = nodes.new("ShaderNodeLightPath")
+mix = nodes.new("ShaderNodeMixShader")
+links.new(path.outputs["Is Camera Ray"], mix.inputs["Fac"])
+links.new(studio.outputs["Background"], mix.inputs[1])
+links.new(nodes["Background"].outputs["Background"], mix.inputs[2])
+links.new(mix.outputs["Shader"], nodes["World Output"].inputs["Surface"])
 
 target = bpy.data.objects.new("Target", None)
 target.location = (0, 0, -0.7)

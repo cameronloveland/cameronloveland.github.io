@@ -3,7 +3,7 @@ reference photo (kept outside the repo; this script never reads it).
 
 Runs while the MPFB targets are still live, before 30_bust.py bakes them. MPFB fits the
 eyes when they are added and does not refit them on a target change, so this step
-refits them last.
+refits them last. Then it adds the fitted hair, brows and beard meshes.
 """
 import importlib
 import os
@@ -49,14 +49,12 @@ TARGETS = {
     ("nose", "nose-volume-incr"): 0.3,
     ("eyes", "l-eye-scale-decr"): 0.2,
     ("eyes", "r-eye-scale-decr"): 0.2,
-    ("eyes", "l-eye-height2-decr"): 0.3,
-    ("eyes", "r-eye-height2-decr"): 0.3,
     ("head", "head-scale-horiz-incr"): 0.25,
     ("head", "head-scale-vert-decr"): 0.15,
     ("mouth", "mouth-angles-up"): 0.9,
     ("mouth", "mouth-scale-horiz-incr"): 0.3,
-    # Round 2: ears flat to the head, a fuller lower face, a broader nose tip and the
-    # squint of his smile.
+    # Round 2: ears flat to the head, a fuller lower face, a broader nose tip. (Round 3: eyes
+    # left open; the squint read as half-closed.)
     ("ears", "l-ear-wing-decr"): 0.8,
     ("ears", "r-ear-wing-decr"): 0.8,
     ("ears", "l-ear-flap-decr"): 0.4,
@@ -67,8 +65,13 @@ TARGETS = {
     ("head", "head-oval"): 0.3,
     ("nose", "nose-point-width-incr"): 0.4,
     ("nose", "nose-scale-horiz-incr"): 0.2,
-    ("expression/units/caucasian", "eye-left-slit"): 0.35,
-    ("expression/units/caucasian", "eye-right-slit"): 0.35,
+    # Round 4: a happier face. MPFB's expression units: the smile muscle pulls the mouth
+    # corners up and out, the upper lip lifts a little, the cheeks round under the eyes and
+    # the outer brows lift. The eyes stay open.
+    ("expression/units/caucasian", "mouth-corner-puller"): 0.85,
+    ("expression/units/caucasian", "mouth-upward-retraction"): 0.15,
+    ("expression/units/caucasian", "eyebrows-left-extern-up"): 0.25,
+    ("expression/units/caucasian", "eyebrows-right-extern-up"): 0.25,
 }
 
 
@@ -86,8 +89,25 @@ for (folder, stem), weight in TARGETS.items():
     TargetService.load_target(human, path, weight=weight, name=stem)
 
 bpy.context.view_layer.update()
+
 HumanService.refit(human)
 bpy.context.view_layer.update()
+
+# Hair, brows and beard as fitted meshes (MakeHuman CC0 assets): MPFB fits each one to the
+# shaped head as it is added, after the refit (the refit cannot find the vendored beard).
+# 42_hair_models.py textures them and joins them in.
+ASSETS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
+FITTED = (  # (object name, asset type, mhclo path)
+    ("HairModel", "Hair", AssetService.find_asset_absolute_path("short01/short01.mhclo", asset_subdir="hair")),
+    ("BrowModel", "Eyebrows", AssetService.find_asset_absolute_path("eyebrow001/eyebrow001.mhclo", asset_subdir="eyebrows")),
+    ("BeardModel", "Clothes", os.path.join(ASSETS, "beard_sigmund", "beard_sigmund.mhclo")),
+)
+for name, asset_type, path in FITTED:
+    if not path or not os.path.exists(path):
+        lib.fail(f"{name}: asset {path} is missing; reinstall MPFB 2.0.17 with its system assets")
+    obj = HumanService.add_mhclo_asset(path, human, asset_type=asset_type, subdiv_levels=0,
+                                       material_type="MAKESKIN", set_up_rigging=False)
+    obj.name = obj.data.name = name
 
 
 def shaped_centroid(group_name):

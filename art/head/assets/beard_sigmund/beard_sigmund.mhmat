@@ -1,0 +1,6 @@
+# CC0, see beard_sigmund.mhclo. 42_hair_models.py replaces this material in the build.
+name BeardSigmund
+diffuseColor 1 1 1
+transparent True
+backfaceCull False
+diffuseTexture beard_diffuse.png

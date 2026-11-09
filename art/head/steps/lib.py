@@ -65,6 +65,17 @@ def mpfb_data(*parts):
     return path
 
 
+def mpfb_data_asset(subdir, asset, filename):
+    """Absolute path to a file of an MPFB system asset (for example the hair texture
+    mpfb_data_asset("hair", "short01", "short01_diffuse.png")), found next to its mhclo."""
+    AssetService = mpfb()[1]
+    mhclo = AssetService.find_asset_absolute_path(f"{asset}/{asset}.mhclo", asset_subdir=subdir)
+    path = os.path.join(os.path.dirname(mhclo), filename) if mhclo else None
+    if not path or not os.path.exists(path):
+        fail(f"MPFB asset file {subdir}/{asset}/{filename} is missing; install MPFB's system assets")
+    return path
+
+
 def group_centroid(obj, name):
     """World-space centroid of the vertices in vertex group `name`, read from the mesh
     data (bake MPFB targets first so the joints reflect the shaped body)."""

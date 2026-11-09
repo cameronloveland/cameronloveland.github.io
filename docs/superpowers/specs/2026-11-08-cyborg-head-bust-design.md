@@ -17,7 +17,7 @@ a scan.
 ## Goals
 
 - A stylized-real bust (head, neck, top of the shoulders) that resembles Cameron's photo:
-  a rounder face, full dark beard and mustache, short dark hair with faded sides, rimless
+  a rounder face, full dark beard and mustache, short dark hair with faded sides, dark framed
   rectangular glasses, mid-30s, a warm resting expression.
 - A Terminator-style patch torn open on one side: from the temple, across the eye socket
   and cheek, down toward the jaw. Ragged skin edge, metal skull and mechanics underneath,
@@ -25,7 +25,7 @@ a scan.
   the neck stay human, so the face still reads as Cameron.
 - A hoodie on the shoulders with the hood down behind the neck, so the bust is never shown
   bare (Cameron, 2026-11-08; replaces the collared shirt from the reference photo).
-- The glasses stay whole on both sides; the red eye glows through the lens.
+- The glasses lose their cyborg-side lens and arm with the torn half of the face (see below).
 - A drop-in replacement for the placeholder: same behaviour, no new interactions.
 - Human-looking hands that grip the hero edge in place of the capsule placeholders, the
   android-side hand in metal (added by Cameron 2026-11-08).
@@ -75,8 +75,29 @@ From Cameron:
 - Likeness from his photo, not a copy.
 - Ragged Terminator tear, not a clean panel seam.
 - The tear is a patch (temple, eye socket, cheek, toward the jaw), not a full vertical half.
-- Glasses whole, red eye glowing through the lens.
+- Glasses blown off on the cyborg side (was: whole, red eye through the lens; changed 2026-11-08).
 - Stylized real now; may push toward realism later, so keep the pipeline able to.
+- After the first likeness review (2026-11-08): the tear is larger than first drawn, still
+  sparing the mouth, nose and ear, so it carries more of the image; it reveals a realistic
+  metal cyborg skull, Terminator style; the red eye is a small glowing red dot in a dark
+  lens, not a whole red eye. Say "cyborg", not "android". Hoodie black (was olive), with a folded hood and natural drawstrings.
+- Second review (2026-11-08): dark framed glasses, slightly smaller lenses, arms tucked
+  behind the ears; on the cyborg side the lens and arm are gone, as if blown off with the
+  face. The skull reads as a robot skull: brow shelf, squared socket, cheekbone bar, plate
+  seams, pistons. Messier hair; the beard reads as hair. A beam that blasts the face
+  open as the intro was considered and dropped (Cameron, 2026-11-08): the bust arrives torn.
+- Hair and beard (2026-11-08): generated strands looked bad, so the hair, brows and beard
+  are fitted CC0 MakeHuman meshes (hair `short01`, brows `eyebrow001`, beard "Sigmund" from
+  the community pack bodyparts05), shaped toward the faux hawk and fade. Cameron chose these
+  over generating hair and beard on fal from the photo (cost, upload, not CC0).
+- Third review (2026-11-08): a happier face (MPFB expression units: a smile and lifted
+  outer brows, eyes open); dark semi-rimless glasses as Cameron wears them (a thin bar along
+  the top, the bottom of each squarish lens held by a nylon line), nose pads and a flat arm; the red dot glows in the hero (emission, an additive halo and a
+  small red light that pulse).
+- In the scroll peek the hands wrap over the edge of the section below: fingers curl over
+  its top with the fingertips drawn in front of it, as if pulling up over a ledge
+  (Cameron, 2026-11-08). The hero canvas, or a small layer for the fingers, overlaps the
+  edge to allow it.
 - Behaviour matches the placeholder exactly: head follows the mouse, glances at the
   active project after 2.5 s idle, the scroll peek and its rise, the dim-then-lit intro.
 

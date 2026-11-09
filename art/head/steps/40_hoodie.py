@@ -3,9 +3,11 @@
 Built here from the bust itself, so it is CC0 by construction:
 - body: the skin below the collar line, smoothed (no anatomy shows through cloth) and
   pushed out along its normals;
-- hood: a soft roll swept around the neckline, thin at the front like a collar rib and
-  thick at the back and sides where the lowered hood bunches up;
-- drawstrings: two cords hanging down the front.
+- hood: a soft roll swept around the neckline, thin at the front where its two edges cross
+  in a shallow V and thick at the back and sides where the lowered hood bunches up, with a
+  flattened, uneven section and folds along it so it reads as cloth, not a tube;
+- drawstrings: two flat cords of uneven length coming out of metal eyelets, following the
+  chest with a slight drift, a knot and an aglet at each tip.
 The skin hidden under the hoodie is deleted so it cannot poke through. The hoodie is
 bone-parented to Bust (static), so the neck above the collar still bends with Head.
 """
@@ -43,7 +45,11 @@ SMOOTH_PASSES = 4           # enough to lose the anatomy, not the shoulders
 HIDDEN_DEPTH = 0.35         # skin this far below the neckline is under the hoodie
 ROLL_FRONT, ROLL_BACK = 0.07, 0.30  # hood roll radius at the front and back of the neck
 CORD_X = 0.114 * shoulder_half_width
-CORD_LENGTH, CORD_R = 0.95, 0.018
+CORD_LENGTHS = {-1: 0.98, 1: 0.84}  # the cords never hang level
+CORD_R, CORD_FLAT = 0.02, 0.45   # half width, and depth as a share of it (a flat cord)
+CORD_ROWS = 18
+FOLDS = ((7, 0.5, 0.10), (13, 2.0, 0.05), (4, 1.1, 0.06))  # (count round the roll, phase, size)
+V_DIP, V_HALF = 0.07, 0.22       # the front crossover dips this much over this half width
 UP = Vector((0, 0, 1))
 
 
@@ -105,7 +111,7 @@ bm.free()
 # --- hood roll ----------------------------------------------------------------------
 # Sweep a circle around the neckline, resampled evenly by arc length. `back` is 0 at the
 # front of the neck and 1 at the back, where the lowered hood bunches up.
-SEG, SIDES = 72, 14
+SEG, SIDES = 96, 14
 seglen = [(ring[(i + 1) % len(ring)] - ring[i]).length for i in range(len(ring))]
 total = sum(seglen)
 
@@ -124,14 +130,19 @@ half_depth = max(abs(p.y - cy) for p in ring) or 1.0
 bm = bmesh.new()
 rows, centres = [], []
 for i in range(SEG):
-    p, tangent = ring_at(total * i / SEG)
+    t = i / SEG
+    p, tangent = ring_at(total * t)
     out = Vector((tangent.y, -tangent.x, 0)).normalized()
     back = min(1.0, max(0.0, ((p.y - cy) / half_depth + 1) / 2))
     w = back * back * (3 - 2 * back)  # smoothstep
-    r = ROLL_FRONT + (ROLL_BACK - ROLL_FRONT) * w
-    centre = p + out * (r * 0.55) + Vector((0, 0.10 * w, -0.06 * w + r * 0.25))
+    fold = sum(size * math.sin(2 * math.pi * count * t + phase) for count, phase, size in FOLDS)
+    r = (ROLL_FRONT + (ROLL_BACK - ROLL_FRONT) * w) * (1 + fold * (0.4 + 0.6 * w))
+    flat = 1.0 - 0.35 * w   # the bunched hood lies flatter on the shoulders and back
+    front = max(0.0, 1 - abs(p.x - cx) / V_HALF) * (1 - w)
+    centre = p + out * (r * 0.55) + Vector((0, 0.10 * w, -0.10 * w + r * 0.25 * flat - V_DIP * front * front))
     centres.append(centre)
-    rows.append([bm.verts.new(centre + r * (math.cos(a) * out + math.sin(a) * UP))
+    ripple = 2 * math.pi * t * 5
+    rows.append([bm.verts.new(centre + r * (1 + 0.08 * math.sin(3 * a + ripple)) * (math.cos(a) * out + flat * math.sin(a) * UP))
                  for a in (2 * math.pi * k / SIDES for k in range(SIDES))])
 for i in range(SEG):
     a, b = rows[i], rows[(i + 1) % SEG]
@@ -143,28 +154,68 @@ bm.to_mesh(roll)
 bm.free()
 
 # --- drawstrings --------------------------------------------------------------------
-# Cords fall from the front of the roll, following the hoodie's chest just off its surface.
+# Each cord leaves an eyelet at the front of the roll and falls down the chest just off
+# its surface, drifting a little outward with a gentle sway. The cord is flat (wider than
+# deep) and ends in a knot and an aglet.
 body_bvh = BVHTree.FromPolygons([v.co for v in body.vertices], [p.vertices for p in body.polygons])
 bm = bmesh.new()
+metal_faces = set()
 front_y = min(p.y for p in ring)
+CORD_SIDES = 8
+
+
+def cord_ring(p, d, half, depth):
+    across = Vector((1, 0, 0)) - d * d.x
+    across.normalize()
+    deep = d.cross(across)
+    return [bm.verts.new(p + across * (half * math.cos(a)) + deep * (depth * math.sin(a)))
+            for a in (2 * math.pi * k / CORD_SIDES for k in range(CORD_SIDES))]
+
+
+def band(r0, r1, axis):
+    return [face_out(bm, (r0[k], r0[(k + 1) % CORD_SIDES], r1[(k + 1) % CORD_SIDES], r1[k]), axis)
+            for k in range(CORD_SIDES)]
+
+
 for side in (-1, 1):
+    length = CORD_LENGTHS[side]
+    top_z = collar_z(front_y) - V_DIP * 0.6
     pts = []
-    for j in range(9):
-        z = collar_z(front_y) - 0.05 - CORD_LENGTH * j / 8
-        hit, *_ = body_bvh.ray_cast(Vector((side * CORD_X, front_y - 3, z)), Vector((0, 1, 0)))
-        y = (hit.y if hit else front_y) - CORD_R * 1.5
-        pts.append(Vector((side * (CORD_X - 0.015 * j / 8), y, z)))
-    prev_ring = None
+    for j in range(CORD_ROWS + 1):
+        t = j / CORD_ROWS
+        z = top_z - length * t
+        x = side * (CORD_X + 0.03 * t * t) + 0.012 * math.sin(math.pi * 1.4 * t + side)
+        hit, *_ = body_bvh.ray_cast(Vector((x, front_y - 3, z)), Vector((0, 1, 0)))
+        y = (hit.y if hit else front_y) - CORD_R * CORD_FLAT - 0.006
+        pts.append(Vector((x, y, z)))
+    pts[0].y -= 0.03  # the eyelet sits on the roll, in front of the chest
+    rings = []
     for j, p in enumerate(pts):
-        r = CORD_R * (1.6 if j == len(pts) - 1 else 1.0)  # aglet at the tip
-        cur_ring = [bm.verts.new(p + r * Vector((math.cos(a), math.sin(a), 0)))
-                    for a in (2 * math.pi * k / 6 for k in range(6))]
-        if prev_ring:
-            axis = (pts[j - 1] + p) / 2
-            for k in range(6):
-                face_out(bm, (prev_ring[k], prev_ring[(k + 1) % 6], cur_ring[(k + 1) % 6], cur_ring[k]), axis)
-        prev_ring = cur_ring
-    face_out(bm, prev_ring, pts[-2])  # cap at the tip, facing down the cord
+        d = (pts[min(j + 1, len(pts) - 1)] - pts[max(j - 1, 0)]).normalized()
+        knot = 1.7 if j == len(pts) - 4 else 1.0
+        rings.append(cord_ring(p, d, CORD_R * knot, CORD_R * CORD_FLAT * knot))
+    for j in range(len(rings) - 1):
+        band(rings[j], rings[j + 1], (pts[j] + pts[j + 1]) / 2)
+    # Aglet: a narrow round tube past the end of the cord, capped.
+    d = (pts[-1] - pts[-2]).normalized()
+    tip = pts[-1] + d * 0.07
+    a0 = cord_ring(pts[-1], d, CORD_R * 0.7, CORD_R * 0.7)
+    a1 = cord_ring(tip, d, CORD_R * 0.6, CORD_R * 0.6)
+    metal_faces.update(band(a0, a1, (pts[-1] + tip) / 2))
+    metal_faces.add(face_out(bm, a1, pts[-1]))
+    # Eyelet: a small metal ring round the cord where it leaves the hood, facing forward.
+    e, R, r = pts[0] + Vector((0, -0.005, 0.01)), CORD_R * 1.6, 0.007
+    us = [2 * math.pi * i / 10 for i in range(10)]
+    vs = [2 * math.pi * k / 4 for k in range(4)]
+    grid = [[bm.verts.new(e + Vector((math.cos(u) * (R + r * math.cos(v)), -r * math.sin(v), math.sin(u) * (R + r * math.cos(v)))))
+             for v in vs] for u in us]
+    for i in range(10):
+        u = (us[i] + math.pi / 10)
+        core = e + Vector((math.cos(u) * R, 0, math.sin(u) * R))
+        for k in range(4):
+            metal_faces.add(face_out(bm, (grid[i][k], grid[i][(k + 1) % 4], grid[(i + 1) % 10][(k + 1) % 4], grid[(i + 1) % 10][k]), core))
+for f in bm.faces:
+    f.material_index = 1 if f in metal_faces else 0
 cords = bpy.data.meshes.new("HoodieCords")
 bm.to_mesh(cords)
 bm.free()
@@ -172,12 +223,12 @@ bm.free()
 # --- one object, two materials ------------------------------------------------------
 hoodie_mesh = bpy.data.meshes.new("Hoodie")
 bm = bmesh.new()
-for part, mat_index in ((body, 0), (roll, 0), (cords, 1)):
+for part, base in ((body, 0), (roll, 0), (cords, 1)):
     start = len(bm.faces)
     bm.from_mesh(part)
     bm.faces.ensure_lookup_table()
     for f in bm.faces[start:]:
-        f.material_index = mat_index
+        f.material_index = base + f.material_index  # cords: 0 cord, 1 aglet and eyelet
         f.smooth = True
 bm.to_mesh(hoodie_mesh)
 bm.free()
@@ -185,7 +236,7 @@ for part in (body, roll, cords):
     bpy.data.meshes.remove(part)
 
 
-def material(name, hex_color, roughness):
+def material(name, hex_color, roughness, metallic=0.0):
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
     bsdf = mat.node_tree.nodes.get("Principled BSDF")
@@ -193,11 +244,13 @@ def material(name, hex_color, roughness):
     lin = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in lin]
     bsdf.inputs["Base Color"].default_value = (*lin, 1.0)
     bsdf.inputs["Roughness"].default_value = roughness
+    bsdf.inputs["Metallic"].default_value = metallic
     return mat
 
 
-hoodie_mesh.materials.append(material("Hoodie", "77754f", 0.92))  # olive, as in the reference photo
-hoodie_mesh.materials.append(material("Drawstring", "c9c6bf", 0.8))
+hoodie_mesh.materials.append(material("Hoodie", "1d1d1f", 0.95))  # black
+hoodie_mesh.materials.append(material("Drawstring", "2c2c2f", 0.85))
+hoodie_mesh.materials.append(material("Aglet", "6e6e72", 0.35, 0.8))
 hoodie = bpy.data.objects.new("Hoodie", hoodie_mesh)
 skin.users_collection[0].objects.link(hoodie)
 bpy.context.view_layer.update()
