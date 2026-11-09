@@ -90,6 +90,10 @@ From Cameron:
   are fitted CC0 MakeHuman meshes (hair `short01`, brows `eyebrow001`, beard "Sigmund" from
   the community pack bodyparts05), shaped toward the faux hawk and fade. Cameron chose these
   over generating hair and beard on fal from the photo (cost, upload, not CC0).
+- Third review (2026-11-08): a happier face (MPFB expression units: a smile and lifted
+  outer brows, eyes open); dark semi-rimless glasses as Cameron wears them (a thin bar along
+  the top, the bottom of each squarish lens held by a nylon line), nose pads and a flat arm; the red dot glows in the hero (emission, an additive halo and a
+  small red light that pulse).
 - In the scroll peek the hands wrap over the edge of the section below: fingers curl over
   its top with the fingertips drawn in front of it, as if pulling up over a ledge
   (Cameron, 2026-11-08). The hero canvas, or a small layer for the fingers, overlaps the

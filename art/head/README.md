@@ -37,13 +37,13 @@ crown to chin for comparing the likeness with the reference photo. `build/` and 
 | Step | What it does |
 | --- | --- |
 | `10_base.py` | MPFB base human with low-poly eyes; MPFB targets stay live |
-| `20_likeness.py` | The likeness: MPFB macros (male, about 35, heavier) and face targets (rounder face, fuller cheeks, light smile), tuned by eye against the reference photo; refits the eyes, then fits the hair, brow and beard meshes |
+| `20_likeness.py` | The likeness: MPFB macros (male, about 35, heavier) and face targets (rounder face, fuller cheeks) and a smile from MPFB expression units, tuned by eye against the reference photo; refits the eyes, then fits the hair, brow and beard meshes |
 | `30_bust.py` | Weights the skin to `Head` and `Bust` from MPFB's default-rig weights, bakes the targets, cuts the bust, splits the eyes by side, scales and pivots to the hero contract, binds the two-bone rig, simple materials (brown iris and pupil on `EyeHuman` from the eye's own face rings); keeps MPFB's `scalp`, `lips` and `ears` groups for `45` |
 | `40_hoodie.py` | A hoodie built from the bust: the skin below a tilted neckline smoothed and pushed out, a hood roll swept round the neck (crossing in a V at the front, bunched and folded at the back), two flat drawstrings with eyelets and aglets; hides the skin underneath; bone-parented to `Bust` |
 | `42_hair_models.py` | Joins the hair (MakeHuman `short01`), brows (`eyebrow001`) and beard (`assets/beard_sigmund`) meshes that `20_likeness.py` fitted into `Skin` with full Head weight and textured alpha-cut materials; lifts the top into a faux hawk and pulls the sides in as a fade |
 | `45_hair.py` | A thin dark scalp shell of the skin's own faces under the hair mesh (dark under its cut-out gaps, faded at the edges), inside `Skin` on the `Hair` material; removes the region groups |
 | `50_tear.py` | The cyborg tear: removes a ragged patch of skin, hair and beard from the temple across the eye and cheek to the jaw, gives the torn edge a flesh lip, and puts a machined metal skull under it (brow shelf, squared socket and housing ring, cheekbone bar, plate seams, pistons in the recess); makes `EyeRed` a black lens with a red dot |
-| `55_glasses.py` | Dark framed rectangular glasses: replaces the `Glasses` empty with a mesh of the same name (see-through lens in a dark rim, bridge, arm tucked behind the ear) on the `Head` bone; the cyborg side keeps only a snapped stub of rim |
+| `55_glasses.py` | Dark semi-rimless rectangular glasses: replaces the `Glasses` empty with a mesh of the same name on the `Head` bone (a thin black bar along the top of each squarish lens, a nylon line under the bottom, an end piece at the hinge, keyhole bridge, clear nose pads on metal arms, a flat tapered arm tucked behind the ear, faintly tinted lens); the cyborg side keeps only a snapped stub of the top bar |
 | `90_export.py` | Preview renders and the raw GLB export; always last |
 
 Add a step by dropping a new numbered script in a gap: anything that changes MPFB
@@ -65,7 +65,7 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
   `Bust` (the scene root, static) and `Head` (its child), both at the origin with no
   rotation. The neck is weighted between them, so rotating `Head` bends the neck.
 - `EyeHuman` (character right, -X), `EyeRed` (character left, +X, the cyborg side) and
-  `Glasses` (framed lens, bridge and arm) are children of `Head`. `Hoodie` is a static child of `Bust`.
+  `Glasses` (top bar, nylon line, lens, nose pads and arm) are children of `Head`. `Hoodie` is a static child of `Bust`.
 - In Three.js `Head` and `Bust` load as `Bone`s. Find nodes by name, rotate only `Head`
   with `head.rotation.set(...)` as the placeholder does, and add the whole scene to the
   rig. Quantization folds a scale and offset into the eye nodes' transforms.
@@ -76,6 +76,7 @@ changes targets later, so a likeness step must call `HumanService.refit` on the 
   children are `SkinnedMesh`es, one per material. Check for either, or the bust is
   rejected and the placeholder stays.
 - The hair, brow and beard meshes are alpha `MASK` materials, each with its own texture.
-  The lenses are alpha `BLEND`.
+  The lenses, nylon line and nose pads are alpha `BLEND`; the frame has a clear coat
+  (`KHR_materials_clearcoat`).
 - The metal (`Metal`, `MetalDark`), the lens and the glasses need an environment map to
   read as chrome; the hero mockup gives those materials a `RoomEnvironment`.

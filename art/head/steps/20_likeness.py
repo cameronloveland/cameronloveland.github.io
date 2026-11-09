@@ -65,6 +65,13 @@ TARGETS = {
     ("head", "head-oval"): 0.3,
     ("nose", "nose-point-width-incr"): 0.4,
     ("nose", "nose-scale-horiz-incr"): 0.2,
+    # Round 4: a happier face. MPFB's expression units: the smile muscle pulls the mouth
+    # corners up and out, the upper lip lifts a little, the cheeks round under the eyes and
+    # the outer brows lift. The eyes stay open.
+    ("expression/units/caucasian", "mouth-corner-puller"): 0.85,
+    ("expression/units/caucasian", "mouth-upward-retraction"): 0.15,
+    ("expression/units/caucasian", "eyebrows-left-extern-up"): 0.25,
+    ("expression/units/caucasian", "eyebrows-right-extern-up"): 0.25,
 }
 
 
