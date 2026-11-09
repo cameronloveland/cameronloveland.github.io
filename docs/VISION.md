@@ -3,7 +3,7 @@
 The redesigned portfolio's hero centres on a live head that follows the visitor's mouse
 and glances at the active project. This goal replaces the primitive placeholder with a
 stylized-real bust of Cameron: a likeness from his photo, torn open Terminator-style in a
-patch from temple to jaw to show a metal skull and a red robot eye, wearing his rimless
+patch from temple to jaw to show a metal skull and a red robot eye, wearing his dark framed
 glasses. It is built free and CC0 with MPFB 2 in headless Blender and ships as a small
 GLB, for visitors to the site and for Cameron as its signature image.
 
@@ -44,7 +44,7 @@ item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-desig
 ### Good: it clearly reads as Cameron, ragged tear over a real metal skull, glasses, hair, inside 3 MB
 - [ ] Ragged tear edge: torn skin geometry with thickness and an irregular border over the metal
 - [ ] Android mechanics under the patch: eye housing, cheek and jaw pistons, cables, panel detail
-- [~] Rimless rectangular `Glasses` on the head, with the red eye glowing through the lens (branch: cyborg-tear)
+- [~] Dark framed rectangular `Glasses` on the head, the cyborg-side lens and arm blown off (branch: cyborg-tear)
 - [~] Hair pass: full beard and mustache volume plus the faded short haircut in stylized-real form (branch: cyborg-tear)
 - [x] ~~Collared shirt on the `Bust` shoulders~~ (2026-11-08: dropped - replaced by the hoodie item in Working, Cameron's call)
 - [ ] Human hands that grip the hero edge, replacing the capsule placeholders, the android-side hand in metal

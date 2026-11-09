@@ -7,7 +7,7 @@ facing +Z):
 - Rig: an armature with two bones, Bust (root, static) and Head (its child), both at the
   skull-centre pivot and pointing straight up, which the exporter writes as joints with
   no translation and no rotation. The armature object itself is dropped on export.
-- EyeHuman (character right, -X) and EyeRed (character left, +X, the android side),
+- EyeHuman (character right, -X) and EyeRed (character left, +X, the cyborg side),
   bone-parented to Head with their origins at the eye centres.
 - Glasses: an empty bone-parented to Head until the glasses item fills it.
 """

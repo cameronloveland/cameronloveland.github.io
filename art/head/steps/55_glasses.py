@@ -1,9 +1,10 @@
-"""Step 55: rimless rectangular glasses, as in the reference photo.
+"""Step 55: dark framed rectangular glasses, as in the reference photo.
 
 Replaces the `Glasses` empty with a mesh of the same name, still bone-parented to `Head`:
-two thin see-through lenses with rounded corners, wrapped and tilted to the face, a thin
-metal bridge over the nose and temple arms that run back past the ears and hook down
-behind them. The glasses stay whole on the cyborg side; the red eye glows through the lens.
+two thin see-through lenses with rounded corners in a thin dark rim, wrapped and tilted to
+the face, a dark bridge over the nose and temple arms that run straight back over the ears
+and tuck down behind them, close to the head. On the cyborg side the lens and the arm are
+gone, blown off with that half of the face: only a snapped stub of rim hangs off the bridge.
 Placed from the eyes and the head's own surface, in hero units, Blender Z up, face to -Y.
 """
 import math
@@ -21,7 +22,7 @@ ns = lib.parse_args()
 skin = lib.get("Skin")
 rig = lib.get("Rig")
 
-LENS_W, LENS_H = 0.58, 0.36     # lens size
+LENS_W, LENS_H = 0.52, 0.32     # lens size
 LENS_OUT = 0.04                 # lens centre this much further out than the eye
 LENS_DROP = 0.02                # lens centre this much below the eye
 CORNER = 0.08                   # corner radius
@@ -29,9 +30,10 @@ CORNER_STEPS = 4
 THICK = 0.016                   # lens thickness
 GAP = 0.1                       # lens clearance in front of the face
 WRAP_DEG, TILT_DEG = 10, 8      # outer edge swept back; bottom tilted toward the face
-WIRE = 0.014                    # bridge and arm radius
+WIRE = 0.016                    # bridge and arm radius
+RIM = 0.013                     # radius of the rim round each lens
 WIRE_SIDES = 6
-GLASS, METAL = "e8eef2", "b9bec6"
+GLASS, FRAME = "e8eef2", "1c1b1b"
 
 eyes = [lib.get(name).matrix_world.translation.copy() for name in ("EyeHuman", "EyeRed")]
 # The head's own surface, without the hair cards standing off it (they would push the lenses
@@ -66,26 +68,49 @@ bm = bmesh.new()
 faces = []  # (face, material name)
 
 
-def tube(points):
-    """A thin round wire through the points."""
-    rings = []
+def tube(points, radius=WIRE, closed=False):
+    """A thin round wire through the points; closed joins the last point back to the first.
+
+    Each ring's frame is carried along from the one before (not rebuilt per point), so the
+    wire does not twist where it turns.
+    """
+    n = len(points)
+
+    def heading(i):
+        if closed:
+            return (points[(i + 1) % n] - points[i - 1]).normalized()
+        return (points[min(i + 1, n - 1)] - points[max(i - 1, 0)]).normalized()
+
+    rings, a = [], heading(0).orthogonal().normalized()
     for i, p in enumerate(points):
-        d = (points[min(i + 1, len(points) - 1)] - points[max(i - 1, 0)]).normalized()
-        a = d.orthogonal().normalized()
+        d = heading(i)
+        a = (a - d * a.dot(d)).normalized()
         b = d.cross(a)
-        rings.append([bm.verts.new(p + (a * math.cos(2 * math.pi * k / WIRE_SIDES) + b * math.sin(2 * math.pi * k / WIRE_SIDES)) * WIRE)
+        rings.append([bm.verts.new(p + (a * math.cos(2 * math.pi * k / WIRE_SIDES) + b * math.sin(2 * math.pi * k / WIRE_SIDES)) * radius)
                       for k in range(WIRE_SIDES)])
-    for r0, r1 in zip(rings, rings[1:]):
+    pairs = list(zip(rings, rings[1:] + rings[:1])) if closed else list(zip(rings, rings[1:]))
+    for r0, r1 in pairs:
         for k in range(WIRE_SIDES):
             k2 = (k + 1) % WIRE_SIDES
-            faces.append((bm.faces.new((r0[k], r0[k2], r1[k2], r1[k])), "GlassesMetal"))
-    for ring, flip in ((rings[0], True), (rings[-1], False)):
-        faces.append((bm.faces.new(ring[::-1] if flip else ring), "GlassesMetal"))
+            faces.append((bm.faces.new((r0[k], r0[k2], r1[k2], r1[k])), "GlassesFrame"))
+    if not closed:
+        for ring, flip in ((rings[0], True), (rings[-1], False)):
+            faces.append((bm.faces.new(ring[::-1] if flip else ring), "GlassesFrame"))
 
 
 anchors = {}
 for eye in eyes:
     centre, rot, side = lens_frame(eye)
+    # Where the bridge and the arm meet this lens: its inner and outer top corners.
+    anchors[side] = {
+        "inner": centre + rot @ Vector((-side * (LENS_W / 2 - 0.02), 0.0, LENS_H / 2 - 0.06)),
+        "outer": centre + rot @ Vector((side * (LENS_W / 2 - 0.01), 0.0, LENS_H / 2 - 0.08)),
+    }
+    if side > 0:
+        # Cyborg side: just the rim's inner top corner, snapped part way round.
+        stub = [(x, z) for x, z in outline() if x < -LENS_W * 0.22 and z > 0.0] + [(-LENS_W / 2 + 0.01, -0.02)]
+        tube([centre + rot @ Vector((x, 0.0, z)) for x, z in stub], RIM)
+        continue
     front, back = [], []
     for x, z in outline():
         p = Vector((x, 0.0, z))
@@ -97,41 +122,49 @@ for eye in eyes:
     for i in range(n):
         j = (i + 1) % n
         faces.append((bm.faces.new((front[j], front[i], back[i], back[j])), "GlassesEdge"))
-    # Where the bridge and the arm meet this lens: its inner and outer top corners.
-    anchors[side] = {
-        "inner": centre + rot @ Vector((-side * (LENS_W / 2 - 0.02), 0.0, LENS_H / 2 - 0.06)),
-        "outer": centre + rot @ Vector((side * (LENS_W / 2 - 0.01), 0.0, LENS_H / 2 - 0.08)),
-    }
+    tube([centre + rot @ Vector((x, 0.0, z)) for x, z in outline()], RIM, closed=True)
 
 # Bridge: an arch over the nose between the inner corners.
 l, r = anchors[1.0]["inner"], anchors[-1.0]["inner"]
 mid = (l + r) / 2 + Vector((0.0, 0.02, 0.05))
 tube([r, r.lerp(mid, 0.5) + Vector((0, 0, 0.02)), mid, l.lerp(mid, 0.5) + Vector((0, 0, 0.02)), l])
 
-# Arms: one straight wire from the lens's outer corner to just over the ear, splayed out just
-# enough to clear the side of the head, then a curved hook down behind the ear.
-EAR_Y = 0.1             # where the arm passes over the ear
-CLEAR = 0.04            # gap between the arm and the head
-for side in (1.0, -1.0):
+# Arms: one straight wire from the lens's outer corner to the top of the ear, where it
+# rests on the crease between ear and head, then a hook that follows the head down behind
+# the ear, just off its surface.
+EAR_Y = 0.1             # where the arm crosses the top of the ear
+CLEAR = 0.015           # gap between the arm and the temple in front of the ear
+TUCK = WIRE + 0.008     # gap between the hook and the head behind the ear
+
+
+def head_x(side, y, z, reach=0.05):
+    near = [abs(v.x) for v in verts if abs(v.y - y) < reach and abs(v.z - z) < reach and v.x * side > 0]
+    if not near:
+        lib.fail(f"no head surface near y {y:.2f}, z {z:.2f} for the glasses arm")
+    return max(near)
+
+
+for side in (-1.0,):  # the human side only; the cyborg side's arm is gone
     start = anchors[side]["outer"]
-    band = [v for v in verts if abs(v.z - start.z) < 0.08 and v.x * side > 0 and start.y + 0.1 < v.y < EAR_Y]
-    if not band:
-        lib.fail("no head surface beside the glasses arm")
-    # The arm's x at the ear so the line from start passes outside every band point.
-    ear_x = max(abs(start.x) + (abs(v.x) + CLEAR - abs(start.x)) * (EAR_Y - start.y) / (v.y - start.y) for v in band)
-    ear = Vector((side * ear_x, EAR_Y, start.z - 0.02))
-    along = (ear - start).normalized()
-    hook = [ear + along * 0.08 + Vector((side * -0.01, 0, -0.03)),
-            ear + along * 0.14 + Vector((side * -0.03, 0, -0.1)),
-            ear + along * 0.17 + Vector((side * -0.05, 0, -0.2))]
-    tube([start, ear] + hook)
+    ear_z = start.z - 0.03
+    # Straight from start: wide enough at the ear to rest on it and to pass the temple.
+    ear_x = head_x(side, EAR_Y, ear_z) + WIRE
+    temple = [v for v in verts if abs(v.z - start.z) < 0.06 and v.x * side > 0 and start.y + 0.1 < v.y < EAR_Y - 0.15]
+    for v in temple:
+        ear_x = max(ear_x, abs(start.x) + (abs(v.x) + CLEAR - abs(start.x)) * (EAR_Y - start.y) / (v.y - start.y))
+    ear = Vector((side * ear_x, EAR_Y, ear_z))
+    hook = [ear]
+    for y, dz in ((0.2, -0.04), (0.27, -0.12), (0.31, -0.22), (0.32, -0.3)):
+        z = ear_z + dz
+        hook.append(Vector((side * (head_x(side, y, z) + TUCK), y, z)))
+    tube([start] + hook)
 
 mesh = bpy.data.meshes.new("Glasses")
 bm.normal_update()
 mats = {}
 for name, color, alpha, metallic, rough in (("GlassesLens", GLASS, 0.06, 0.0, 0.05),
                                              ("GlassesEdge", GLASS, 0.35, 0.0, 0.1),
-                                             ("GlassesMetal", METAL, 1.0, 0.9, 0.25)):
+                                             ("GlassesFrame", FRAME, 1.0, 0.2, 0.35)):
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
     bsdf = mat.node_tree.nodes["Principled BSDF"]
@@ -145,7 +178,7 @@ for name, color, alpha, metallic, rough in (("GlassesLens", GLASS, 0.06, 0.0, 0.
     mats[name] = len(mesh.materials) - 1
 for f, name in faces:
     f.material_index = mats[name]
-    f.smooth = name == "GlassesMetal"
+    f.smooth = name == "GlassesFrame"
 bm.to_mesh(mesh)
 bm.free()
 

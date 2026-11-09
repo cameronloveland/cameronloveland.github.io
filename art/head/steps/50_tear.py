@@ -4,13 +4,16 @@ away from the temple across the eye and cheek to the jaw, showing a metal skull 
 - Torn skin: skin, hair and beard faces inside a noisy patch are removed; the skin's new
   border is extruded inward into a thin lip of flesh, so the skin reads as having depth.
 - Metal skull: a copy of the skin under the patch (plus a margin that tucks under the
-  torn edge) shrunk inward, then shaped like bone: a brow ridge, a cheekbone with a hollow
-  under it, and a sunken eye socket with a housing ring round the eye.
+  torn edge) shrunk inward, then shaped like a robot skull: a heavy brow ridge, a squared
+  eye socket sunk deep with a housing ring round the eye, a cheekbone bar running back
+  toward the ear over a dark recess, inlaid seams that split it into machined plates,
+  and two hydraulic pistons in the recess running down toward the jaw hinge.
+- Hair and beard cards with any vertex in the patch go too, so no strand hangs over metal.
 - EyeRed: a black lens with a small glowing red dot, Terminator style, instead of a whole
   red eye.
 
 Everything new stays inside the Skin mesh (materials Metal, MetalDark, Flesh) and carries
-Head and Bust weights, so the node contract is unchanged and the skull turns with the head.
+full Head weight, so the node contract is unchanged and the skull turns with the head.
 Hero units, Blender Z up, face toward -Y.
 """
 import math
@@ -42,10 +45,17 @@ LIP_DEPTH = 0.07        # depth of the torn skin's edge
 EDGE_RELAX = 6          # passes that round the face-by-face border before it is ragged
 EDGE_RAG = ((6.0, 0.07), (15.0, 0.035))  # (frequency, distance) noise that pushes the border in and out along the skin
 MARGIN_RINGS = 2        # face rings of skull that run on under the skin past the tear
-BROW = (0.2, 0.08, 0.1)      # height above the eye, half-height, how far it stands out
-CHEEKBONE = (-0.24, 0.07, 0.07)  # same, below the eye; it rises 0.3 per unit toward the ear
-HOLLOW = (-0.44, 0.1, -0.06)    # the hollow under the cheekbone
-SOCKET_RADIUS, SOCKET_DEPTH = 0.32, 0.17
+BROW = (0.22, 0.08, 0.15)      # height above the eye, half-height, how far it stands out
+BROW_SPAN = 0.36                # |x - eye.x| the brow ridge runs across
+CHEEKBONE = (-0.24, 0.05, 0.14)  # same, below the eye; it rises 0.3 per unit toward the ear
+HOLLOW = (-0.42, 0.12, -0.14)   # the recess under the cheekbone, where the pistons sit
+SOCKET_RADIUS, SOCKET_DEPTH = 0.34, 0.22  # a squared bowl: radius in a 4-norm across x and z
+SEAM_R = 0.013                  # inlaid seam beads, half sunk into the plates
+PISTON_R = (0.045, 0.022)       # sleeve and rod radii
+PISTONS = ((0.42, 0.5), (0.56, 0.63))   # (x at the top, x at the bottom) of each piston
+HEAD_AXIS_Y = -0.3              # seams are cast toward the vertical axis through here
+PISTON_Z = (-0.12, -0.8)        # top under the cheekbone, bottom on under the skin toward the jaw hinge
+ARCH_R = 0.035                  # the cheekbone bar (zygomatic arch) laid over the shaped cheekbone
 SKULL_SMOOTH = 3        # smoothing passes before the bone is shaped (one more after), ironing out the coarse mesh's creases
 RING_MAJOR, RING_MINOR = 1.1, 0.045  # housing ring radius as a share of the eye radius, tube radius
 DOT_DEG = 12            # red dot cone round the eye's axis
@@ -98,6 +108,24 @@ for mat in (srgb_mat("Metal", METAL, 0.95, 0.2), srgb_mat("MetalDark", METAL_DAR
 
 inside = {v: torn(v.co) and v.co.x > 0 for v in bm.verts}
 gone = [f for f in bm.faces if all(inside[v] for v in f.verts)]
+# Hair and beard cards: a whole card goes if any vertex of it is in the patch.
+card_slots = {i for i, m in enumerate(skin.data.materials) if m.name.startswith(("HairCard", "BeardCard"))}
+seen = set()
+gone_set = set(gone)
+for f in bm.faces:
+    if f.material_index not in card_slots or f in seen:
+        continue
+    card, todo = {f}, [f]
+    while todo:
+        for v in todo.pop().verts:
+            for lf in v.link_faces:
+                if lf not in card:
+                    card.add(lf)
+                    todo.append(lf)
+    seen |= card
+    if any(inside[v] for c in card for v in c.verts):
+        gone += [c for c in card if c not in gone_set]
+        gone_set |= card
 gone_skin = [f for f in gone if f.material_index == skin_slot]
 if not gone_skin:
     lib.fail("the tear patch removes no skin; check PATCH_OFFSET against the red eye")
@@ -131,18 +159,18 @@ for _ in range(SKULL_SMOOTH):
 for old, new in skull.items():
     co, n = new.co.copy(), normals[old]
     dx = co.x - eye.x
-    if abs(dx) < 0.3:
-        for height, half, push in (BROW,):
-            t = 1 - min(1.0, abs(co.z - (eye.z + height)) / half)
-            new.co += n * push * t * t
+    if abs(dx) < BROW_SPAN:
+        height, half, push = BROW
+        t = min(1.0, 1.6 * (1 - min(1.0, abs(co.z - (eye.z + height)) / half)))  # flat topped, hard edged
+        new.co += n * push * t * min(1.0, 3 * (1 - abs(dx) / BROW_SPAN))
     for height, half, push in (CHEEKBONE, HOLLOW):
         line = eye.z + height + 0.3 * max(0.0, dx)
         t = 1 - min(1.0, abs(co.z - line) / half)
-        new.co += n * push * t * t
-    # The socket: a bowl round the eye, deepest at the rim of the eye.
-    d = (co - eye).length
-    if d < SOCKET_RADIUS:
-        t = 1 - d / SOCKET_RADIUS
+        new.co += n * push * (t if push > 0 else t * t)
+    # The socket: a squared bowl round the eye, deepest at the rim of the eye.
+    d = ((co.x - eye.x) ** 4 + (co.z - eye.z) ** 4) ** 0.25
+    if d < SOCKET_RADIUS and co.y < eye.y + 0.3:
+        t = min(1.0, 1.4 * (1 - d / SOCKET_RADIUS))
         new.co += Vector((0.0, 1.0, 0.0)) * SOCKET_DEPTH * t
 bmesh.ops.smooth_vert(bm, verts=list(skull.values()), factor=0.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
 for new in skull.values():
@@ -206,6 +234,100 @@ for i in range(SEG):
     for k in range(SIDES):
         i2, k2 = (i + 1) % SEG, (k + 1) % SIDES
         extra.append((bm.faces.new((rings[i][k], rings[i2][k], rings[i2][k2], rings[i][k2])), "MetalDark"))
+
+# Seams and pistons sit on the skull, found by casting from the front onto it.
+live = [f for f in skull_faces if f.is_valid]
+sv = list({v for f in live for v in f.verts})
+si = {v: i for i, v in enumerate(sv)}
+skull_bvh = BVHTree.FromPolygons([v.co.copy() for v in sv], [[si[v] for v in f.verts] for f in live])
+
+
+def on_skull(x, z):
+    """The skull straight behind (x, z) seen from the front."""
+    hit, normal, *_ = skull_bvh.ray_cast(Vector((x, -4.0, z)), Vector((0.0, 1.0, 0.0)))
+    return (hit, normal) if hit else (None, None)
+
+
+def round_skull(degrees, z):
+    """The skull at height z, `degrees` round from the front toward his left ear."""
+    a = math.radians(degrees)
+    out = Vector((math.sin(a), -math.cos(a), 0.0))
+    hit, normal, *_ = skull_bvh.ray_cast(Vector((0.0, HEAD_AXIS_Y, z)) + out * 4.0, -out)
+    return (hit, normal) if hit else (None, None)
+
+
+def tube(points, radius, name, sides=5, caps=True):
+    """A thin tube through the points, its cross-section kept square to the viewer (-Y)."""
+    rings = []
+    for i, p in enumerate(points):
+        d = (points[min(i + 1, len(points) - 1)] - points[max(i - 1, 0)]).normalized()
+        ref = Vector((0.0, -1.0, 0.0))
+        a = ref - d * ref.dot(d)
+        a = a.normalized() if a.length > 1e-4 else d.orthogonal().normalized()
+        b = d.cross(a)
+        rings.append([head_vert(p + (a * math.cos(2 * math.pi * k / sides) + b * math.sin(2 * math.pi * k / sides)) * radius)
+                      for k in range(sides)])
+    for r0, r1 in zip(rings, rings[1:]):
+        for k in range(sides):
+            k2 = (k + 1) % sides
+            extra.append((bm.faces.new((r0[k], r0[k2], r1[k2], r1[k])), name))
+    if caps:
+        extra.append((bm.faces.new(rings[0][::-1]), name))
+        extra.append((bm.faces.new(rings[-1]), name))
+
+
+def seam(path, steps):
+    """A bead along a path in (degrees, z) round the head, on the skull, in runs where it is hit."""
+    run = []
+    for i in range(steps + 1):
+        hit, normal = round_skull(*path(i / steps))
+        if hit is None:
+            if len(run) > 1:
+                tube(run, SEAM_R, "MetalDark", 4, False)
+            run = []
+            continue
+        run.append(hit - normal * SEAM_R * 0.3)
+    if len(run) > 1:
+        tube(run, SEAM_R, "MetalDark", 4, False)
+
+
+# Plate edges: one over the brow ridge round to the temple, one up the temple, one up the
+# forehead, so the metal reads as machined plates rather than one cast piece.
+top = eye.z + BROW[0] + BROW[1] + 0.04
+seam(lambda t: (8 + 80 * t, top + 0.03 * t), 18)
+seam(lambda t: (62, top + (1.05 - top) * t), 10)
+seam(lambda t: (24, top + (1.05 - top) * t), 10)
+
+# The cheekbone bar: a chrome rod along the cheekbone from under the eye back toward the ear.
+arch = []
+for i in range(13):
+    deg = 18 + 60 * i / 12
+    x_guess = 0.85 * math.sin(math.radians(deg))
+    hit, normal = round_skull(deg, eye.z + CHEEKBONE[0] + 0.3 * max(0.0, x_guess - eye.x))
+    if hit is not None:
+        arch.append(hit + normal * ARCH_R * 0.5)
+if len(arch) > 1:
+    tube(arch, ARCH_R, "Metal", 6)
+
+# Two pistons in the recess: a thick sleeve from under the cheekbone, a thin rod into the jaw,
+# hung from a bracket under the bar.
+mounts = []
+for x_top, x_bottom in PISTONS:
+    top_hit, top_n = on_skull(x_top, PISTON_Z[0])
+    for k in range(9):  # the lowest point toward PISTON_Z[1] that is still on the skull
+        bottom_hit, bottom_n = on_skull(x_bottom, PISTON_Z[1] + (PISTON_Z[0] - PISTON_Z[1]) * k / 10)
+        if bottom_hit is not None:
+            break
+    if top_hit is None or bottom_hit is None:
+        continue
+    p0 = top_hit + top_n * PISTON_R[0] * 0.8
+    p1 = bottom_hit + bottom_n * PISTON_R[0] * 0.8
+    tube([p0, p0.lerp(p1, 0.45)], PISTON_R[0], "MetalDark", 6)
+    tube([p0.lerp(p1, 0.4), p1], PISTON_R[1], "Metal", 6)
+    mounts.append(p0)
+if len(mounts) == 2:
+    tube([mounts[0] + (mounts[0] - mounts[1]).normalized() * 0.04, mounts[1] + (mounts[1] - mounts[0]).normalized() * 0.04],
+         PISTON_R[1] * 1.2, "MetalDark", 6)
 
 for f, name in extra:
     f.material_index = slots[name]
