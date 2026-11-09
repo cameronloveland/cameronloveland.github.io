@@ -84,8 +84,8 @@ From Cameron:
 - Second review (2026-11-08): dark framed glasses, slightly smaller lenses, arms tucked
   behind the ears; on the cyborg side the lens and arm are gone, as if blown off with the
   face. The skull reads as a robot skull: brow shelf, squared socket, cheekbone bar, plate
-  seams, pistons. Messier hair; the beard reads as hair. Idea under discussion: the intro
-  becomes a beam that blasts the face open on click, showing the skull.
+  seams, pistons. Messier hair; the beard reads as hair. A beam that blasts the face
+  open as the intro was considered and dropped (Cameron, 2026-11-08): the bust arrives torn.
 - Hair and beard (2026-11-08): generated strands looked bad, so the hair, brows and beard
   are fitted CC0 MakeHuman meshes (hair `short01`, brows `eyebrow001`, beard "Sigmund" from
   the community pack bodyparts05), shaped toward the faux hawk and fade. Cameron chose these
