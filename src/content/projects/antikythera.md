@@ -16,6 +16,8 @@ stack: ["Three.js", "React", "Next.js", "Blender"]
 commits: 28
 image: "/images/antikythera.webp"
 imageFocus: "48% 46%"
+stageImage: "/images/antikythera-stage.webp"
 video: "/videos/antikythera.mp4"
+videoAv1: "/videos/antikythera-av1.mp4"
 videoPhone: "/videos/antikythera-phone.mp4"
 ---
