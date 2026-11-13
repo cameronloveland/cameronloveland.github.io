@@ -1,14 +1,16 @@
 # Portfolio Vision
 
-The redesigned portfolio's hero centres on a live head that follows the visitor's mouse
-and glances at the active project. This goal replaces the primitive placeholder with a
+The redesigned portfolio's hero is a Billboard slideshow of the work. A live head that
+follows the visitor's mouse and glances at the active project is an extra the visitor can
+turn on, alone over the ledge as the page scrolls or inside the screen wall. This goal replaces the primitive placeholder with a
 stylized-real bust of Cameron: a likeness from his photo, torn open Terminator-style in a
 patch from temple to jaw to show a metal skull and a red robot eye, wearing his rimless
 glasses. It is built free and CC0 with MPFB 2 in headless Blender and ships as a small
 GLB, for visitors to the site and for Cameron as its signature image.
 
 ## Done when
-- The hero shows the bust instead of the placeholder, with identical behaviour.
+- With the bust or the screen wall turned on, the hero shows the bust instead of the
+  placeholder, with identical behaviour.
 - Side by side with his photo, the human side reads as Cameron.
 - The tear reads as ragged skin over metal, and the red eye glows through the glasses.
 - The GLB is under 3 MB and the hero holds 60 fps on a mid-range laptop.
@@ -23,6 +25,8 @@ GLB, for visitors to the site and for Cameron as its signature image.
 See `docs/superpowers/specs/2026-11-08-cyborg-head-bust-design.md`: the node contract with
 the hero (`Bust`, `Head`, `EyeHuman`, `EyeRed`, `Glasses`), the web budget, the CC0 rule,
 the reference photo rule, and the decisions and calls already made.
+
+The default hero is specified in `docs/superpowers/specs/2026-11-12-billboard-hero-design.md`.
 
 ## Roadmap
 
