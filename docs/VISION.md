@@ -35,6 +35,20 @@ Append-only. Check an item with the date and a one-line note. A struck item read
 the first `- [ ]` line, top tier first; `- [~] text (branch: x, plan: y)` marks the
 item in progress. Spec: docs/superpowers/specs/2026-11-08-cyborg-head-bust-design.md. Approval: once.
 
+### Next: crisp video samples in the hero (Cameron, 2026-11-13)
+
+Record these on the PC, not in a cloud session: the sites are live 3D and a cloud session
+has no graphics card, so a capture there comes out choppy and soft. Close other heavy apps
+first; the PC runs low on memory. Shared recipe: capture the live site in real Chrome at
+1920 wide or more with no upscaling, about 12 to 15 s that loops cleanly, no audio, H.264
+with faststart at a quality that keeps edges and text sharp at full hero width, a poster
+frame as WebP, and the hero mockup and the project's `video` field both pointed at it.
+
+- [ ] Cosmic Drift: re-record the hero clip crisp. Open question for Cameron: keep the title screen, or show a race in progress, since the title screen's own logo and menu sit behind the caption
+- [ ] Antikythera Mechanism: re-record the hero clip, the current one is blurry
+- [ ] Gnome Glider: record a hero clip
+- [ ] Futuristic HUD Portfolio: record a hero clip
+
 ### Working: the bust is in the hero with matched behaviour, rough likeness, basic tear, red eye
 - [x] Head build pipeline: `art/head/` headless Blender scripts export a compressed MPFB base bust GLB with the spec's node names, plus `npm run head` and a budget check (2026-11-08: PR #97, 70 KB neutral MPFB bust; neck seam opens on turn, skinned-neck fix proposed in art/head/README.md)
 - [x] ~~Hero mockup loads the head GLB in place of the placeholder with matched mouse follow, idle glance, scroll peek and load fallback~~ (2026-11-08: split into a/b)

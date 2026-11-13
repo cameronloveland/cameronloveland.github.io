@@ -4,6 +4,10 @@
 
 **Goal:** The hero mockup opens on the Billboard slideshow alone, HUD profile first, with the intro, the bust and the screen wall behind one quiet "Extras" menu and no 3D loaded until one of them is asked for.
 
+**Slide order superseded (2026-11-13):** the slideshow now opens on Cosmic Drift, then the
+Futuristic HUD Portfolio slide, per the "Decided" section of the spec. Where this plan says
+the HUD slide is first, read Cosmic Drift first and the HUD slide second.
+
 **Architecture:** A new mockup page, `billboard-hero.html`, is cut down from `hero-slideshow.html`: one layout, no mode switcher. The three.js block moves out of the page into `hero-extras.js`, which the page imports on demand. The page itself owns the arrival classes, the slideshow, the Extras menu and the stored choices; the module only draws the bust, plays the intro and reads the hero's classes as it does today.
 
 **Tech stack:** One static HTML page with inline CSS and vanilla scripts, three.js 0.160.0 from the existing import map, served by the brainstorm companion. No build step, no new dependencies.

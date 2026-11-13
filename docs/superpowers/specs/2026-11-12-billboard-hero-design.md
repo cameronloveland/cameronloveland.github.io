@@ -61,9 +61,11 @@ Cameron's call was to hide the extras, so the bust stays small: see Decided.
 ## Decided
 
 - Billboard is the only layout. Marquee, Index and Reel are removed from the hero.
-- The slideshow always opens on the Futuristic HUD Portfolio slide: that picture of
-  Cameron is the introduction to him. (Cameron) The rest follow in the existing featured
-  order.
+- The slideshow always opens on Cosmic Drift, the most polished project, playing its
+  video. (Cameron, 2026-11-13) The Futuristic HUD Portfolio slide comes second: that
+  picture of Cameron is the introduction to him. (Cameron) The rest follow in the
+  existing featured order. This replaces the 2026-11-12 decision to open on the HUD
+  slide, which is what the plan of that date records.
 - "Watch intro" plays the existing intro once, then returns to the Billboard. (Cameron)
 - The bust is opt-in. (Cameron)
 - The extras are hidden. (Cameron) How, below, is Claude's call:
