@@ -6,7 +6,7 @@ startDate: 2025-10-01
 updatedDate: 2026-05-01
 links:
   - label: "live site"
-    href: "https://cosmicdrift.clovola.workers.dev/"
+    href: "https://cosmicdriftracing.com/"
     primary: true
 languages:
   - name: "TypeScript"
@@ -16,5 +16,7 @@ languages:
 stack: ["Three.js", "Vite"]
 commits: 94
 image: "/images/cosmic-drift.webp"
-imageFocus: "50% 64%"
+stageImage: "/images/cosmic-drift-title.webp"
+video: "/videos/cosmic-drift.mp4"
+imageFocus: "50% 8%"
 ---
