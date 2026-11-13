@@ -34,12 +34,19 @@ const focus = (value?: string) => { const [x, y] = (value ?? '50% 44%').split(' 
 // The stage shows stageImage when a project has one (a picture that suits the wide crop), else its card image.
 const picture = (project: typeof projects[number]) => project.data.stageImage ?? project.data.image;
 const stageImage = (project: typeof projects[number]) => project.data.stageFit === 'contain' ? `;--stage-image:url("${picture(project)}")` : '';
+// AV1 main profile, level 5.0, 8-bit: covers 2560x1280 at 60 fps. Browsers that cannot play it skip to the H.264 source.
+const AV1_TYPE = 'video/mp4; codecs="av01.0.12M.08"';
 ---
 {count > 0 && <section class:list={['hero', 'reel', {'reel--dense': dense}]} role="region" aria-label="Featured projects" aria-roledescription="carousel" style={`--body-a:${bodyA / 100};--body-step:${(step / 100).toFixed(4)};--arc-end:${arcEnd / 100};--arc-dip:${arcDip / 100};--arc-r:${radius.toFixed(1)}`}>
   <div class="stage">
     {projects.map((project,index) => <div class:list={['reel-slide', {'is-active': index === 0, 'reel-slide--contain': project.data.stageFit === 'contain'}]} style={focus(project.data.imageFocus) + stageImage(project)} data-slide aria-hidden={index !== 0} inert={index !== 0} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${count}: ${project.data.title}`}>
       {project.data.video
-        ? <video src={project.data.video} poster={picture(project)} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600"></video>
+        ? <video poster={picture(project)} muted loop playsinline autoplay preload={index === 0 ? 'auto' : 'metadata'} aria-label={`${project.data.title} preview`} width="1200" height="600">
+            {/* The browser takes the first source it can play: the phone file at phone widths, then AV1, then H.264. */}
+            {project.data.videoPhone && <source src={project.data.videoPhone} type="video/mp4" media="(max-width: 720px)" />}
+            {project.data.videoAv1 && <source src={project.data.videoAv1} type={AV1_TYPE} />}
+            <source src={project.data.video} type="video/mp4" />
+          </video>
         : <img src={picture(project)} alt={`${project.data.title} preview`} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} width="1200" height="600" />}
     </div>)}
     <div class="stage-scrim" aria-hidden="true"></div>

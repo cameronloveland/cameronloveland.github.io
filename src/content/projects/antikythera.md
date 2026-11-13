@@ -17,4 +17,5 @@ commits: 28
 image: "/images/antikythera.webp"
 imageFocus: "48% 46%"
 video: "/videos/antikythera.mp4"
+videoPhone: "/videos/antikythera-phone.mp4"
 ---
