@@ -18,4 +18,8 @@ stack: ["Three.js", "Blender", "Vite", "Playwright"]
 commits: 22
 image: "/images/knight-life.webp"
 imageFocus: "50% 55%"
+stageImage: "/images/knight-life-stage.webp"
+video: "/videos/knight-life.mp4"
+videoAv1: "/videos/knight-life-av1.mp4"
+videoPhone: "/videos/knight-life-phone.mp4"
 ---
