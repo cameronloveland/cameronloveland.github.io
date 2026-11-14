@@ -217,7 +217,7 @@
   .nav.solid .nav-pill { background: rgba(18, 18, 21, .82); box-shadow: 0 14px 40px rgba(0,0,0,.45); }
   .brand { display: inline-flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; border-radius: 999px; }
   .brand:hover { background: rgba(255,255,255,.05); }
-  .mono { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--indigo); color: #fff; font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: .02em; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
+  .mono { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--hero-c, var(--cat-web)); transition: background .6s; color: #fff; font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: .02em; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
   .bn { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
   .tabs { position: relative; display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.04); }
   .tab { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--muted); transition: color .2s; }
@@ -225,7 +225,7 @@
   .tab svg circle { fill: currentColor; }
   .tab:hover { color: var(--ink); }
   .tab.on { color: #fff; }
-  .ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--indigo); opacity: 0; transition: transform .35s cubic-bezier(.2,.8,.2,1), width .35s cubic-bezier(.2,.8,.2,1), opacity .25s; }
+  .ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--hero-c, var(--cat-web)); opacity: 0; transition: background .6s, transform .35s cubic-bezier(.2,.8,.2,1), width .35s cubic-bezier(.2,.8,.2,1), opacity .25s; }
   .social { display: flex; gap: 6px; padding-right: 2px; }
   .ib { position: relative; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); transition: color .2s, border-color .2s, transform .2s; }
   .ib svg { width: 17px; height: 17px; fill: currentColor; }
@@ -2044,6 +2044,7 @@
         if (v) { if (k === cur) { v.currentTime = 0; if (paused) return; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause(); }
       });
       [].forEach.call(seg.children, function (li, k) { li.classList.toggle('on', k === cur); li.classList.toggle('done', k < cur); });
+      document.documentElement.style.setProperty('--hero-c', CAT[p.c][1]);
       cap.querySelector('.k').style.setProperty('--c', CAT[p.c][1]);
       cap.querySelector('.k .i1').innerHTML = ICON[p.c];
       cap.querySelector('.k b').textContent = CAT[p.c][0];
