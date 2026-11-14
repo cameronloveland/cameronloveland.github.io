@@ -19,4 +19,8 @@ stack: ["Next.js", "Three.js", "Tailwind", "Framer Motion"]
 commits: 329
 image: "/images/space-portfolio.webp"
 imageFocus: "50% 40%"
+stageImage: "/images/hud-portfolio-stage.webp"
+video: "/videos/hud-portfolio.mp4"
+videoAv1: "/videos/hud-portfolio-av1.mp4"
+videoPhone: "/videos/hud-portfolio-phone.mp4"
 ---

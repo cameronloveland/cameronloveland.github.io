@@ -39,7 +39,13 @@ const projects = defineCollection({
     // imageFocus; "contain" shows the whole image letterboxed over a blurred
     // copy of itself, for artwork whose copy any crop would cut through.
     stageFit: z.enum(['cover', 'contain']).default('cover'),
+    // The hero clip, H.264 MP4; every browser can play it.
     video: z.string().optional(),
+    // Optional extra encodes of the same clip. videoAv1: an AV1 MP4, the same
+    // sharpness in a smaller file, used where the browser plays AV1. videoPhone:
+    // a lighter H.264 MP4 (1280 wide) for the phone layout, 720px and narrower.
+    videoAv1: z.string().optional(),
+    videoPhone: z.string().optional(),
     unpublished: z.boolean().default(false),
   }),
 });

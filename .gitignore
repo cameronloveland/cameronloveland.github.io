@@ -23,3 +23,6 @@ art/head/renders/
 *.blend1
 __pycache__/
 art/head/**/*.blend
+
+# three.js files copied from node_modules by scripts/vendor-three.mjs
+public/vendor/

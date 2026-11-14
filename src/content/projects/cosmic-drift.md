@@ -17,4 +17,8 @@ stack: ["Three.js", "Vite"]
 commits: 94
 image: "/images/cosmic-drift.webp"
 imageFocus: "50% 64%"
+stageImage: "/images/cosmic-drift-stage.webp"
+video: "/videos/cosmic-drift.mp4"
+videoAv1: "/videos/cosmic-drift-av1.mp4"
+videoPhone: "/videos/cosmic-drift-phone.mp4"
 ---

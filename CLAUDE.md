@@ -4,15 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A personal project-showcase site for Cameron Loveland, hosted on GitHub Pages. It is
-built with [Astro](https://astro.build) as a fully static site (`output: "static"`) -
-no server, no client-side framework, no tracking. The small interactive parts (theme
-toggle, featured-project reel, gallery/timeline switch, category filter) are vanilla
-`<script>` blocks inside their components.
+A personal project-showcase site for Cameron Loveland, hosted on GitHub Pages. Astro
+builds it as a fully static site (`output: "static"`), with no server and no tracking.
 
-Design direction lives in `docs/superpowers/specs/2026-09-12-award-gauntlet-design-direction.md`
-(palette, type, radius scale, principles, the "instrument" idea). Read it before changing
-anything visual; it is the contract every visual change is judged against.
+The homepage is one hand-written page, `public/index.html`. It is the billboard mockup,
+approved by Cameron in November 2026 and shipped as is (spec
+`docs/superpowers/specs/2026-11-13-mockup-to-site-design.md`). Its CSS and vanilla scripts are
+inline, and its project data is the `P` list in its first script. The hero is a playlist:
+a video plays to its end, then the next item plays; a still plays a 12 s zoom and pan;
+after the last item it loops. The player row has play/pause, a scrub bar and a quality menu
+that picks among each take's three encodes (`<name>-av1.mp4` 1280p, `<name>.mp4` 960p,
+`<name>-phone.mp4` 640p). The Extras menu (intro, bust, screen wall) imports
+`public/js/hero-extras.js`, which loads three.js from `/vendor/three/` and the bust from
+`public/models/head.glb`. The page is dark only.
 
 ## Workflow
 
@@ -24,75 +28,25 @@ anything visual; it is the contract every visual change is judged against.
   installs dependencies, builds the site, and deploys `dist/` via
   `actions/upload-pages-artifact` + `actions/deploy-pages`. One-time repo setting:
   Settings > Pages > Source = **GitHub Actions**.
+- `predev` and `prebuild` run `scripts/vendor-three.mjs`, which copies the three.js files the
+  Extras need from `node_modules` into `public/vendor/three/` (gitignored).
 - There is no test suite beyond Astro's content collection schema validation (see
   below) - a project with malformed frontmatter fails `npm run build`.
 - **Roadmap:** `docs/VISION.md` (consumed by `/next-goal`). Current goal: the cyborg head
   bust, spec `docs/superpowers/specs/2026-11-08-cyborg-head-bust-design.md`.
 - **Gates:** `npm run build`; for `art/head/` items also `npm run head` (headless Blender
   build plus GLB budget check, created by the first roadmap item).
-- **Run by hand:** `npm run head`, then look at the renders in `art/head/renders/`; the hero
-  mockup is served by the brainstorm companion from `.superpowers/brainstorm/`.
+- **Run by hand:** `npm run build`, then serve `dist/` with range requests (videos need them)
+  and check the homepage at 1440x900 and at a phone width; `npm run head` for the bust renders.
 
 ## Project data (`src/content/projects/`)
 
-Each project is a markdown file with frontmatter validated against the schema in
-`src/content/config.ts`: `title`, `description`, `section`
-(`web` | `games` | `mobile-apps` | `experiments` | `prototypes`), `startDate`, `updatedDate`
-(optional), `links` (label/href/primary; the primary link's wording comes from the
-section via `src/utils/linkLabel.ts`: Play now, Open website, Visit website, Open
-project, Try it), `languages` (name/color, following GitHub's linguist colors), `stack`,
-`commits` (optional), `image` (optional, WebP under `public/images/`), `stageImage`
-(optional, a different picture for the wide hero stage), `imageFocus` (optional
-object-position pair for the crop), `stageFit` (`cover` | `contain`), `video`
-(optional, under `public/videos/`), `unpublished` (default `false`, shown as
-"In progress").
-
-To add a project, add a markdown file to `src/content/projects/` and a WebP image
-(1600px wide is plenty; keep PNG sources out of `public/`). The homepage
-(`src/pages/index.astro`) reads the collection with `getCollection('projects')` and
-renders the gallery and the timeline from the same data; the hero reel shows the
-projects with an image, in the order set by `featuredOrder` in `src/utils/projects.ts`.
-
-## Components (`src/components/`)
-
-- `ProjectCarousel.astro` - the hero: a wide stage (image or video, caption, CTA) and
-  the instrument under it: a brass arc carrying one body per featured project, with
-  ticks, a sliding hand and a sweep that times the slideshow. Phones swap the arc for
-  a scroll-snap strip of chips and put prev/next on the stage. Its script owns play,
-  pause, the hold while the open link is hovered, keyboard pause, swipe, the arrival animation and the
-  `--reel-index` custom property that also turns the maker's mark in the header.
-- `SkyField.astro` - the starfield and three meteors behind the fold (dark theme).
-- `Card.astro` - a gallery card (kicker with category and status, title, description,
-  facts plate, links).
-- `ViewToggle.astro` - the Gallery/Timeline switch plus the category filter logic; view
-  and filter changes run inside the View Transitions API where available.
-- `Timeline.astro` - the chronological view: a month scale, one lane per project in
-  start-date order, rods in category color, dashed to Now while in progress.
-- `ThemeToggle.astro` - the dark/light toggle (crossfades via a view transition).
-- `MakerMark.astro` - the maker's mark in the header and footer: the instrument in
-  miniature, a dial with one graduation per featured project and a body that turns
-  to the active one with the reel.
-- `ExternalLinkIcon.astro` - the shared new-tab glyph.
-
-`src/layouts/Layout.astro` holds the `<head>` (theme init, font preload, Open Graph
-meta), the header band (maker's mark, wordmark, links, theme toggle), the fold, the
-main slot and the footer.
-
-## Styling (`src/styles/portfolio.css`)
-
-- One stylesheet. Tokens for both themes sit at the top: colors (`:root` is the light
-  "Daylight" theme, `[data-theme="dark"]` is "Night"), the five category colors
-  (`--cat-games`, `--cat-web`, `--cat-mobile`, `--cat-experiments`, `--cat-prototypes`), type scale,
-  weights, radius scale (24 / 16 / 12 / 6 / pill), spacing and motion tokens
-  (`--dur-fast/base/slow`, `--ease-out`, `--ease-in-out`). Nothing outside the token
-  blocks declares a color.
-- The active theme is stored in `localStorage` under `theme` and applied to
-  `document.documentElement` before first paint by the inline script in `Layout.astro`.
-- One family, Schibsted Grotesk (variable, self-hosted in `public/fonts/`, OFL). No
-  monospace anywhere.
-- Reduced motion: the block at the end of the stylesheet stops every animation and
-  transition; the scripts also skip view transitions and the arrival under it.
-- Phone layout changes at 720px; the arc instrument needs 721px and up.
+Each project is still a markdown file validated against `src/content/config.ts` (title,
+description, section, dates, links, languages, stack, image, stageImage, video, videoAv1,
+videoPhone, unpublished), so `npm run build` catches malformed data. The homepage does not
+read the collection yet: adding or changing a project means editing the `P` list in
+`public/index.html` (and the Showcase markup, if it is featured) as well as its markdown.
+Images are WebP under `public/images/`, videos under `public/videos/`.
 
 ## Conventions
 
@@ -100,8 +54,9 @@ main slot and the footer.
   icons, CSS-first animation. No new dependencies without asking.
 - Sentence case everywhere. No all-caps eyebrows, no middle-dot meta strings, no
   numbering that is not a real sequence. No em dashes in code, comments or copy.
-- Brass (`--accent`) marks only what is active or pressable; categories use their own
-  colors; "in progress" is a state (hollow lamp, dashed rod), not a color.
+- Mint (`--mint`) marks what is active or pressable; categories use their own colors
+  (`--cat-games`, `--cat-web`, `--cat-mobile`, `--cat-prototypes`). Item labels are icon
+  ribbons; section titles are Plates.
 - External links use `target="_blank" rel="noopener noreferrer"` and carry the
   external-link glyph.
 - Planning and design docs live in `docs/superpowers/{plans,specs}/` with date-prefixed
