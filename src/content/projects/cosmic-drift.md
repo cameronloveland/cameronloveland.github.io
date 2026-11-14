@@ -6,7 +6,7 @@ startDate: 2025-10-01
 updatedDate: 2026-05-01
 links:
   - label: "live site"
-    href: "https://cosmicdrift.clovola.workers.dev/"
+    href: "https://cosmicdriftracing.com/"
     primary: true
 languages:
   - name: "TypeScript"
