@@ -2047,7 +2047,10 @@
       cap.querySelector('.k').style.setProperty('--c', CAT[p.c][1]);
       cap.querySelector('.k .i1').innerHTML = ICON[p.c];
       cap.querySelector('.k b').textContent = CAT[p.c][0];
-      cap.querySelector('.t').textContent = p.t;
+      // the first word of the title takes the project type's colour
+      var tEl = cap.querySelector('.t'), sp = p.t.indexOf(' '), w1 = document.createElement('span');
+      w1.className = 'w1'; w1.style.color = CAT[p.c][1]; w1.textContent = sp < 0 ? p.t : p.t.slice(0, sp);
+      tEl.textContent = ''; tEl.appendChild(w1); if (sp >= 0) tEl.appendChild(document.createTextNode(p.t.slice(sp)));
       cap.querySelector('.d').textContent = p.d;
       cap.querySelector('.go').textContent = p.cta;
       var go = cap.querySelector('.go'); go.href = p.web || '#';
