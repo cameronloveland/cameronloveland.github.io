@@ -1772,7 +1772,7 @@
     var VIDEO = { '2100': '/videos/2100.mp4', anti: '/videos/antikythera.mp4', cosmic: '/videos/cosmic-drift.mp4', gnome: '/videos/gnome-glider.mp4', hud: '/videos/hud-portfolio.mp4', knight: '/videos/knight-life.mp4' };
     var POSTER = { '2100': '/images/2100-stage.webp', cosmic: '/images/cosmic-drift-stage.webp', anti: '/images/antikythera-stage.webp', gnome: '/images/gnome-glider-stage.webp', hud: '/images/hud-portfolio-stage.webp', knight: '/images/knight-life-stage.webp' };
     var FIT = { strength: 1 };
-    var S = ['cosmic', 'hud', '2100', 'gnome', 'knight', 'anti', 'strength'].map(function (id) { return P.filter(function (p) { return p.id === id; })[0]; });
+    var S = ['cosmic', 'hud', 'knight', '2100', 'gnome', 'anti', 'strength'].map(function (id) { return P.filter(function (p) { return p.id === id; })[0]; });
     var n = S.length, cur = -1, elapsed = 0, hover = false;
     var art = document.getElementById('sx-art'), cap = document.getElementById('sx-cap');
     var seg = document.getElementById('sx-seg'), rail = document.getElementById('sx-rail');
