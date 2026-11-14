@@ -12,7 +12,7 @@ export function sortByOrder<T extends { id: string; data: { title: string } }>(p
 
 // The hero's featured set: these five, in this order, and only those with a
 // picture. The gallery can grow without the reel growing with it.
-export const featuredOrder = ['cosmic-drift', 'hud-portfolio', 'gnome-glider', 'knight-life', 'antikythera', 'strength-path'];
+export const featuredOrder = ['cosmic-drift', 'hud-portfolio', '2100', 'gnome-glider', 'knight-life', 'antikythera', 'strength-path'];
 export const featured = <T extends { id: string; data: { title: string; image?: string } }>(projects: T[]): T[] =>
   sortByOrder(projects.filter(p => p.data.image && featuredOrder.includes(p.id)), featuredOrder);
 
