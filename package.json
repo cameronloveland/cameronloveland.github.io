@@ -4,14 +4,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "predev": "node scripts/vendor-three.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/vendor-three.mjs",
     "build": "astro check && astro build",
     "typecheck": "astro check",
     "preview": "astro preview",
     "head": "node --test art/head/check.test.mjs && node art/head/build.mjs"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "astro": "^5.0.0",
+    "three": "0.160.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
